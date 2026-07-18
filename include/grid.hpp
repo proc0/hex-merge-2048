@@ -18,7 +18,7 @@ namespace std {
 }
 
 class Grid : public Layer {
-	std::unordered_map<Hex::Point, Hex::State> map;
+	std::unordered_map<Hex::Point, HexState> map;
 
 	const Window& window;
 	Vector2 origin = { window.halfWidthf, window.halfHeightf };
@@ -38,19 +38,12 @@ public:
 	void reset();
 
 	void render() const;
-	void renderHex(const Hex::Point&, const Hex::State&) const;
+	void renderHex(const Hex::Point&, const HexState&) const;
 
-	Hex::State getState(Hex::Point) const;
+	HexState getState(Hex::Point) const;
 	Vector2 getPosition(Hex::Point) const;
 
 	void place(Hex::Point, int value);
-
-    Hex::Point inject(Vector2 position);
-    Vector2 project(Hex::Point);
-
-    Hex::Point add(Hex::Point, Hex::Point) const;
-    Hex::Point subtract(Hex::Point, Hex::Point) const;
-    Hex::Point multiply(Hex::Point, int k) const;
     Hex::Point walk(Hex::Point, Hex::Point) const;
     Hex::Point corner(Hex::Point) const;
     int distance(Hex::Point, Hex::Point) const;

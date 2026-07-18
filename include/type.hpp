@@ -217,27 +217,73 @@ namespace Hex {
         Point({  0,  1, -1 })
     };
 
+    // pointy top hex map
+    // const Matrix2x2Pair view = Matrix2x2Pair({
+    //   sqrtf(3.0f), sqrtf(3.0f)/2.0f, 0.0f, 3.0f/2.0f,
+    //   sqrtf(3.0f)/3.0f, -1.0f/3.0f, 0.0, 2.0f/3.0f
+    // });
+
     // flat top hex map
     static inline const Matrix2x2Pair View = Matrix2x2Pair({
         3.0f/2.0f, 0.0f, sqrtf(3.0f)/2.0f, sqrtf(3.0f),
         2.0f/3.0f, 0.0f, -1.0f/3.0f, sqrtf(3.0f)/3.0f
     });
 
-    struct State {
-        Vector2 position;
-        int key;
-    };
+    static inline Point inject(Vector2 point, Vector2 origin, Vector2 unit) {
+        int q0 = (point.x - origin.x) / unit.x;
+        int r0 = (point.y - origin.y) / unit.y;
+        Point hex = Point(q0, r0);
 
-    // pointy top hex map
-    // const Matrix2x2Pair view = Matrix2x2Pair({
-    //   sqrtf(3.0f), sqrtf(3.0f)/2.0f, 0.0f, 3.0f/2.0f,
-    //   sqrtf(3.0f)/3.0f, -1.0f/3.0f, 0.0, 2.0f/3.0f
-    // });
+        float q = View.b0 * hex.q + View.b1 * hex.r;
+        float r = View.b2 * hex.q + View.b3 * hex.r;
+        float s = -q - r;
+        // float division needs to round to the nearest int
+        int q1 = static_cast<int>(roundf(q));
+        int r1 = static_cast<int>(roundf(r));
+        int s1 = static_cast<int>(roundf(s));
+        // after rounding we do not have a guarantee that q + r + s = 0.
+        // reset the component with the largest change back to what the constraint requires
+        double q_diff = abs(q1 - q);
+        double r_diff = abs(r1 - r);
+        double s_diff = abs(s1 - s);
+        if (q_diff > r_diff && q_diff > s_diff) {
+            q1 = -r1 - s1;
+        } else if (r_diff > s_diff) {
+            r1 = -q1 - s1;
+        } else {
+            s1 = -q1 - r1;
+        }
+
+        return { q1, r1, s1 };
+    }
+
+    static inline Vector2 project(Point point, Vector2 origin, Vector2 unit) {
+        float x = (View.f0 * point.q + View.f1 * point.r) * unit.x;
+        float y = (View.f2 * point.q + View.f3 * point.r) * unit.y;
+
+        return { x + origin.x, y + origin.y };
+    }
+
+    static inline Point add(Point a, Point b) {
+        return Point(a.q + b.q, a.r + b.r, a.s + b.s);
+    }
+
+    static inline Point subtract(Point a, Point b) {
+        return Point(a.q - b.q, a.r - b.r, a.s - b.s);
+    }
+
+    static inline Point multiply(Point a, int k) {
+        return Point(a.q * k, a.r * k, a.s * k);
+    }
+
+    static inline int length(Point point) {
+        return static_cast<int>((abs(point.q) + abs(point.r) + abs(point.s))*0.5f);
+    }
+
+    static inline int distance(Point a, Point b) {
+        return length(subtract(a, b));
+    }
 }
-
-struct ChipState {
-    int value;
-};
 
 #define DIR_UP   Hex::Cardinal::NORTH
 #define DIR_UP_R Hex::Cardinal::NORTH_EAST
@@ -245,3 +291,13 @@ struct ChipState {
 #define DIR_DN   Hex::Cardinal::SOUTH
 #define DIR_DN_L Hex::Cardinal::SOUTH_WEST
 #define DIR_UP_L Hex::Cardinal::NORTH_WEST
+
+struct HexState {
+    Vector2 position;
+    int key;
+};
+
+struct ChipState {
+    int value;
+};
+

@@ -19,7 +19,7 @@ void Grid::create(int k) {
 		for (int r = r1; r <= r2; r++) {
 			Hex::Point hex = {q, r};
 			// bool isColEdge = r == r1 || r == r2;
-			map.insert({ hex, { project(hex), 0 } });
+			map.insert({ hex, { project(hex, origin, unit), 0 } });
 		}
 	}
 }
@@ -30,7 +30,7 @@ void Grid::render() const {
 	}
 }
 
-void Grid::renderHex(const Hex::Point& point, const Hex::State& state) const {
+void Grid::renderHex(const Hex::Point& point, const HexState& state) const {
 	DrawPoly(state.position, 6, unit.x, 0.0f, state.key > 0 ? YELLOW : colorHex);
 	DrawPolyLines(state.position, 6, unit.x, 0.0f, colorLine);
 
@@ -38,7 +38,7 @@ void Grid::renderHex(const Hex::Point& point, const Hex::State& state) const {
 	DrawText(pointLabel, state.position.x - 30.0f, state.position.y - 9.0f, 18, BLACK);
 }
 
-Hex::State Grid::getState(Hex::Point hex) const {
+HexState Grid::getState(Hex::Point hex) const {
 	// TODO: change to map[hex] and/or add DEBUG guard
 	return map.at(hex);
 }
@@ -50,78 +50,22 @@ Vector2 Grid::getPosition(Hex::Point hex) const {
 
 void Grid::place(Hex::Point point, int key) {
 	// TODO: change to map[hex] and/or add DEBUG guard
-	Hex::State& state = map.at(point);
+	HexState& state = map.at(point);
 	// state.position = project(point);
 	state.key = key;
 }
 
-Hex::Point Grid::inject(Vector2 point) {
-	int q0 = (point.x - origin.x) / unit.x;
-	int r0 = (point.y - origin.y) / unit.y;
-	Hex::Point hex = Hex::Point(q0, r0);
-
-	float q = Hex::View.b0 * hex.q + Hex::View.b1 * hex.r;
-	float r = Hex::View.b2 * hex.q + Hex::View.b3 * hex.r;
-	float s = -q - r;
-	// float division needs to round to the nearest int
-	int q1 = static_cast<int>(roundf(q));
-	int r1 = static_cast<int>(roundf(r));
-	int s1 = static_cast<int>(roundf(s));
-	// after rounding we do not have a guarantee that q + r + s = 0.
-	// reset the component with the largest change back to what the constraint requires
-	double q_diff = abs(q1 - q);
-	double r_diff = abs(r1 - r);
-	double s_diff = abs(s1 - s);
-	if (q_diff > r_diff && q_diff > s_diff) {
-		q1 = -r1 - s1;
-	} else if (r_diff > s_diff) {
-		r1 = -q1 - s1;
-	} else {
-		s1 = -q1 - r1;
-	}
-
-	return { q1, r1, s1 };
-}
-
-Vector2 Grid::project(Hex::Point point) {
-	float x = (Hex::View.f0 * point.q + Hex::View.f1 * point.r) * unit.x;
-	float y = (Hex::View.f2 * point.q + Hex::View.f3 * point.r) * unit.y;
-
-	return { x + origin.x, y + origin.y };
-}
-
-Hex::Point Grid::add(Hex::Point a, Hex::Point b) const {
-	return Hex::Point(a.q + b.q, a.r + b.r, a.s + b.s);
-}
-
-Hex::Point Grid::subtract(Hex::Point a, Hex::Point b) const {
-	return Hex::Point(a.q - b.q, a.r - b.r, a.s - b.s);
-}
-
-Hex::Point Grid::multiply(Hex::Point a, int k) const {
-	return Hex::Point(a.q * k, a.r * k, a.s * k);
-}
-
 Hex::Point Grid::walk(Hex::Point departure, Hex::Point direction) const {
-	Hex::Point destination = add(departure, direction);
+	Hex::Point destination = Hex::add(departure, direction);
 
 	return within(destination) ? destination : departure;
 }
 
 // get a corner based on unit direction hex
-Hex::Point Grid::corner(Hex::Point dir) const {
-	Hex::Point border = { extent, extent, extent };
-	Hex::Point target = { dir.q * border.q, dir.r * border.r, dir.s * border.s };
+Hex::Point Grid::corner(Hex::Point source) const {
+	Hex::Point target = Hex::multiply(source, extent);
 
-	return within(target) ? target : dir;
-}
-
-int Grid::distance(Hex::Point a, Hex::Point b) const {
-	return length(subtract(a, b));
-}
-
-int Grid::length(Hex::Point point) const {
-	return static_cast<int>((abs(point.q) + abs(point.r) + abs(point.s))*0.5f);
+	return within(target) ? target : source;
 }
 
 bool Grid::within(Hex::Point point) const {
@@ -138,6 +82,6 @@ void Grid::resize(int width, int height) {
 	origin.y = window.halfHeightf;
 
 	for (auto &[point, state] : map) {
-		state.position = project(point);
+		state.position = project(point, origin, unit);
 	}
 }
