@@ -1,11 +1,15 @@
 #include "world.hpp"
 
 #include "index.h"
-#include "raylib.h"
 #include "type.hpp"
+
+#include "raylib.h"
 
 void World::load(){
     splat = LoadSound(PATH_ASSET(URI_SOUND_SPLAT));
+    grid.load();
+
+    window.enlist(&grid);
 }
 
 void World::renderMain() const {
@@ -14,6 +18,7 @@ void World::renderMain() const {
 
 void World::renderGame() const {
     DrawRectangleGradientV(0, 0, window.width, window.height, BLUE, GREEN);
+    grid.render();
 }
 
 void World::renderHold() const {

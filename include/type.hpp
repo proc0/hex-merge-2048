@@ -4,6 +4,9 @@
 
 #include "raylib.h"
 
+#include <array>
+#include <cmath>
+
 namespace Action {
     enum Surface {
         DO_NOTHING,
@@ -125,15 +128,110 @@ struct WorldState {
 class Layer {
 public:
     virtual ~Layer() = default;
-    virtual void resize(int width, int height) {};
+    virtual void resize(int width, int height) {}
 };
 
-struct Hex { 
-    // cube coordinates storage 
-    int q, r, s;
-    // axial coordinates constructor (q, r)
-    // derive the third coordinate s by -q - r
-    constexpr Hex(int q1, int r1): q(q1), r(r1), s(-q1 - r1) {}
-    constexpr Hex(int q1, int r1, int s1): q(q1), r(r1), s(s1) {}
-    bool operator==(const Hex&) const = default;
+struct Matrix2x2Pair {
+    const float f0, f1, f2, f3;
+    const float b0, b1, b2, b3;
 };
+
+namespace Hex {
+    struct Point { 
+        int q, r, s; // cube coordinates storage
+        // axial coordinates derive the third coordinate s by -q - r
+        constexpr Point(int q1, int r1): q(q1), r(r1), s(-q1 - r1) {}
+        constexpr Point(int q1, int r1, int s1): q(q1), r(r1), s(s1) {}
+        bool operator==(const Point&) const = default;
+    };
+
+    enum Cardinal {
+      NORTH,
+      NORTH_EAST,
+      SOUTH_EAST,
+      SOUTH,
+      SOUTH_WEST,
+      NORTH_WEST
+    };
+
+    static inline constexpr std::array<Point, 6> Direction = { 
+        Point({  0, -1,  1 }),
+        Point({  1, -1,  0 }),
+        Point({  1,  0, -1 }),
+        Point({  0,  1, -1 }),
+        Point({ -1,  1,  0 }),
+        Point({ -1,  0,  1 })
+    };
+
+    static inline constexpr std::array<Point, 6> Reverse = { 
+        Point({  0,  1, -1 }),
+        Point({ -1,  1,  0 }),
+        Point({ -1,  0,  1 }),
+        Point({  0, -1,  1 }),
+        Point({  1, -1,  0 }),
+        Point({  1,  0, -1 })
+    };
+
+    struct Unit {
+        static constexpr Point UP         = Direction[Cardinal::NORTH];
+        static constexpr Point UP_RIGHT   = Direction[Cardinal::NORTH_EAST];
+        static constexpr Point DOWN_RIGHT = Direction[Cardinal::SOUTH_EAST];
+        static constexpr Point DOWN       = Direction[Cardinal::SOUTH];
+        static constexpr Point DOWN_LEFT  = Direction[Cardinal::SOUTH_WEST];
+        static constexpr Point UP_LEFT    = Direction[Cardinal::NORTH_WEST];
+    };
+
+    static inline constexpr std::array<Point, 6> RotateClockwise1 = { 
+        Point({  1, -1,  0 }),
+        Point({  1,  0, -1 }),
+        Point({  0,  1, -1 }),
+        Point({ -1,  1,  0 }),
+        Point({ -1,  0,  1 }),
+        Point({  0, -1,  1 })
+    };
+
+    static inline constexpr std::array<Point, 6> RotateClockwise2 = { 
+        Point({  0, -1,  1 }),
+        Point({  1, -1,  0 }),
+        Point({  1,  0, -1 }),
+        Point({  0,  1, -1 }),
+        Point({ -1,  1,  0 }),
+        Point({ -1,  0,  1 })
+    };
+
+    static inline constexpr std::array<Point, 6> RotateCounterwise1 = { 
+        Point({ -1,  0,  1 }),
+        Point({  0, -1,  1 }),
+        Point({  1, -1,  0 }),
+        Point({  1,  0, -1 }),
+        Point({  0,  1, -1 }),
+        Point({ -1,  1,  0 })
+    };
+
+    static inline constexpr std::array<Point, 6> RotateCounterwise2 = { 
+        Point({ -1,  1,  0 }),
+        Point({ -1,  0,  1 }),
+        Point({  0, -1,  1 }),
+        Point({  1, -1,  0 }),
+        Point({  1,  0, -1 }),
+        Point({  0,  1, -1 })
+    };
+
+    struct State {
+        Vector2 position;
+        int key;
+        bool isEmpty;
+    };
+
+    // flat top hex map
+    static inline const Matrix2x2Pair View = Matrix2x2Pair({
+        3.0f/2.0f, 0.0f, sqrtf(3.0f)/2.0f, sqrtf(3.0f),
+        2.0f/3.0f, 0.0f, -1.0f/3.0f, sqrtf(3.0f)/3.0f
+    });
+    // pointy top hex map
+    // const Matrix2x2Pair view = Matrix2x2Pair({
+    //   sqrtf(3.0f), sqrtf(3.0f)/2.0f, 0.0f, 3.0f/2.0f,
+    //   sqrtf(3.0f)/3.0f, -1.0f/3.0f, 0.0, 2.0f/3.0f
+    // });
+}
+

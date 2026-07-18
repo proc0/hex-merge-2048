@@ -13,3 +13,8 @@
 #define INTRO_TIME_MS 3000
 
 #define RAYLIB_LOGO_SIZE 200
+
+#define HEX_SIZE 66.0f
+// Hex grid extent (half width/height) - 1 (center hex)
+// or number of onion hex layers around center hex
+#define GRID_EXTENT 2

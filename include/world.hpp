@@ -3,12 +3,14 @@
 #include "config.hpp"
 #include "type.hpp"
 #include "window.hpp"
+#include "grid.hpp"
 
 #include "raylib.h"
 
 class World : public Layer {
     Sound splat;
-    const Window& window;
+    Window& window;
+    Grid grid{window};
 
     Vector2 rlLogoDir = { static_cast<float>(GetRandomValue(-100, 100))/100.0f, static_cast<float>(GetRandomValue(-100, 100))/100.0f };
     Vector2 rlLogoPos = { static_cast<float>(GetRandomValue(0, SCREEN_WIDTH-RAYLIB_LOGO_SIZE)), static_cast<float>(GetRandomValue(0, SCREEN_HEIGHT-RAYLIB_LOGO_SIZE)) };
@@ -16,7 +18,7 @@ class World : public Layer {
     int dummyGoalTracker = 0;
 
 public:
-    World(const Window& window): window(window) {}
+    World(Window& window): window(window) {}
     ~World() = default;
     
     void (World::*render)() const = &World::renderUnit;
