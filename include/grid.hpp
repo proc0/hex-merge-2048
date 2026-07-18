@@ -37,11 +37,23 @@ public:
 	void create(int extent);
 	void reset();
 
-	void renderHex(const Hex::Point&, const Hex::State&) const;
 	void render() const;
+	void renderHex(const Hex::Point&, const Hex::State&) const;
 
+	Hex::State getState(Hex::Point) const;
+	
     Hex::Point inject(Vector2 position);
     Vector2 project(Hex::Point);
 
+    Hex::Point add(Hex::Point, Hex::Point) const;
+    Hex::Point subtract(Hex::Point, Hex::Point) const;
+    Hex::Point multiply(Hex::Point, int k) const;
+    Hex::Point walk(Hex::Point, Hex::Point) const;
+    Hex::Point corner(Hex::Point) const;
+    int distance(Hex::Point, Hex::Point) const;
+    int length(Hex::Point) const;
+    int size() const;
+
+    bool within(Hex::Point point) const;
     void resize(int width, int height) override;
 };

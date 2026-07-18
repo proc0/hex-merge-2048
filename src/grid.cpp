@@ -33,8 +33,13 @@ void Grid::render() const {
 void Grid::renderHex(const Hex::Point& point, const Hex::State& state) const {
 	DrawPoly(state.position, 6, unit.x, 0.0f, state.isEmpty ? colorHex : YELLOW);
 	DrawPolyLines(state.position, 6, unit.x, 0.0f, colorLine);
+
 	const char *pointLabel = TextFormat("(%d, %d, %d)", point.q, point.r, point.s);
 	DrawText(pointLabel, state.position.x - 30.0f, state.position.y - 9.0f, 18, BLACK);
+}
+
+Hex::State Grid::getState(Hex::Point hex) const {
+	return map.at(hex);
 }
 
 Hex::Point Grid::inject(Vector2 point) {
@@ -70,6 +75,48 @@ Vector2 Grid::project(Hex::Point point) {
 	float y = (Hex::View.f2 * point.q + Hex::View.f3 * point.r) * unit.y;
 
 	return { x + origin.x, y + origin.y };
+}
+
+Hex::Point Grid::add(Hex::Point a, Hex::Point b) const {
+	return Hex::Point(a.q + b.q, a.r + b.r, a.s + b.s);
+}
+
+Hex::Point Grid::subtract(Hex::Point a, Hex::Point b) const {
+	return Hex::Point(a.q - b.q, a.r - b.r, a.s - b.s);
+}
+
+Hex::Point Grid::multiply(Hex::Point a, int k) const {
+	return Hex::Point(a.q * k, a.r * k, a.s * k);
+}
+
+Hex::Point Grid::walk(Hex::Point departure, Hex::Point direction) const {
+	Hex::Point destination = add(departure, direction);
+
+	return within(destination) ? destination : departure;
+}
+
+// get a corner based on unit axis hex
+Hex::Point Grid::corner(Hex::Point axis) const {
+	Hex::Point max = { extent, extent, extent };
+	Hex::Point target = { axis.q * max.q, axis.r * max.r, axis.s * max.s };
+
+	return within(target) ? target : axis;
+}
+
+int Grid::distance(Hex::Point a, Hex::Point b) const {
+	return length(subtract(a, b));
+}
+
+int Grid::length(Hex::Point point) const {
+	return static_cast<int>((abs(point.q) + abs(point.r) + abs(point.s))*0.5f);
+}
+
+bool Grid::within(Hex::Point point) const {
+	return abs(point.q) < extent && abs(point.r) < extent && abs(point.s) < extent;
+}
+
+int Grid::size() const {
+	return 1 + 6 * summation(extent);
 }
 
 void Grid::resize(int width, int height) {
