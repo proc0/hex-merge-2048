@@ -16,7 +16,22 @@ void World::load(){
     // shim chip
     chips.emplace_back(Hex::Point(0, 0, 0), Vector2({}), 0);
 
-    createChip(Hex::Unit::UP, 2);
+    // createChip(Hex::Direction[DIR_UP_L], 6);
+    // Hex::State hex = grid.getState(Hex::Direction[DIR_UP_L]);
+    // Chip::State chip = chips.at(hex.key).getState();
+    createChip(grid.corner(Hex::Unit::UP), 12);
+    createChip(grid.corner(Hex::Unit::UP_R), 2);
+    createChip(grid.corner(Hex::Unit::DN_R), 4);
+    createChip(grid.corner(Hex::Unit::DN), 6);
+    createChip(grid.corner(Hex::Unit::DN_L), 8);
+    createChip(grid.corner(Hex::Unit::UP_L), 10);
+    // createChip(Hex::RotateClockwise2[DIR_UP_L], 8);
+    // createChip(Hex::RotateCounterwise1[DIR_UP_L], 5);
+    // createChip(Hex::RotateCounterwise2[DIR_UP_L], 4);
+    // createChip(Hex::Reverse[Hex::Cardinal::NORTH_WEST], 4);
+    // createChip(Hex::Reverse[Hex::Cardinal::NORTH], 6);
+    // createChip(Hex::Reverse[Hex::Cardinal::NORTH_EAST], 8);
+    // createChip(Hex::Reverse[Hex::Cardinal::SOUTH_EAST], 10);
 }
 
 void World::spawnChip(Hex::Point hex, int value) {

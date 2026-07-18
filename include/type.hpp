@@ -163,15 +163,14 @@ namespace Hex {
         Point({ -1,  0,  1 })
     };
 
-    struct Unit {
-        static constexpr Point UP         = Direction[Cardinal::NORTH];
-        static constexpr Point UP_RIGHT   = Direction[Cardinal::NORTH_EAST];
-        static constexpr Point DOWN_RIGHT = Direction[Cardinal::SOUTH_EAST];
-        static constexpr Point DOWN       = Direction[Cardinal::SOUTH];
-        static constexpr Point DOWN_LEFT  = Direction[Cardinal::SOUTH_WEST];
-        static constexpr Point UP_LEFT    = Direction[Cardinal::NORTH_WEST];
+    struct Unit {   
+        static constexpr Point UP   = Direction[Cardinal::NORTH];
+        static constexpr Point UP_R = Direction[Cardinal::NORTH_EAST];
+        static constexpr Point DN_R = Direction[Cardinal::SOUTH_EAST];
+        static constexpr Point DN   = Direction[Cardinal::SOUTH];
+        static constexpr Point DN_L = Direction[Cardinal::SOUTH_WEST];
+        static constexpr Point UP_L = Direction[Cardinal::NORTH_WEST];
     };
-
 
     static inline constexpr std::array<Point, 6> Reverse = { 
         Point({  0,  1, -1 }),
@@ -192,12 +191,12 @@ namespace Hex {
     };
 
     static inline constexpr std::array<Point, 6> RotateClockwise2 = { 
-        Point({  0, -1,  1 }),
-        Point({  1, -1,  0 }),
         Point({  1,  0, -1 }),
         Point({  0,  1, -1 }),
         Point({ -1,  1,  0 }),
-        Point({ -1,  0,  1 })
+        Point({ -1,  0,  1 }),
+        Point({  0, -1,  1 }),
+        Point({  1, -1,  0 })
     };
 
     static inline constexpr std::array<Point, 6> RotateCounterwise1 = { 
@@ -236,16 +235,13 @@ namespace Hex {
     // });
 }
 
-
-// struct Unit {
-//     static constexpr Hex::Point UP         = Hex::Direction[Hex::Cardinal::NORTH];
-//     static constexpr Hex::Point UP_RIGHT   = Hex::Direction[Hex::Cardinal::NORTH_EAST];
-//     static constexpr Hex::Point DOWN_RIGHT = Hex::Direction[Hex::Cardinal::SOUTH_EAST];
-//     static constexpr Hex::Point DOWN       = Hex::Direction[Hex::Cardinal::SOUTH];
-//     static constexpr Hex::Point DOWN_LEFT  = Hex::Direction[Hex::Cardinal::SOUTH_WEST];
-//     static constexpr Hex::Point UP_LEFT    = Hex::Direction[Hex::Cardinal::NORTH_WEST];
-// };
-
 struct ChipState {
     int value;
 };
+
+#define DIR_UP   Hex::Cardinal::NORTH
+#define DIR_UP_R Hex::Cardinal::NORTH_EAST
+#define DIR_DN_R Hex::Cardinal::SOUTH_EAST
+#define DIR_DN   Hex::Cardinal::SOUTH
+#define DIR_DN_L Hex::Cardinal::SOUTH_WEST
+#define DIR_UP_L Hex::Cardinal::NORTH_WEST

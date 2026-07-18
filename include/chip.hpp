@@ -7,11 +7,14 @@
 
 #include <array>
 
+// WARNING: must equal the properties enum size
+#define PROPS_SIZE 10
+
 class Chip {
-	std::array<float, 9> source{0};
-	std::array<float, 9> target{0};
-	std::array<float, 9> current{0};
-	std::array<int, 9> frame{0};
+	std::array<float, PROPS_SIZE> source{0};
+	std::array<float, PROPS_SIZE> target{0};
+	std::array<float, PROPS_SIZE> current{0};
+	std::array<int, PROPS_SIZE> frame{0};
 
 	Hex::Point currentHex;
 	Hex::Point targetHex;
@@ -43,12 +46,16 @@ public:
 		targetHex(target), 
 		state({ value }),
 		enabled(active) {
+    		TraceLog(LOG_INFO, "CREATING CHIP %f %f", position.x, position.y);
 			load(position, { 1.0f, 1.0f }, 0.0f);
 		}
 	~Chip() = default;
 
 	void load(Vector2 position, Vector2 scale, float rotation);
 	void reset(Hex::Point, Vector2 position, Vector2 scale, float rotation, int value);
+
+	ChipState getState() const;
+	Vector2 getPosition() const;
 
 	void render() const;
 

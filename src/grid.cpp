@@ -39,16 +39,19 @@ void Grid::renderHex(const Hex::Point& point, const Hex::State& state) const {
 }
 
 Hex::State Grid::getState(Hex::Point hex) const {
+	// TODO: change to map[hex] and/or add DEBUG guard
 	return map.at(hex);
 }
 
 Vector2 Grid::getPosition(Hex::Point hex) const {
+	// TODO: change to map[hex] and/or add DEBUG guard
 	return map.at(hex).position;
 }
 
 void Grid::place(Hex::Point point, int key) {
-	Hex::State state = map.at(point);
-	state.position = project(point);
+	// TODO: change to map[hex] and/or add DEBUG guard
+	Hex::State& state = map.at(point);
+	// state.position = project(point);
 	state.key = key;
 }
 
@@ -105,12 +108,12 @@ Hex::Point Grid::walk(Hex::Point departure, Hex::Point direction) const {
 	return within(destination) ? destination : departure;
 }
 
-// get a corner based on unit axis hex
-Hex::Point Grid::corner(Hex::Point axis) const {
-	Hex::Point max = { extent, extent, extent };
-	Hex::Point target = { axis.q * max.q, axis.r * max.r, axis.s * max.s };
+// get a corner based on unit direction hex
+Hex::Point Grid::corner(Hex::Point dir) const {
+	Hex::Point border = { extent, extent, extent };
+	Hex::Point target = { dir.q * border.q, dir.r * border.r, dir.s * border.s };
 
-	return within(target) ? target : axis;
+	return within(target) ? target : dir;
 }
 
 int Grid::distance(Hex::Point a, Hex::Point b) const {
@@ -122,7 +125,7 @@ int Grid::length(Hex::Point point) const {
 }
 
 bool Grid::within(Hex::Point point) const {
-	return abs(point.q) < extent && abs(point.r) < extent && abs(point.s) < extent;
+	return abs(point.q) <= extent && abs(point.r) <= extent && abs(point.s) <= extent;
 }
 
 int Grid::size() const {

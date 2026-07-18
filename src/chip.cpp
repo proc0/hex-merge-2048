@@ -51,6 +51,15 @@ void Chip::reset(Hex::Point hex, Vector2 position, Vector2 scale, float rotation
 	enable();
 }
 
+ChipState Chip::getState() const {
+	return state;
+}
+
+Vector2 Chip::getPosition() const {
+	return { current[POSX], current[POSY] };
+}
+
+
 void Chip::render() const {
 	DrawPoly({ current[POSX], current[POSY] }, 6, current[SIZE], 0.0f, { static_cast<unsigned char>(current[COL1]), static_cast<unsigned char>(current[COL2]), static_cast<unsigned char>(current[COL3]), static_cast<unsigned char>(current[COL4]) });
 	DrawPolyLines({ current[POSX], current[POSY] }, 6, current[SIZE], 0.0f, BLACK);
