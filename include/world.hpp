@@ -1,9 +1,10 @@
 #pragma once
 
-#include "config.hpp"
+// #include "config.hpp"
 #include "type.hpp"
 #include "window.hpp"
 #include "grid.hpp"
+#include "chip.hpp"
 
 #include "raylib.h"
 
@@ -12,8 +13,7 @@ class World : public Layer {
     Window& window;
     Grid grid{window};
 
-    Vector2 rlLogoDir = { static_cast<float>(GetRandomValue(-100, 100))/100.0f, static_cast<float>(GetRandomValue(-100, 100))/100.0f };
-    Vector2 rlLogoPos = { static_cast<float>(GetRandomValue(0, SCREEN_WIDTH-RAYLIB_LOGO_SIZE)), static_cast<float>(GetRandomValue(0, SCREEN_HEIGHT-RAYLIB_LOGO_SIZE)) };
+    std::vector<Chip> chips;
 
     int dummyGoalTracker = 0;
 
@@ -25,7 +25,10 @@ public:
     WorldState (World::*update)(InputEvent, Action::Surface) = &World::updateUnit;
 
     void load();
-    
+    void spawnChip(Hex::Point hex, int value);
+    void createChip(Hex::Point hex, int value);
+    void respawnChip(Hex::Point hex, int value);
+
     void renderUnit() const {};
     void renderMain() const;
     void renderGame() const;

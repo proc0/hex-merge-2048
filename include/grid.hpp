@@ -41,7 +41,10 @@ public:
 	void renderHex(const Hex::Point&, const Hex::State&) const;
 
 	Hex::State getState(Hex::Point) const;
-	
+	Vector2 getPosition(Hex::Point) const;
+
+	void place(Hex::Point, int value);
+
     Hex::Point inject(Vector2 position);
     Vector2 project(Hex::Point);
 

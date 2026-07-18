@@ -19,7 +19,7 @@ void Grid::create(int k) {
 		for (int r = r1; r <= r2; r++) {
 			Hex::Point hex = {q, r};
 			// bool isColEdge = r == r1 || r == r2;
-			map.insert({ hex, { project(hex), 0, true } });
+			map.insert({ hex, { project(hex), 0 } });
 		}
 	}
 }
@@ -31,7 +31,7 @@ void Grid::render() const {
 }
 
 void Grid::renderHex(const Hex::Point& point, const Hex::State& state) const {
-	DrawPoly(state.position, 6, unit.x, 0.0f, state.isEmpty ? colorHex : YELLOW);
+	DrawPoly(state.position, 6, unit.x, 0.0f, state.key > 0 ? YELLOW : colorHex);
 	DrawPolyLines(state.position, 6, unit.x, 0.0f, colorLine);
 
 	const char *pointLabel = TextFormat("(%d, %d, %d)", point.q, point.r, point.s);
@@ -40,6 +40,16 @@ void Grid::renderHex(const Hex::Point& point, const Hex::State& state) const {
 
 Hex::State Grid::getState(Hex::Point hex) const {
 	return map.at(hex);
+}
+
+Vector2 Grid::getPosition(Hex::Point hex) const {
+	return map.at(hex).position;
+}
+
+void Grid::place(Hex::Point point, int key) {
+	Hex::State state = map.at(point);
+	state.position = project(point);
+	state.key = key;
 }
 
 Hex::Point Grid::inject(Vector2 point) {

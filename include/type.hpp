@@ -163,15 +163,6 @@ namespace Hex {
         Point({ -1,  0,  1 })
     };
 
-    static inline constexpr std::array<Point, 6> Reverse = { 
-        Point({  0,  1, -1 }),
-        Point({ -1,  1,  0 }),
-        Point({ -1,  0,  1 }),
-        Point({  0, -1,  1 }),
-        Point({  1, -1,  0 }),
-        Point({  1,  0, -1 })
-    };
-
     struct Unit {
         static constexpr Point UP         = Direction[Cardinal::NORTH];
         static constexpr Point UP_RIGHT   = Direction[Cardinal::NORTH_EAST];
@@ -179,6 +170,16 @@ namespace Hex {
         static constexpr Point DOWN       = Direction[Cardinal::SOUTH];
         static constexpr Point DOWN_LEFT  = Direction[Cardinal::SOUTH_WEST];
         static constexpr Point UP_LEFT    = Direction[Cardinal::NORTH_WEST];
+    };
+
+
+    static inline constexpr std::array<Point, 6> Reverse = { 
+        Point({  0,  1, -1 }),
+        Point({ -1,  1,  0 }),
+        Point({ -1,  0,  1 }),
+        Point({  0, -1,  1 }),
+        Point({  1, -1,  0 }),
+        Point({  1,  0, -1 })
     };
 
     static inline constexpr std::array<Point, 6> RotateClockwise1 = { 
@@ -217,17 +218,17 @@ namespace Hex {
         Point({  0,  1, -1 })
     };
 
-    struct State {
-        Vector2 position;
-        int key;
-        bool isEmpty;
-    };
-
     // flat top hex map
     static inline const Matrix2x2Pair View = Matrix2x2Pair({
         3.0f/2.0f, 0.0f, sqrtf(3.0f)/2.0f, sqrtf(3.0f),
         2.0f/3.0f, 0.0f, -1.0f/3.0f, sqrtf(3.0f)/3.0f
     });
+
+    struct State {
+        Vector2 position;
+        int key;
+    };
+
     // pointy top hex map
     // const Matrix2x2Pair view = Matrix2x2Pair({
     //   sqrtf(3.0f), sqrtf(3.0f)/2.0f, 0.0f, 3.0f/2.0f,
@@ -235,3 +236,16 @@ namespace Hex {
     // });
 }
 
+
+// struct Unit {
+//     static constexpr Hex::Point UP         = Hex::Direction[Hex::Cardinal::NORTH];
+//     static constexpr Hex::Point UP_RIGHT   = Hex::Direction[Hex::Cardinal::NORTH_EAST];
+//     static constexpr Hex::Point DOWN_RIGHT = Hex::Direction[Hex::Cardinal::SOUTH_EAST];
+//     static constexpr Hex::Point DOWN       = Hex::Direction[Hex::Cardinal::SOUTH];
+//     static constexpr Hex::Point DOWN_LEFT  = Hex::Direction[Hex::Cardinal::SOUTH_WEST];
+//     static constexpr Hex::Point UP_LEFT    = Hex::Direction[Hex::Cardinal::NORTH_WEST];
+// };
+
+struct ChipState {
+    int value;
+};
