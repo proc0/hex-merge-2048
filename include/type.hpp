@@ -127,3 +127,13 @@ public:
     virtual ~Layer() = default;
     virtual void resize(int width, int height) {};
 };
+
+struct Hex { 
+    // cube coordinates storage 
+    int q, r, s;
+    // axial coordinates constructor (q, r)
+    // derive the third coordinate s by -q - r
+    constexpr Hex(int q1, int r1): q(q1), r(r1), s(-q1 - r1) {}
+    constexpr Hex(int q1, int r1, int s1): q(q1), r(r1), s(s1) {}
+    bool operator==(const Hex&) const = default;
+};

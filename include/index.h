@@ -1,9 +1,9 @@
 #pragma once
 
-#define PROJECT_NAME "rayclay"
+#define PROJECT_NAME "hex-merge-2048"
 #define VERSION "0.2.0"
 #define DEBUG 1
-#define DATE_BUILD "2026-07-17 17:34:00"
+#define DATE_BUILD "2026-07-17 19:46:57"
 #define DIR_ASSETS "asset"
 
 #define PATH_ASSET(filename) DIR_ASSETS "/" filename
