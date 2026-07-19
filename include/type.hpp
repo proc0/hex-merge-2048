@@ -326,26 +326,28 @@ namespace Hex {
     //   sqrtf(3.0f)/3.0f, -1.0f/3.0f, 0.0, 2.0f/3.0f
     // });
 
-    // flat top hex map
+    // flat top hex grid transform matrix to and from screen space
     static inline const Matrix2x2Pair View = Matrix2x2Pair({
         3.0f/2.0f, 0.0f, sqrtf(3.0f)/2.0f, sqrtf(3.0f),
         2.0f/3.0f, 0.0f, -1.0f/3.0f, sqrtf(3.0f)/3.0f
     });
 
-    static inline Point inject(Vector2 point, Vector2 origin, Vector2 unit) {
-        int q0 = (point.x - origin.x) / unit.x;
-        int r0 = (point.y - origin.y) / unit.y;
-        Point hex = Point(q0, r0);
-
-        float q = View.b0 * hex.q + View.b1 * hex.r;
-        float r = View.b2 * hex.q + View.b3 * hex.r;
+    // screen point to hex grid point parameterized by grid origin and hex size
+    static inline Point inject(Vector2 point, Vector2 origin, Vector2 size) {
+        // undoing hex grid transform projection
+        int q0 = (point.x - origin.x) / size.x;
+        int r0 = (point.y - origin.y) / size.y;
+        Point axial = Point(q0, r0);
+        // transform matrix is 2x2, using axial system
+        float q = View.b0 * axial.q + View.b1 * axial.r;
+        float r = View.b2 * axial.q + View.b3 * axial.r;
         float s = -q - r;
         // float division needs to round to the nearest int
         int q1 = static_cast<int>(roundf(q));
         int r1 = static_cast<int>(roundf(r));
         int s1 = static_cast<int>(roundf(s));
         // after rounding we do not have a guarantee that q + r + s = 0.
-        // reset the component with the largest change back to what the constraint requires
+        // reset the component with the largest change to satisfy contraint
         double q_diff = abs(q1 - q);
         double r_diff = abs(r1 - r);
         double s_diff = abs(s1 - s);
@@ -360,9 +362,10 @@ namespace Hex {
         return { q1, r1, s1 };
     }
 
-    static inline Vector2 project(Point point, Vector2 origin, Vector2 unit) {
-        float x = (View.f0 * point.q + View.f1 * point.r) * unit.x;
-        float y = (View.f2 * point.q + View.f3 * point.r) * unit.y;
+    // hex grid point to screen point parameterized by grid origin and hex size
+    static inline Vector2 project(Point point, Vector2 origin, Vector2 size) {
+        float x = (View.f0 * point.q + View.f1 * point.r) * size.x;
+        float y = (View.f2 * point.q + View.f3 * point.r) * size.y;
 
         return { x + origin.x, y + origin.y };
     }
