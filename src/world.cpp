@@ -89,7 +89,7 @@ void World::updateChip(Hex::Basis moveStep, Hex::Point sourceHex) {
     }
 
     Hex::Point lastTarget = targetHex;
-    while (maxTries > 0 && !grid.isDirectionEdge(targetHex, moveStep) && grid.vacant(targetHex)) {
+    while (maxTries > 0 && !grid.walkEnded(moveStep, targetHex) && grid.vacant(targetHex)) {
         lastTarget = targetHex;
         targetHex = grid.walk(moveStep, targetHex);
         maxTries--;
@@ -127,57 +127,56 @@ void World::updateChip(Hex::Basis moveStep, Hex::Point sourceHex) {
     sourceChip.setCurrentHex(targetHex);
 }
 
-void World::searchGrid(Hex::Basis moveStep, Hex::Basis searchStep, Hex::Point sourceHex) {
+void World::searchGrid(Hex::Basis forward, Hex::Basis step, Hex::Point center) {
     int maxTries = 30;
     
-    Hex::Point nextHex = grid.walk(searchStep, sourceHex);
+    Hex::Point hex = grid.walk(step, center);
 
-    while (maxTries > 0 && !grid.isDirectionEdge(nextHex, searchStep)) {
-        // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-        if (!grid.vacant(nextHex)){
-            updateChip(moveStep, nextHex);
+    while (maxTries > 0 && !grid.walkEnded(step, hex)) {
+        // TraceLog(LOG_INFO, "HEX WALK %d %d %d", hex.q, hex.r, hex.s);
+        if (!grid.vacant(hex)){
+            updateChip(forward, hex);
         }
-        nextHex = grid.walk(searchStep, nextHex);
+        hex = grid.walk(step, hex);
         maxTries--;
     }
 
-    // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-    if (!grid.vacant(nextHex)){
-        updateChip(moveStep, nextHex);
+    // TraceLog(LOG_INFO, "HEX WALK %d %d %d", hex.q, hex.r, hex.s);
+    if (!grid.vacant(hex)){
+        updateChip(forward, hex);
     } 
 
 }
 
-void World::updateMove(Hex::Cardinal dir) {
-    Hex::Basis moveStep = Hex::Direction[dir];
+void World::updateMove(Hex::Cardinal index) {
+    Hex::Basis forward = Hex::Direction[index];
     // direction of sweep walk through center hex column
-    Hex::Basis stepBack = Hex::Reverse[dir];
+    Hex::Basis backward = Hex::Reverse[index];
     // TODO: why cant I use [dir]?
     // Hex::Cardinal oppositeDir = Hex::Opposite.at(dir);
     // direction of side flank sweeps as we are stepping back
-    Hex::Basis stepLeft = Hex::RotateCounterwise2[dir];
-    Hex::Basis stepRight = Hex::RotateClockwise2[dir];
-    TraceLog(LOG_INFO, "STEP LEFT %d %d %d, STEP RIGHT %d %d %d", stepLeft.q, stepLeft.r, stepLeft.s, stepRight.q, stepRight.r, stepRight.s);
+    Hex::Basis leftward = Hex::RotateCounterwise2[index];
+    Hex::Basis rightward = Hex::RotateClockwise2[index];
 
     int maxTries = 30;
     // start with the corner hex in the direction of movement
-    Hex::Point nextHex = grid.corner(moveStep);
-    while (maxTries > 0 && !grid.isDirectionEdge(nextHex, stepBack)) {
+    Hex::Point hex = grid.corner(forward);
+    while (maxTries > 0 && !grid.walkEnded(backward, hex)) {
 
-        TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-        if (!grid.vacant(nextHex)){
-            updateChip(moveStep, nextHex);
+        TraceLog(LOG_INFO, "HEX WALK %d %d %d", hex.q, hex.r, hex.s);
+        if (!grid.vacant(hex)){
+            updateChip(forward, hex);
         }
-        searchGrid(moveStep, stepRight, nextHex);
-        searchGrid(moveStep, stepLeft, nextHex);
+        searchGrid(forward, rightward, hex);
+        searchGrid(forward, leftward, hex);
 
-        nextHex = grid.walk(stepBack, nextHex);
+        hex = grid.walk(backward, hex);
         maxTries--;
     }
 
-    TraceLog(LOG_INFO, "END HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-    if (!grid.vacant(nextHex)){
-        updateChip(moveStep, nextHex);
+    TraceLog(LOG_INFO, "END HEX WALK %d %d %d", hex.q, hex.r, hex.s);
+    if (!grid.vacant(hex)){
+        updateChip(forward, hex);
     }
     // std::erase_if(chipsIdxsReady, [this, dir](int idx){
     //     Chip& chip = chips[idx];

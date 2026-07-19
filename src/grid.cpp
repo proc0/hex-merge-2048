@@ -88,7 +88,7 @@ bool Grid::within(Hex::Point point) const {
 // necessary because chips can move along edges if the direction is 
 // not towards that edge (i.e. chip is on left edge moving up)
 // WARNING: the direction should be a unit hex!
-bool Grid::isDirectionEdge(Hex::Point hex, Hex::Point dir) const {
+bool Grid::walkEnded(Hex::Basis dir, Hex::Point hex) const {
 	// NOTE: this detects the edge specifically, no whether it's inside the grid 
 	if (dir.q == 0) {
 		return hex.r == dir.r * extent || hex.s == dir.s * extent;
