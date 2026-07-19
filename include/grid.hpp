@@ -41,7 +41,6 @@ public:
 	void renderHex(const Hex::Point&, const HexState&) const;
 
 	HexState getState(Hex::Point) const;
-	void setKey(Hex::Point, int key);
 	Vector2 getPosition(Hex::Point) const;
 	Vector2 getUnit() const;
 

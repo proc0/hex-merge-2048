@@ -17,17 +17,20 @@ void World::load(){
     chipsIdxsReady.reserve(chipsCapacity-1);
     chipsIdxsMoving.reserve(chipsCapacity-1);
     // shim chip
-    chips.emplace_back(Hex::Point(0, 0, 0), Vector2({}), 0);
+    chips.emplace_back(Hex::Point(0, 0, 0), Vector2({}), 0, 0);
     // createChip(Hex::Direction[DIR_UP_L], 6);
     // Hex::State hex = grid.getState(Hex::Direction[DIR_UP_L]);
     // Chip::State chip = chips.at(hex.key).getState();
-    createChip(grid.corner(Hex::Unit::UP), 12);
-    createChip(grid.corner(Hex::Unit::UP_R), 2);
-    createChip(grid.corner(Hex::Unit::DN_R), 4);
-    createChip(grid.corner(Hex::Unit::DN), 6);
-    createChip(grid.corner(Hex::Unit::DN_L), 8);
-    createChip(grid.corner(Hex::Unit::UP_L), 10);
-    createChip(Hex::RotateClockwise2[Hex::UP], 8);
+    int key1 = createChip(grid.corner(Hex::Unit::UP), 12);
+    grid.place(grid.corner(Hex::Unit::UP), key1);
+
+    int key2 = createChip(grid.corner(Hex::Unit::UP_R), 2);
+    grid.place(grid.corner(Hex::Unit::UP_R), key2);
+    // createChip(grid.corner(Hex::Unit::DN_R), 4);
+    // createChip(grid.corner(Hex::Unit::DN), 6);
+    // createChip(grid.corner(Hex::Unit::DN_L), 8);
+    // createChip(grid.corner(Hex::Unit::UP_L), 10);
+    // createChip(Hex::RotateClockwise2[Hex::UP], 8);
     // createChip(Hex::RotateCounterwise1[DIR_UP_L], 5);
     // createChip(Hex::RotateCounterwise2[DIR_UP_L], 4);
     // createChip(Hex::Reverse[Hex::Cardinal::NORTH_WEST], 4);
@@ -36,24 +39,29 @@ void World::load(){
     // createChip(Hex::Reverse[Hex::Cardinal::SOUTH_EAST], 10);
 }
 
-void World::spawnChip(Hex::Point hex, int value) {
+int World::spawnChip(Hex::Point hex, int value) {
     // if (!grid.within(hex)) return TraceLog(LOG_ERROR, "Bad hex for spawning sigil!");
-
-    if (static_cast<int>(chips.size()) > grid.size()) {
-        respawnChip(hex, value);
+    int key = -1;
+    if (static_cast<int>(chips.size()) > grid.size()+1) {
+        key = respawnChip(hex, value);
     } else {
-        createChip(hex, value);
+        key = createChip(hex, value);
     }
+
+    return key;
 }
 
-void World::createChip(Hex::Point hex, int value) {
-    int total = static_cast<int>(chips.size());
-    grid.place(hex, total);
-    chips.emplace_back(hex, grid.getPosition(hex), value, true);
-    chipsIdxsReady.push_back(total);
+int World::createChip(Hex::Point hex, int value) {
+    int key = static_cast<int>(chips.size());
+    grid.place(hex, key);
+    chips.emplace_back(hex, grid.getPosition(hex), key, value, true);
+    chipsIdxsReady.push_back(key);
+
+    return key;
 }
 
-void World::respawnChip(Hex::Point hex, int value) {
+int World::respawnChip(Hex::Point hex, int value) {
+    int key = -1;
     // WARNING: do not use ANCHOR sigil at 0!
     int total = static_cast<int>(chips.size());
     for (int i = 1; i < total; ++i) {
@@ -64,50 +72,62 @@ void World::respawnChip(Hex::Point hex, int value) {
             grid.place(hex, i);
             chip.place(hex, grid.getPosition(hex), value);
             chipsIdxsReady.push_back(i);
+            key = i;
             break;
         }
     }
+
+    return key;
 }
 
-void World::renderMain() const {
-    DrawRectangleGradientV(0, 0, window.width, window.height, DARKBLUE, DARKGRAY);
-}
 
-void World::renderGame() const {
-    DrawRectangleGradientV(0, 0, window.width, window.height, BLUE, GREEN);
-    grid.render();
-    
-    for (auto& chip : chips) {
-        if (chip.active()) {
-            chip.render();
-        }
+void World::updateChip(Hex::Point sourceHex, Hex::Point moveStep) {
+    int maxTries = 30;
+
+    TraceLog(LOG_INFO, "UPDATING %d %d %d", sourceHex.q, sourceHex.r, sourceHex.s);
+    Hex::Point targetHex = grid.walk(sourceHex, moveStep);
+    if (!grid.isEmpty(targetHex)) {
+        return;
     }
-}
+    while (maxTries > 0 && !grid.isDirectionEdge(targetHex, moveStep) && grid.isEmpty(targetHex)) {
+        targetHex = grid.walk(targetHex, moveStep);
+        maxTries--;
+    }
 
-void World::updateChip(Hex::Point source, Hex::Point step) {
-    // int chipKey = grid.getState(source).key;
-    // Chip& chip = chips.at(chipKey);
+    int chipKey = grid.getState(sourceHex).key;
+    Chip& chip = chips.at(chipKey);
+    TraceLog(LOG_INFO, "FOUND TARGET FOR %d (%d) at %d %d %d", chipKey, chip.getValue(), targetHex.q, targetHex.r, targetHex.s);
+    grid.place(sourceHex, 0);
+    grid.place(targetHex, chipKey);
+    chip.setPosition(grid.getPosition(targetHex));
+    chip.setCurrentHex(targetHex);
     // Vector2 chipPos = chip.getPosition();
     // TraceLog(LOG_INFO, "CHIP %d (%d) at %f %f", chipKey, chip.getValue(), chipPos.x, chipPos.y);
 }
 
-void World::searchGrid(Hex::Point sourceHex, Hex::Point hexStep) {
+void World::searchGrid(Hex::Point sourceHex, Hex::Point searchStep, Hex::Point moveStep) {
     int maxTries = 30;
     
-    Hex::Point nextHex = grid.walk(sourceHex, hexStep);
-    while (maxTries > 0 && !grid.isDirectionEdge(nextHex, hexStep)) {
-        TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+    Hex::Point nextHex = grid.walk(sourceHex, searchStep);
 
-        nextHex = grid.walk(nextHex, hexStep);
+    while (maxTries > 0 && !grid.isDirectionEdge(nextHex, searchStep)) {
+        // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+        if (!grid.isEmpty(nextHex)){
+            updateChip(nextHex, moveStep);
+        }
+        nextHex = grid.walk(nextHex, searchStep);
         maxTries--;
     }
-    
-    TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+
+    // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+    if (!grid.isEmpty(nextHex)){
+        updateChip(nextHex, moveStep);
+    } 
 
 }
 
 void World::updateMove(Hex::Cardinal dir) {
-    Hex::Point step = Hex::Direction[dir];
+    Hex::Point moveStep = Hex::Direction[dir];
     // direction of sweep walk through center hex column
     Hex::Point stepBack = Hex::Reverse[dir];
     // TODO: why cant I use [dir]?
@@ -118,43 +138,24 @@ void World::updateMove(Hex::Cardinal dir) {
 
     int maxTries = 30;
     // start with the corner hex in the direction of movement
-    Hex::Point nextHex = grid.corner(step);
+    Hex::Point nextHex = grid.corner(moveStep);
     while (maxTries > 0 && !grid.isDirectionEdge(nextHex, stepBack)) {
 
-        TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-        // if (!grid.isEmpty(nextHex)){
-        //     updateChip(nextHex, step);
-        // }
-        searchGrid(nextHex, stepRight);
-        searchGrid(nextHex, stepLeft);
-        // Hex::Point nextHexRight = grid.walk(nextHex, stepRight);
-        // while (maxTries > 0 && !grid.isDirectionEdge(nextHexRight, stepRight)) {
-        //     TraceLog(LOG_INFO, "HEX WALK RIGHT %d %d %d", nextHexRight.q, nextHexRight.r, nextHexRight.s);
-        //     // if (!grid.isEmpty(nextHexRight)){
-        //     //     updateChip(nextHexRight, step);
-        //     // }
-        //     nextHexRight = grid.walk(nextHexRight, stepRight);
-        //     maxTries--;
-        // }
-        // TraceLog(LOG_INFO, "HEX WALK RIGHT %d %d %d", nextHexRight.q, nextHexRight.r, nextHexRight.s);
-
-        // Hex::Point nextHexLeft = grid.walk(nextHex, stepLeft);
-        // while (maxTries > 0 && !grid.isDirectionEdge(nextHexLeft, stepLeft)) {
-        //     TraceLog(LOG_INFO, "HEX WALK LEFT %d %d %d", nextHexLeft.q, nextHexLeft.r, nextHexLeft.s);
-        //     // if (!grid.isEmpty(nextHexLeft)){
-        //     //     updateChip(nextHexLeft, step);
-        //     // }
-        //     nextHexLeft = grid.walk(nextHexLeft, stepLeft);
-        //     maxTries--;
-        // }
-        // TraceLog(LOG_INFO, "HEX WALK LEFT %d %d %d", nextHexLeft.q, nextHexLeft.r, nextHexLeft.s);
+        // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+        if (!grid.isEmpty(nextHex)){
+            updateChip(nextHex, moveStep);
+        }
+        searchGrid(nextHex, stepRight, moveStep);
+        searchGrid(nextHex, stepLeft, moveStep);
 
         nextHex = grid.walk(nextHex, stepBack);
         maxTries--;
     }
 
-    TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-
+    // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+    if (!grid.isEmpty(nextHex)){
+        updateChip(nextHex, moveStep);
+    }
     // std::erase_if(chipsIdxsReady, [this, dir](int idx){
     //     Chip& chip = chips[idx];
     //     Vector2 chipPos = chip.getPosition();
@@ -193,8 +194,13 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
     if (inputEvent.id == Event::Input::MOVE_UP || action == Action::Surface::MOVE_UP ) {
             TraceLog(LOG_INFO, "MOVE UP");
             updateMove(Hex::UP);
+    } else if (inputEvent.id == Event::Input::MOVE_UP_RIGHT || action == Action::Surface::MOVE_UP_RIGHT ) {
+            TraceLog(LOG_INFO, "MOVE UP RIGHT");
+            updateMove(Hex::UP_R);
+
     } else if (inputEvent.id == Event::Input::MOVE_RIGHT || action == Action::Surface::MOVE_RIGHT ) {
             TraceLog(LOG_INFO, "MOVE RIGHT");
+            updateMove(Hex::DN_R);
 
     } else if (inputEvent.id == Event::Input::MOVE_DOWN || action == Action::Surface::MOVE_DOWN ) {
             TraceLog(LOG_INFO, "MOVE DOWN");
@@ -202,7 +208,11 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
     } else if (inputEvent.id == Event::Input::MOVE_LEFT || action == Action::Surface::MOVE_LEFT ) {
             TraceLog(LOG_INFO, "MOVE LEFT");
+            updateMove(Hex::DN_L);
 
+    } else if (inputEvent.id == Event::Input::MOVE_UP_LEFT || action == Action::Surface::MOVE_UP_LEFT ) {
+            TraceLog(LOG_INFO, "MOVE UP LEFT");
+            updateMove(Hex::UP_L);
     }
 
     // if (dummyGoalTracker >= 3) {
@@ -215,6 +225,21 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
     // }
 
     return { .reachedGoal = false };
+}
+
+void World::renderMain() const {
+    DrawRectangleGradientV(0, 0, window.width, window.height, DARKBLUE, DARKGRAY);
+}
+
+void World::renderGame() const {
+    DrawRectangleGradientV(0, 0, window.width, window.height, BLUE, GREEN);
+    grid.render();
+    
+    for (auto& chip : chips) {
+        if (chip.active()) {
+            chip.render();
+        }
+    }
 }
 
 void World::transition(State::App appState, State::Screen screen) {

@@ -43,11 +43,6 @@ HexState Grid::getState(Hex::Point hex) const {
 	return map.at(hex);
 }
 
-void Grid::setKey(Hex::Point hex, int key) {
-	// TODO: change to map[hex] and/or add DEBUG guard
-	map.at(hex).key = key;
-}
-
 Vector2 Grid::getPosition(Hex::Point hex) const {
 	// TODO: change to map[hex] and/or add DEBUG guard
 	return map.at(hex).position;

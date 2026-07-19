@@ -27,9 +27,9 @@ public:
     WorldState (World::*update)(InputEvent, Action::Surface) = &World::updateUnit;
 
     void load();
-    void spawnChip(Hex::Point hex, int value);
-    void createChip(Hex::Point hex, int value);
-    void respawnChip(Hex::Point hex, int value);
+    int spawnChip(Hex::Point hex, int value);
+    int createChip(Hex::Point hex, int value);
+    int respawnChip(Hex::Point hex, int value);
 
     void renderUnit() const {};
     void renderMain() const;
@@ -37,8 +37,8 @@ public:
     void renderHold() const;
 
     void updateMove(Hex::Cardinal);
-    void updateChip(Hex::Point source, Hex::Point step);
-    void searchGrid(Hex::Point next, Hex::Point step);
+    void updateChip(Hex::Point source, Hex::Point moveStep);
+    void searchGrid(Hex::Point source, Hex::Point searchStep, Hex::Point moveStep);
     WorldState updateUnit(InputEvent, Action::Surface) { return { .reachedGoal = false }; };
     WorldState updateMain(InputEvent, Action::Surface);
     WorldState updateGame(InputEvent, Action::Surface);

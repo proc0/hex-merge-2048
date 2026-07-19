@@ -36,8 +36,16 @@ Hex::Point Chip::getCurrentHex() const {
 	return currentHex;
 }
 
+void Chip::setCurrentHex(Hex::Point hex) {
+	currentHex = hex;
+}
+
 Vector2 Chip::getPosition() const {
 	return { current[POSX], current[POSY] };
+}
+
+int Chip::getId() const {
+	return id;
 }
 
 int Chip::getValue() const {

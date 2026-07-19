@@ -22,6 +22,7 @@ class Chip {
 	Color primaryColor = LIGHTGRAY;
 	Color secondaryColor = RAYWHITE;
 
+	const int id;
 	int value = 0;
 	int size = HEX_SIZE;
 	bool enabled;
@@ -40,9 +41,10 @@ class Chip {
 	};
 
 public:
-	Chip(Hex::Point hex, Vector2 position, int value, bool active = false): 
+	Chip(Hex::Point hex, Vector2 position, int id_, int value, bool active = false): 
 		currentHex(hex), 
 		targetHex(hex), 
+		id(id_),
 		value(value),
 		enabled(active) {
     		TraceLog(LOG_INFO, "CREATING CHIP %d: %f %f", value, position.x, position.y);
@@ -56,7 +58,9 @@ public:
 	void place(Hex::Point, Vector2 position, int value);
 
 	Hex::Point getCurrentHex() const;
+	void setCurrentHex(Hex::Point);
 	Vector2 getPosition() const;
+	int getId() const;
 	int getValue() const;
 	void setPosition(Vector2);
 	void setScale(Vector2);
