@@ -100,8 +100,12 @@ bool Grid::isDirectionEdge(Hex::Point hex, Hex::Point dir) const {
 	return false;
 }
 
-bool Grid::isEmpty(Hex::Point hex) const {
+bool Grid::vacant(Hex::Point hex) const {
 	return map.at(hex).key == 0;
+}
+
+bool Grid::filled(Hex::Point hex) const {
+	return map.at(hex).key > 0;
 }
 
 int Grid::size() const {

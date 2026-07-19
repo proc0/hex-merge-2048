@@ -46,12 +46,13 @@ public:
 
 	void place(Hex::Point, int value);
 	void clear(Hex::Point point);
-	
+
     Hex::Point walk(Hex::Point, Hex::Point) const;
     Hex::Point corner(Hex::Point) const;
 
     bool isDirectionEdge(Hex::Point hex, Hex::Point dir) const;
-    bool isEmpty(Hex::Point) const;
+    bool vacant(Hex::Point) const;
+    bool filled(Hex::Point) const;
 
     int size() const;
     bool within(Hex::Point point) const;

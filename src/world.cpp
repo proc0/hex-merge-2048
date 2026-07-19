@@ -83,13 +83,13 @@ void World::updateChip(Hex::Point sourceHex, Hex::Point moveStep) {
     int maxTries = 30;
 
     Hex::Point targetHex = grid.walk(sourceHex, moveStep);
-    // TODO: rename isEmpty to grid.vacant? and add a counterpart grid.filled/occupied?
-    if (!grid.isEmpty(targetHex)) {
+    // TODO: rename vacant to grid.vacant? and add a counterpart grid.filled/occupied?
+    if (!grid.vacant(targetHex)) {
         return;
     }
 
     Hex::Point lastTarget = targetHex;
-    while (maxTries > 0 && !grid.isDirectionEdge(targetHex, moveStep) && grid.isEmpty(targetHex)) {
+    while (maxTries > 0 && !grid.isDirectionEdge(targetHex, moveStep) && grid.vacant(targetHex)) {
         lastTarget = targetHex;
         targetHex = grid.walk(targetHex, moveStep);
         maxTries--;
@@ -98,7 +98,7 @@ void World::updateChip(Hex::Point sourceHex, Hex::Point moveStep) {
     int sourceKey = grid.getState(sourceHex).key;
     Chip& sourceChip = chips.at(sourceKey);
 
-    if (!grid.isEmpty(targetHex)) {
+    if (!grid.vacant(targetHex)) {
         int targetKey = grid.getState(targetHex).key;
         Chip& targetChip = chips.at(targetKey);
         // TODO: right an isEqual on Chip
@@ -106,13 +106,15 @@ void World::updateChip(Hex::Point sourceHex, Hex::Point moveStep) {
         int sourceValue = sourceChip.getValue();
         if (targetValue == sourceValue) {
             grid.clear(sourceHex);
+            // TODO: abstract addValue and value into a struct
+            // and a merge for future changes to using something other than numbers
             targetChip.addValue(sourceValue);
             sourceChip.disable();
             // NOTE: might be needed for animations
             // sourceChip.setPosition(grid.getPosition(targetHex));
             // sourceChip.setCurrentHex(targetHex);
             return;
-        } else if (grid.isEmpty(lastTarget)) {
+        } else if (grid.vacant(lastTarget)) {
             targetHex = lastTarget;
         } else {
             return;
@@ -132,7 +134,7 @@ void World::searchGrid(Hex::Point sourceHex, Hex::Point searchStep, Hex::Point m
 
     while (maxTries > 0 && !grid.isDirectionEdge(nextHex, searchStep)) {
         // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-        if (!grid.isEmpty(nextHex)){
+        if (!grid.vacant(nextHex)){
             updateChip(nextHex, moveStep);
         }
         nextHex = grid.walk(nextHex, searchStep);
@@ -140,7 +142,7 @@ void World::searchGrid(Hex::Point sourceHex, Hex::Point searchStep, Hex::Point m
     }
 
     // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-    if (!grid.isEmpty(nextHex)){
+    if (!grid.vacant(nextHex)){
         updateChip(nextHex, moveStep);
     } 
 
@@ -151,10 +153,10 @@ void World::updateMove(Hex::Cardinal dir) {
     // direction of sweep walk through center hex column
     Hex::Point stepBack = Hex::Reverse[dir];
     // TODO: why cant I use [dir]?
-    Hex::Cardinal oppositeDir = Hex::Opposite.at(dir);
+    // Hex::Cardinal oppositeDir = Hex::Opposite.at(dir);
     // direction of side flank sweeps as we are stepping back
-    Hex::Point stepLeft = Hex::RotateClockwise1[oppositeDir];
-    Hex::Point stepRight = Hex::RotateCounterwise1[oppositeDir];
+    Hex::Point stepLeft = Hex::RotateCounterwise2[dir];
+    Hex::Point stepRight = Hex::RotateClockwise2[dir];
 
     int maxTries = 30;
     // start with the corner hex in the direction of movement
@@ -162,7 +164,7 @@ void World::updateMove(Hex::Cardinal dir) {
     while (maxTries > 0 && !grid.isDirectionEdge(nextHex, stepBack)) {
 
         // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-        if (!grid.isEmpty(nextHex)){
+        if (!grid.vacant(nextHex)){
             updateChip(nextHex, moveStep);
         }
         searchGrid(nextHex, stepRight, moveStep);
@@ -173,7 +175,7 @@ void World::updateMove(Hex::Cardinal dir) {
     }
 
     // TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
-    if (!grid.isEmpty(nextHex)){
+    if (!grid.vacant(nextHex)){
         updateChip(nextHex, moveStep);
     }
     // std::erase_if(chipsIdxsReady, [this, dir](int idx){
