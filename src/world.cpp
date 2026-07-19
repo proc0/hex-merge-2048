@@ -26,6 +26,14 @@ void World::load(){
 
     int key2 = createChip(grid.corner(Hex::Unit::UP_R), 2);
     grid.place(grid.corner(Hex::Unit::UP_R), key2);
+
+    int key3 = createChip(grid.corner(Hex::Unit::DN_R), 4);
+    grid.place(grid.corner(Hex::Unit::DN_R), key3);
+
+    int key4 = createChip(grid.corner(Hex::Unit::UP_L), 10);
+    grid.place(grid.corner(Hex::Unit::UP_L), key4);
+
+
     // createChip(grid.corner(Hex::Unit::DN_R), 4);
     // createChip(grid.corner(Hex::Unit::DN), 6);
     // createChip(grid.corner(Hex::Unit::DN_L), 8);
@@ -86,14 +94,29 @@ void World::updateChip(Hex::Point sourceHex, Hex::Point moveStep) {
 
     TraceLog(LOG_INFO, "UPDATING %d %d %d", sourceHex.q, sourceHex.r, sourceHex.s);
     Hex::Point targetHex = grid.walk(sourceHex, moveStep);
+    int targetKey1 = grid.getState(targetHex).key;
+    TraceLog(LOG_INFO, "NEXT HEX %d %d %d, KEY %d", targetHex.q, targetHex.r, targetHex.s, targetKey1);
     if (!grid.isEmpty(targetHex)) {
         return;
     }
+    Hex::Point lastTarget = targetHex;
     while (maxTries > 0 && !grid.isDirectionEdge(targetHex, moveStep) && grid.isEmpty(targetHex)) {
+        TraceLog(LOG_INFO, "WALKING HEX %d %d %d", targetHex.q, targetHex.r, targetHex.s);
+        lastTarget = targetHex;
         targetHex = grid.walk(targetHex, moveStep);
         maxTries--;
     }
 
+    if (!grid.isEmpty(targetHex)) {
+        if (grid.isEmpty(lastTarget)) {
+            targetHex = lastTarget;
+        } else {
+            return;
+        }
+    }
+
+    int targetKey2 = grid.getState(targetHex).key;
+    TraceLog(LOG_INFO, "TARGET HEX KEY %d ", targetKey2);
     int chipKey = grid.getState(sourceHex).key;
     Chip& chip = chips.at(chipKey);
     TraceLog(LOG_INFO, "FOUND TARGET FOR %d (%d) at %d %d %d", chipKey, chip.getValue(), targetHex.q, targetHex.r, targetHex.s);
