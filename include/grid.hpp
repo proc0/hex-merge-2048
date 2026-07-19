@@ -41,16 +41,18 @@ public:
 	void renderHex(const Hex::Point&, const HexState&) const;
 
 	HexState getState(Hex::Point) const;
+	void setKey(Hex::Point, int key);
 	Vector2 getPosition(Hex::Point) const;
 	Vector2 getUnit() const;
 
 	void place(Hex::Point, int value);
     Hex::Point walk(Hex::Point, Hex::Point) const;
     Hex::Point corner(Hex::Point) const;
-    int distance(Hex::Point, Hex::Point) const;
-    int length(Hex::Point) const;
-    int size() const;
 
+    bool isDirectionEdge(Hex::Point hex, Hex::Point dir) const;
+    bool isEmpty(Hex::Point) const;
+
+    int size() const;
     bool within(Hex::Point point) const;
     void resize(int width, int height) override;
 };

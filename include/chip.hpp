@@ -57,6 +57,7 @@ public:
 
 	Hex::Point getCurrentHex() const;
 	Vector2 getPosition() const;
+	int getValue() const;
 	void setPosition(Vector2);
 	void setScale(Vector2);
 	void setSize(float);

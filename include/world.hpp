@@ -14,6 +14,8 @@ class World : public Layer {
     Grid grid{window};
 
     std::vector<Chip> chips;
+    std::vector<int> chipsIdxsReady;
+    std::vector<int> chipsIdxsMoving;
 
     int dummyGoalTracker = 0;
 
@@ -34,6 +36,9 @@ public:
     void renderGame() const;
     void renderHold() const;
 
+    void updateMove(Hex::Cardinal);
+    void updateChip(Hex::Point source, Hex::Point step);
+    void searchGrid(Hex::Point next, Hex::Point step);
     WorldState updateUnit(InputEvent, Action::Surface) { return { .reachedGoal = false }; };
     WorldState updateMain(InputEvent, Action::Surface);
     WorldState updateGame(InputEvent, Action::Surface);

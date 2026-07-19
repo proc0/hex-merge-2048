@@ -43,6 +43,11 @@ HexState Grid::getState(Hex::Point hex) const {
 	return map.at(hex);
 }
 
+void Grid::setKey(Hex::Point hex, int key) {
+	// TODO: change to map[hex] and/or add DEBUG guard
+	map.at(hex).key = key;
+}
+
 Vector2 Grid::getPosition(Hex::Point hex) const {
 	// TODO: change to map[hex] and/or add DEBUG guard
 	return map.at(hex).position;
@@ -74,6 +79,27 @@ Hex::Point Grid::corner(Hex::Point source) const {
 
 bool Grid::within(Hex::Point point) const {
 	return abs(point.q) <= extent && abs(point.r) <= extent && abs(point.s) <= extent;
+}
+
+// obtain the edge of the hex grid in a given direction
+// necessary because chips can move along edges if the direction is 
+// not towards that edge (i.e. chip is on left edge moving up)
+// WARNING: the direction should be a unit hex!
+bool Grid::isDirectionEdge(Hex::Point hex, Hex::Point dir) const {
+	// NOTE: this detects the edge specifically, no whether it's inside the grid 
+	if (dir.q == 0) {
+		return hex.r == dir.r * extent || hex.s == dir.s * extent;
+	} else if (dir.r == 0) {
+		return hex.q == dir.q * extent || hex.s == dir.s * extent;
+	} else if (dir.s == 0) {
+		return hex.q == dir.q * extent || hex.r == dir.r * extent;
+	}
+
+	return false;
+}
+
+bool Grid::isEmpty(Hex::Point hex) const {
+	return map.at(hex).key == 0;
 }
 
 int Grid::size() const {

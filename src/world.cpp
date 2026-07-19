@@ -12,10 +12,12 @@ void World::load(){
     window.enlist(&grid);
 
     // reserve hex numbers plus shim chip
-    chips.reserve(grid.size() + 1);
+    int chipsCapacity = grid.size() + 1;
+    chips.reserve(chipsCapacity);
+    chipsIdxsReady.reserve(chipsCapacity-1);
+    chipsIdxsMoving.reserve(chipsCapacity-1);
     // shim chip
     chips.emplace_back(Hex::Point(0, 0, 0), Vector2({}), 0);
-
     // createChip(Hex::Direction[DIR_UP_L], 6);
     // Hex::State hex = grid.getState(Hex::Direction[DIR_UP_L]);
     // Chip::State chip = chips.at(hex.key).getState();
@@ -48,6 +50,7 @@ void World::createChip(Hex::Point hex, int value) {
     int total = static_cast<int>(chips.size());
     grid.place(hex, total);
     chips.emplace_back(hex, grid.getPosition(hex), value, true);
+    chipsIdxsReady.push_back(total);
 }
 
 void World::respawnChip(Hex::Point hex, int value) {
@@ -60,12 +63,11 @@ void World::respawnChip(Hex::Point hex, int value) {
 
             grid.place(hex, i);
             chip.place(hex, grid.getPosition(hex), value);
-
+            chipsIdxsReady.push_back(i);
             break;
         }
     }
 }
-
 
 void World::renderMain() const {
     DrawRectangleGradientV(0, 0, window.width, window.height, DARKBLUE, DARKGRAY);
@@ -80,6 +82,95 @@ void World::renderGame() const {
             chip.render();
         }
     }
+}
+
+void World::updateChip(Hex::Point source, Hex::Point step) {
+    // int chipKey = grid.getState(source).key;
+    // Chip& chip = chips.at(chipKey);
+    // Vector2 chipPos = chip.getPosition();
+    // TraceLog(LOG_INFO, "CHIP %d (%d) at %f %f", chipKey, chip.getValue(), chipPos.x, chipPos.y);
+}
+
+void World::searchGrid(Hex::Point sourceHex, Hex::Point hexStep) {
+    int maxTries = 30;
+    
+    Hex::Point nextHex = grid.walk(sourceHex, hexStep);
+    while (maxTries > 0 && !grid.isDirectionEdge(nextHex, hexStep)) {
+        TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+
+        nextHex = grid.walk(nextHex, hexStep);
+        maxTries--;
+    }
+    
+    TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+
+}
+
+void World::updateMove(Hex::Cardinal dir) {
+    Hex::Point step = Hex::Direction[dir];
+    // direction of sweep walk through center hex column
+    Hex::Point stepBack = Hex::Reverse[dir];
+    // TODO: why cant I use [dir]?
+    Hex::Cardinal oppositeDir = Hex::Opposite.at(dir);
+    // direction of side flank sweeps as we are stepping back
+    Hex::Point stepLeft = Hex::RotateClockwise1[oppositeDir];
+    Hex::Point stepRight = Hex::RotateCounterwise1[oppositeDir];
+
+    int maxTries = 30;
+    // start with the corner hex in the direction of movement
+    Hex::Point nextHex = grid.corner(step);
+    while (maxTries > 0 && !grid.isDirectionEdge(nextHex, stepBack)) {
+
+        TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+        // if (!grid.isEmpty(nextHex)){
+        //     updateChip(nextHex, step);
+        // }
+        searchGrid(nextHex, stepRight);
+        searchGrid(nextHex, stepLeft);
+        // Hex::Point nextHexRight = grid.walk(nextHex, stepRight);
+        // while (maxTries > 0 && !grid.isDirectionEdge(nextHexRight, stepRight)) {
+        //     TraceLog(LOG_INFO, "HEX WALK RIGHT %d %d %d", nextHexRight.q, nextHexRight.r, nextHexRight.s);
+        //     // if (!grid.isEmpty(nextHexRight)){
+        //     //     updateChip(nextHexRight, step);
+        //     // }
+        //     nextHexRight = grid.walk(nextHexRight, stepRight);
+        //     maxTries--;
+        // }
+        // TraceLog(LOG_INFO, "HEX WALK RIGHT %d %d %d", nextHexRight.q, nextHexRight.r, nextHexRight.s);
+
+        // Hex::Point nextHexLeft = grid.walk(nextHex, stepLeft);
+        // while (maxTries > 0 && !grid.isDirectionEdge(nextHexLeft, stepLeft)) {
+        //     TraceLog(LOG_INFO, "HEX WALK LEFT %d %d %d", nextHexLeft.q, nextHexLeft.r, nextHexLeft.s);
+        //     // if (!grid.isEmpty(nextHexLeft)){
+        //     //     updateChip(nextHexLeft, step);
+        //     // }
+        //     nextHexLeft = grid.walk(nextHexLeft, stepLeft);
+        //     maxTries--;
+        // }
+        // TraceLog(LOG_INFO, "HEX WALK LEFT %d %d %d", nextHexLeft.q, nextHexLeft.r, nextHexLeft.s);
+
+        nextHex = grid.walk(nextHex, stepBack);
+        maxTries--;
+    }
+
+    TraceLog(LOG_INFO, "HEX WALK %d %d %d", nextHex.q, nextHex.r, nextHex.s);
+
+    // std::erase_if(chipsIdxsReady, [this, dir](int idx){
+    //     Chip& chip = chips[idx];
+    //     Vector2 chipPos = chip.getPosition();
+    //     TraceLog(LOG_INFO, "READY CHIP %d (%d) at %f %f", idx, chip.getValue(), chipPos.x, chipPos.y);
+    //     chipsIdxsMoving.push_back(idx);
+    //     return dir == Hex::UP;
+    // });
+    // std::erase_if(chipsIdxsMoving, [this, dir](int idx){
+    //     Chip& chip = chips[idx];
+    //     // Vector2 chipPos = chip.getPosition();
+    //     TraceLog(LOG_INFO, "MOVING CHIP %d (%d)", idx, chip.getValue());
+
+    //     return dir == Hex::DN;
+    // });
+    
+    TraceLog(LOG_INFO, "----------- END TURN -----------");
 }
 
 void World::renderHold() const {
@@ -101,27 +192,27 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
     if (inputEvent.id == Event::Input::MOVE_UP || action == Action::Surface::MOVE_UP ) {
             TraceLog(LOG_INFO, "MOVE UP");
-            dummyGoalTracker++;
+            updateMove(Hex::UP);
     } else if (inputEvent.id == Event::Input::MOVE_RIGHT || action == Action::Surface::MOVE_RIGHT ) {
             TraceLog(LOG_INFO, "MOVE RIGHT");
 
     } else if (inputEvent.id == Event::Input::MOVE_DOWN || action == Action::Surface::MOVE_DOWN ) {
             TraceLog(LOG_INFO, "MOVE DOWN");
-            dummyGoalTracker--;
+            updateMove(Hex::DN);
 
     } else if (inputEvent.id == Event::Input::MOVE_LEFT || action == Action::Surface::MOVE_LEFT ) {
             TraceLog(LOG_INFO, "MOVE LEFT");
 
     }
 
-    if (dummyGoalTracker >= 3) {
-        PlaySound(splat);
-        dummyGoalTracker = 0;
-        return { .reachedGoal = true };
-    } else if (dummyGoalTracker < -2) {
-        dummyGoalTracker = 0;
-        return { .failedGoal = true };
-    }
+    // if (dummyGoalTracker >= 3) {
+    //     PlaySound(splat);
+    //     dummyGoalTracker = 0;
+    //     return { .reachedGoal = true };
+    // } else if (dummyGoalTracker < -2) {
+    //     dummyGoalTracker = 0;
+    //     return { .failedGoal = true };
+    // }
 
     return { .reachedGoal = false };
 }

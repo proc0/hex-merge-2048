@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cmath>
+#include <unordered_map>
 
 namespace Action {
     enum Surface {
@@ -170,6 +171,15 @@ namespace Hex {
     static inline constexpr Cardinal DN_L = Cardinal::SOUTH_WEST;
     static inline constexpr Cardinal UP_L = Cardinal::NORTH_WEST;
 
+    static inline const std::unordered_map<Cardinal, Cardinal> Opposite = {
+        { Cardinal::NORTH, Cardinal::SOUTH },
+        { Cardinal::NORTH_EAST, Cardinal::SOUTH_WEST },
+        { Cardinal::SOUTH_EAST, Cardinal::NORTH_WEST },
+        { Cardinal::SOUTH, Cardinal::NORTH },
+        { Cardinal::SOUTH_WEST, Cardinal::NORTH_EAST },
+        { Cardinal::NORTH_WEST, Cardinal::SOUTH_EAST },
+    };
+
     struct Unit {   
         static constexpr Point UP   = Direction[Cardinal::NORTH];
         static constexpr Point UP_R = Direction[Cardinal::NORTH_EAST];
@@ -179,7 +189,7 @@ namespace Hex {
         static constexpr Point UP_L = Direction[Cardinal::NORTH_WEST];
     };
 
-    static inline constexpr std::array<Point, 6> Reverse = { 
+    static inline constexpr std::array<Point, 6> Reverse = {
         Point({  0,  1, -1 }),
         Point({ -1,  1,  0 }),
         Point({ -1,  0,  1 }),

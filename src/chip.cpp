@@ -40,6 +40,10 @@ Vector2 Chip::getPosition() const {
 	return { current[POSX], current[POSY] };
 }
 
+int Chip::getValue() const {
+	return value;
+}
+
 void Chip::setPosition(Vector2 position) {
 	current[POSX] = position.x;	
 	source[POSX] = position.x;	
