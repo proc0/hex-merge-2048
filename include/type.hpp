@@ -163,6 +163,13 @@ namespace Hex {
         Point({ -1,  0,  1 })
     };
 
+    static inline constexpr Cardinal UP   = Cardinal::NORTH;
+    static inline constexpr Cardinal UP_R = Cardinal::NORTH_EAST;
+    static inline constexpr Cardinal DN_R = Cardinal::SOUTH_EAST;
+    static inline constexpr Cardinal DN   = Cardinal::SOUTH;
+    static inline constexpr Cardinal DN_L = Cardinal::SOUTH_WEST;
+    static inline constexpr Cardinal UP_L = Cardinal::NORTH_WEST;
+    
     struct Unit {   
         static constexpr Point UP   = Direction[Cardinal::NORTH];
         static constexpr Point UP_R = Direction[Cardinal::NORTH_EAST];
@@ -285,12 +292,12 @@ namespace Hex {
     }
 }
 
-#define DIR_UP   Hex::Cardinal::NORTH
-#define DIR_UP_R Hex::Cardinal::NORTH_EAST
-#define DIR_DN_R Hex::Cardinal::SOUTH_EAST
-#define DIR_DN   Hex::Cardinal::SOUTH
-#define DIR_DN_L Hex::Cardinal::SOUTH_WEST
-#define DIR_UP_L Hex::Cardinal::NORTH_WEST
+// #define DIR_UP   Hex::Cardinal::NORTH
+// #define DIR_UP_R Hex::Cardinal::NORTH_EAST
+// #define DIR_DN_R Hex::Cardinal::SOUTH_EAST
+// #define DIR_DN   Hex::Cardinal::SOUTH
+// #define DIR_DN_L Hex::Cardinal::SOUTH_WEST
+// #define DIR_UP_L Hex::Cardinal::NORTH_WEST
 
 struct HexState {
     Vector2 position;

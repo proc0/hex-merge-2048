@@ -25,7 +25,7 @@ void World::load(){
     createChip(grid.corner(Hex::Unit::DN), 6);
     createChip(grid.corner(Hex::Unit::DN_L), 8);
     createChip(grid.corner(Hex::Unit::UP_L), 10);
-    // createChip(Hex::RotateClockwise2[DIR_UP_L], 8);
+    createChip(Hex::RotateClockwise2[Hex::UP], 8);
     // createChip(Hex::RotateCounterwise1[DIR_UP_L], 5);
     // createChip(Hex::RotateCounterwise2[DIR_UP_L], 4);
     // createChip(Hex::Reverse[Hex::Cardinal::NORTH_WEST], 4);
