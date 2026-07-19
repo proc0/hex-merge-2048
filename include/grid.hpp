@@ -45,6 +45,8 @@ public:
 	Vector2 getUnit() const;
 
 	void place(Hex::Point, int value);
+	void clear(Hex::Point point);
+	
     Hex::Point walk(Hex::Point, Hex::Point) const;
     Hex::Point corner(Hex::Point) const;
 

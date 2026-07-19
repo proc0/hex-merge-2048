@@ -59,6 +59,13 @@ void Grid::place(Hex::Point point, int key) {
 	state.key = key;
 }
 
+void Grid::clear(Hex::Point point) {
+	// TODO: change to map[hex] and/or add DEBUG guard
+	HexState& state = map.at(point);
+	// state.position = project(point);
+	state.key = 0;
+}
+
 Hex::Point Grid::walk(Hex::Point departure, Hex::Point direction) const {
 	Hex::Point destination = Hex::add(departure, direction);
 

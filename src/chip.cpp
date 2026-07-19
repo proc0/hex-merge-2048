@@ -52,6 +52,14 @@ int Chip::getValue() const {
 	return value;
 }
 
+void Chip::setValue(int val) {
+	value = val;
+}
+
+void Chip::addValue(int val) {
+	value += val;
+}
+
 void Chip::setPosition(Vector2 position) {
 	current[POSX] = position.x;	
 	source[POSX] = position.x;	

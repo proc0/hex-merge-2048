@@ -57,11 +57,14 @@ public:
 	// void reset(Hex::Point, Vector2 position, Vector2 scale, float rotation, int value);
 	void place(Hex::Point, Vector2 position, int value);
 
-	Hex::Point getCurrentHex() const;
-	void setCurrentHex(Hex::Point);
-	Vector2 getPosition() const;
 	int getId() const;
 	int getValue() const;
+	Hex::Point getCurrentHex() const;
+	Vector2 getPosition() const;
+
+	void addValue(int);
+	void setValue(int);
+	void setCurrentHex(Hex::Point);
 	void setPosition(Vector2);
 	void setScale(Vector2);
 	void setSize(float);

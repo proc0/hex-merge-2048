@@ -21,30 +21,18 @@ void World::load(){
     // createChip(Hex::Direction[DIR_UP_L], 6);
     // Hex::State hex = grid.getState(Hex::Direction[DIR_UP_L]);
     // Chip::State chip = chips.at(hex.key).getState();
-    int key1 = createChip(grid.corner(Hex::Unit::UP), 12);
+    int key1 = createChip(grid.corner(Hex::Unit::UP), 4);
     grid.place(grid.corner(Hex::Unit::UP), key1);
 
     int key2 = createChip(grid.corner(Hex::Unit::UP_R), 2);
     grid.place(grid.corner(Hex::Unit::UP_R), key2);
 
-    int key3 = createChip(grid.corner(Hex::Unit::DN_R), 4);
+    int key3 = createChip(grid.corner(Hex::Unit::DN_R), 2);
     grid.place(grid.corner(Hex::Unit::DN_R), key3);
 
-    int key4 = createChip(grid.corner(Hex::Unit::UP_L), 10);
+    int key4 = createChip(grid.corner(Hex::Unit::UP_L), 4);
     grid.place(grid.corner(Hex::Unit::UP_L), key4);
 
-
-    // createChip(grid.corner(Hex::Unit::DN_R), 4);
-    // createChip(grid.corner(Hex::Unit::DN), 6);
-    // createChip(grid.corner(Hex::Unit::DN_L), 8);
-    // createChip(grid.corner(Hex::Unit::UP_L), 10);
-    // createChip(Hex::RotateClockwise2[Hex::UP], 8);
-    // createChip(Hex::RotateCounterwise1[DIR_UP_L], 5);
-    // createChip(Hex::RotateCounterwise2[DIR_UP_L], 4);
-    // createChip(Hex::Reverse[Hex::Cardinal::NORTH_WEST], 4);
-    // createChip(Hex::Reverse[Hex::Cardinal::NORTH], 6);
-    // createChip(Hex::Reverse[Hex::Cardinal::NORTH_EAST], 8);
-    // createChip(Hex::Reverse[Hex::Cardinal::SOUTH_EAST], 10);
 }
 
 int World::spawnChip(Hex::Point hex, int value) {
@@ -88,44 +76,53 @@ int World::respawnChip(Hex::Point hex, int value) {
     return key;
 }
 
-
 void World::updateChip(Hex::Point sourceHex, Hex::Point moveStep) {
+    // TODO: make this safety mechanism a member field
+    // and just call one function within the while loop that increments
+    // and checks an upper bound across all while loops
     int maxTries = 30;
 
-    TraceLog(LOG_INFO, "UPDATING %d %d %d", sourceHex.q, sourceHex.r, sourceHex.s);
     Hex::Point targetHex = grid.walk(sourceHex, moveStep);
-    int targetKey1 = grid.getState(targetHex).key;
-    TraceLog(LOG_INFO, "NEXT HEX %d %d %d, KEY %d", targetHex.q, targetHex.r, targetHex.s, targetKey1);
+    // TODO: rename isEmpty to grid.vacant? and add a counterpart grid.filled/occupied?
     if (!grid.isEmpty(targetHex)) {
         return;
     }
+
     Hex::Point lastTarget = targetHex;
     while (maxTries > 0 && !grid.isDirectionEdge(targetHex, moveStep) && grid.isEmpty(targetHex)) {
-        TraceLog(LOG_INFO, "WALKING HEX %d %d %d", targetHex.q, targetHex.r, targetHex.s);
         lastTarget = targetHex;
         targetHex = grid.walk(targetHex, moveStep);
         maxTries--;
     }
 
+    int sourceKey = grid.getState(sourceHex).key;
+    Chip& sourceChip = chips.at(sourceKey);
+
     if (!grid.isEmpty(targetHex)) {
-        if (grid.isEmpty(lastTarget)) {
+        int targetKey = grid.getState(targetHex).key;
+        Chip& targetChip = chips.at(targetKey);
+        // TODO: right an isEqual on Chip
+        int targetValue = targetChip.getValue();
+        int sourceValue = sourceChip.getValue();
+        if (targetValue == sourceValue) {
+            grid.clear(sourceHex);
+            targetChip.addValue(sourceValue);
+            sourceChip.disable();
+            // NOTE: might be needed for animations
+            // sourceChip.setPosition(grid.getPosition(targetHex));
+            // sourceChip.setCurrentHex(targetHex);
+            return;
+        } else if (grid.isEmpty(lastTarget)) {
             targetHex = lastTarget;
         } else {
             return;
         }
-    }
+    } 
 
-    int targetKey2 = grid.getState(targetHex).key;
-    TraceLog(LOG_INFO, "TARGET HEX KEY %d ", targetKey2);
-    int chipKey = grid.getState(sourceHex).key;
-    Chip& chip = chips.at(chipKey);
-    TraceLog(LOG_INFO, "FOUND TARGET FOR %d (%d) at %d %d %d", chipKey, chip.getValue(), targetHex.q, targetHex.r, targetHex.s);
-    grid.place(sourceHex, 0);
-    grid.place(targetHex, chipKey);
-    chip.setPosition(grid.getPosition(targetHex));
-    chip.setCurrentHex(targetHex);
-    // Vector2 chipPos = chip.getPosition();
-    // TraceLog(LOG_INFO, "CHIP %d (%d) at %f %f", chipKey, chip.getValue(), chipPos.x, chipPos.y);
+    grid.clear(sourceHex);
+    grid.place(targetHex, sourceKey);
+    sourceChip.setPosition(grid.getPosition(targetHex));
+    sourceChip.setCurrentHex(targetHex);
 }
 
 void World::searchGrid(Hex::Point sourceHex, Hex::Point searchStep, Hex::Point moveStep) {
