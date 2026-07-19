@@ -66,8 +66,9 @@ void Grid::clear(Hex::Point point) {
 	state.key = 0;
 }
 
-Hex::Point Grid::walk(Hex::Point departure, Hex::Point direction) const {
-	Hex::Point destination = Hex::add(departure, direction);
+Hex::Point Grid::walk(Hex::Basis direction, Hex::Point departure) const {
+	// Hex::Point destination = Hex::add(departure, direction);
+	Hex::Point destination = departure + direction;
 
 	return within(destination) ? destination : departure;
 }

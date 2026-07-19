@@ -37,8 +37,8 @@ public:
     void renderHold() const;
 
     void updateMove(Hex::Cardinal);
-    void updateChip(Hex::Point source, Hex::Point moveStep);
-    void searchGrid(Hex::Point source, Hex::Point searchStep, Hex::Point moveStep);
+    void updateChip(Hex::Basis moveStep, Hex::Point source);
+    void searchGrid(Hex::Basis moveStep, Hex::Basis searchStep, Hex::Point source);
     WorldState updateUnit(InputEvent, Action::Surface) { return { .reachedGoal = false }; };
     WorldState updateMain(InputEvent, Action::Surface);
     WorldState updateGame(InputEvent, Action::Surface);

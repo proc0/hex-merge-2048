@@ -149,6 +149,41 @@ namespace Hex {
         constexpr Point(int q1, int r1): q(q1), r(r1), s(-q1 - r1) {}
         constexpr Point(int q1, int r1, int s1): q(q1), r(r1), s(s1) {}
         bool operator==(const Point&) const = default;
+        Point operator+(const Point& other) const {
+            return Point(
+                this->q + other.q, 
+                this->r + other.r, 
+                this->s + other.s);
+        }
+    };
+
+    class Basis {
+        // strong wrapper with implicit conversion
+        // defines basis hex components of hex grid
+        // private constructors and static factory methods
+        explicit constexpr Basis(int q1, int r1) : q(q1), r(r1), s(-q1 - r1) {}
+        explicit constexpr Basis(int q1, int r1, int s1) : q(q1), r(r1), s(s1) {}
+
+    public:
+        const int q, r, s;
+        // using keyboard WASD + QE as basis names
+        // starting from twelve o'clock rotating clockwise
+        static constexpr Basis W() { return Basis( 0, -1,  1); }
+        static constexpr Basis E() { return Basis( 1, -1,  0); }
+        static constexpr Basis D() { return Basis( 1,  0, -1); }
+        static constexpr Basis S() { return Basis( 0,  1, -1); }
+        static constexpr Basis A() { return Basis(-1,  1,  0); }
+        static constexpr Basis Q() { return Basis(-1,  0,  1); }
+
+        // implicit conversion to Point
+        operator Point() const { return Point(q, r, s); }
+        // adding two basis hexes yields a non-basis point
+        Point operator+(const Basis& other) const {
+            return Point(
+                this->q + other.q, 
+                this->r + other.r, 
+                this->s + other.s);
+        }
     };
 
     enum Cardinal {
@@ -160,15 +195,6 @@ namespace Hex {
       NORTH_WEST
     };
 
-    static inline constexpr std::array<Point, 6> Direction = { 
-        Point({  0, -1,  1 }),
-        Point({  1, -1,  0 }),
-        Point({  1,  0, -1 }),
-        Point({  0,  1, -1 }),
-        Point({ -1,  1,  0 }),
-        Point({ -1,  0,  1 })
-    };
-
     static inline constexpr Cardinal UP   = Cardinal::NORTH;
     static inline constexpr Cardinal UP_R = Cardinal::NORTH_EAST;
     static inline constexpr Cardinal DN_R = Cardinal::SOUTH_EAST;
@@ -177,68 +203,123 @@ namespace Hex {
     static inline constexpr Cardinal UP_L = Cardinal::NORTH_WEST;
 
     static inline const std::unordered_map<Cardinal, Cardinal> Opposite = {
-        { Cardinal::NORTH, Cardinal::SOUTH },
+        { Cardinal::NORTH,      Cardinal::SOUTH      },
         { Cardinal::NORTH_EAST, Cardinal::SOUTH_WEST },
         { Cardinal::SOUTH_EAST, Cardinal::NORTH_WEST },
-        { Cardinal::SOUTH, Cardinal::NORTH },
+        { Cardinal::SOUTH,      Cardinal::NORTH      },
         { Cardinal::SOUTH_WEST, Cardinal::NORTH_EAST },
         { Cardinal::NORTH_WEST, Cardinal::SOUTH_EAST },
     };
 
-    struct Unit {   
-        static constexpr Point UP   = Direction[Cardinal::NORTH];
-        static constexpr Point UP_R = Direction[Cardinal::NORTH_EAST];
-        static constexpr Point DN_R = Direction[Cardinal::SOUTH_EAST];
-        static constexpr Point DN   = Direction[Cardinal::SOUTH];
-        static constexpr Point DN_L = Direction[Cardinal::SOUTH_WEST];
-        static constexpr Point UP_L = Direction[Cardinal::NORTH_WEST];
+    static inline constexpr std::array<Basis, 6> Direction = {
+        Basis::W(),
+        Basis::E(),
+        Basis::D(),
+        Basis::S(),
+        Basis::A(),
+        Basis::Q(),
+    };
+    // static inline constexpr std::array<Point, 6> Direction = { 
+    //     Point( 0, -1,  1),
+    //     Point( 1, -1,  0),
+    //     Point( 1,  0, -1),
+    //     Point( 0,  1, -1),
+    //     Point(-1,  1,  0),
+    //     Point(-1,  0,  1)
+    // };
+
+
+    // struct Unit {   
+    //     static constexpr Point UP   = Direction[Cardinal::NORTH];
+    //     static constexpr Point UP_R = Direction[Cardinal::NORTH_EAST];
+    //     static constexpr Point DN_R = Direction[Cardinal::SOUTH_EAST];
+    //     static constexpr Point DN   = Direction[Cardinal::SOUTH];
+    //     static constexpr Point DN_L = Direction[Cardinal::SOUTH_WEST];
+    //     static constexpr Point UP_L = Direction[Cardinal::NORTH_WEST];
+    // };
+
+    // static inline constexpr std::array<Point, 6> Reverse = {
+    //     Point({  0,  1, -1 }),
+    //     Point({ -1,  1,  0 }),
+    //     Point({ -1,  0,  1 }),
+    //     Point({  0, -1,  1 }),
+    //     Point({  1, -1,  0 }),
+    //     Point({  1,  0, -1 })
+    // };
+    static inline constexpr std::array<Basis, 6> Reverse = {
+        Basis::S(),
+        Basis::A(),
+        Basis::Q(),
+        Basis::W(),
+        Basis::E(),
+        Basis::D(),
+    };
+    // static inline constexpr std::array<Point, 6> RotateClockwise1 = { 
+    //     Point({  1, -1,  0 }),
+    //     Point({  1,  0, -1 }),
+    //     Point({  0,  1, -1 }),
+    //     Point({ -1,  1,  0 }),
+    //     Point({ -1,  0,  1 }),
+    //     Point({  0, -1,  1 })
+    // };
+    
+    static inline constexpr std::array<Basis, 6> RotateClockwise1 = {
+        Basis::E(),
+        Basis::D(),
+        Basis::S(),
+        Basis::A(),
+        Basis::Q(),
+        Basis::W(),
     };
 
-    static inline constexpr std::array<Point, 6> Reverse = {
-        Point({  0,  1, -1 }),
-        Point({ -1,  1,  0 }),
-        Point({ -1,  0,  1 }),
-        Point({  0, -1,  1 }),
-        Point({  1, -1,  0 }),
-        Point({  1,  0, -1 })
+    // static inline constexpr std::array<Point, 6> RotateClockwise2 = { 
+    //     Point({  1,  0, -1 }),
+    //     Point({  0,  1, -1 }),
+    //     Point({ -1,  1,  0 }),
+    //     Point({ -1,  0,  1 }),
+    //     Point({  0, -1,  1 }),
+    //     Point({  1, -1,  0 })
+    // };
+    static inline constexpr std::array<Basis, 6> RotateClockwise2 = {
+        Basis::D(),
+        Basis::S(),
+        Basis::A(),
+        Basis::Q(),
+        Basis::W(),
+        Basis::E(),
     };
-
-    static inline constexpr std::array<Point, 6> RotateClockwise1 = { 
-        Point({  1, -1,  0 }),
-        Point({  1,  0, -1 }),
-        Point({  0,  1, -1 }),
-        Point({ -1,  1,  0 }),
-        Point({ -1,  0,  1 }),
-        Point({  0, -1,  1 })
+    // static inline constexpr std::array<Point, 6> RotateCounterwise1 = { 
+    //     Point({ -1,  0,  1 }),
+    //     Point({  0, -1,  1 }),
+    //     Point({  1, -1,  0 }),
+    //     Point({  1,  0, -1 }),
+    //     Point({  0,  1, -1 }),
+    //     Point({ -1,  1,  0 })
+    // };
+    static inline constexpr std::array<Basis, 6> RotateCounterwise1 = {
+        Basis::Q(),
+        Basis::W(),
+        Basis::E(),
+        Basis::D(),
+        Basis::S(),
+        Basis::A(),
     };
-
-    static inline constexpr std::array<Point, 6> RotateClockwise2 = { 
-        Point({  1,  0, -1 }),
-        Point({  0,  1, -1 }),
-        Point({ -1,  1,  0 }),
-        Point({ -1,  0,  1 }),
-        Point({  0, -1,  1 }),
-        Point({  1, -1,  0 })
+    // static inline constexpr std::array<Point, 6> RotateCounterwise2 = { 
+    //     Point({ -1,  1,  0 }),
+    //     Point({ -1,  0,  1 }),
+    //     Point({  0, -1,  1 }),
+    //     Point({  1, -1,  0 }),
+    //     Point({  1,  0, -1 }),
+    //     Point({  0,  1, -1 })
+    // };
+    static inline constexpr std::array<Basis, 6> RotateCounterwise2 = {
+        Basis::A(),
+        Basis::Q(),
+        Basis::W(),
+        Basis::E(),
+        Basis::D(),
+        Basis::S(),
     };
-
-    static inline constexpr std::array<Point, 6> RotateCounterwise1 = { 
-        Point({ -1,  0,  1 }),
-        Point({  0, -1,  1 }),
-        Point({  1, -1,  0 }),
-        Point({  1,  0, -1 }),
-        Point({  0,  1, -1 }),
-        Point({ -1,  1,  0 })
-    };
-
-    static inline constexpr std::array<Point, 6> RotateCounterwise2 = { 
-        Point({ -1,  1,  0 }),
-        Point({ -1,  0,  1 }),
-        Point({  0, -1,  1 }),
-        Point({  1, -1,  0 }),
-        Point({  1,  0, -1 }),
-        Point({  0,  1, -1 })
-    };
-
     // pointy top hex map
     // const Matrix2x2Pair view = Matrix2x2Pair({
     //   sqrtf(3.0f), sqrtf(3.0f)/2.0f, 0.0f, 3.0f/2.0f,
