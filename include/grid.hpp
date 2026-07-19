@@ -42,6 +42,7 @@ public:
 
 	HexState getState(Hex::Point) const;
 	Vector2 getPosition(Hex::Point) const;
+	Vector2 getUnit() const;
 
 	void place(Hex::Point, int value);
     Hex::Point walk(Hex::Point, Hex::Point) const;

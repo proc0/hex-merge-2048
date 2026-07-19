@@ -22,8 +22,7 @@ class Chip {
 	Color primaryColor = LIGHTGRAY;
 	Color secondaryColor = RAYWHITE;
 
-	ChipState state;
-
+	int value = 0;
 	int size = HEX_SIZE;
 	bool enabled;
 
@@ -41,22 +40,29 @@ class Chip {
 	};
 
 public:
-	Chip(Hex::Point target, Vector2 position, int value, bool active = false): 
-		currentHex(target), 
-		targetHex(target), 
-		state({ value }),
+	Chip(Hex::Point hex, Vector2 position, int value, bool active = false): 
+		currentHex(hex), 
+		targetHex(hex), 
+		value(value),
 		enabled(active) {
-    		TraceLog(LOG_INFO, "CREATING CHIP %f %f", position.x, position.y);
-			load(position, { 1.0f, 1.0f }, 0.0f);
+    		TraceLog(LOG_INFO, "CREATING CHIP %d: %f %f", value, position.x, position.y);
+			load(position);
 		}
 	~Chip() = default;
 
-	void load(Vector2 position, Vector2 scale, float rotation);
-	void reset(Hex::Point, Vector2 position, Vector2 scale, float rotation, int value);
+	void load(Vector2 position);
+	void reload(Vector2 position, Vector2 scale, float size, float rotation, Color color);
+	// void reset(Hex::Point, Vector2 position, Vector2 scale, float rotation, int value);
+	void place(Hex::Point, Vector2 position, int value);
 
-	ChipState getState() const;
+	Hex::Point getCurrentHex() const;
 	Vector2 getPosition() const;
-
+	void setPosition(Vector2);
+	void setScale(Vector2);
+	void setSize(float);
+	void setRotation(float);
+	void setColor(Color);
+	
 	void render() const;
 
 	void update();
@@ -66,5 +72,6 @@ public:
 	bool active() const;
 	bool available() const;
 
+	void resize();
 	void unload();
 };

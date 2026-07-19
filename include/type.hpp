@@ -169,7 +169,7 @@ namespace Hex {
     static inline constexpr Cardinal DN   = Cardinal::SOUTH;
     static inline constexpr Cardinal DN_L = Cardinal::SOUTH_WEST;
     static inline constexpr Cardinal UP_L = Cardinal::NORTH_WEST;
-    
+
     struct Unit {   
         static constexpr Point UP   = Direction[Cardinal::NORTH];
         static constexpr Point UP_R = Direction[Cardinal::NORTH_EAST];
@@ -302,9 +302,5 @@ namespace Hex {
 struct HexState {
     Vector2 position;
     int key;
-};
-
-struct ChipState {
-    int value;
 };
 

@@ -58,8 +58,8 @@ void World::respawnChip(Hex::Point hex, int value) {
         if (chip.available()) {
             chip.enable();
 
-            grid.place(hex, total);
-            chip.reset(hex, grid.getPosition(hex), Vector2({ 1.0f, 1.0f }), 0.0f, value);
+            grid.place(hex, i);
+            chip.place(hex, grid.getPosition(hex), value);
 
             break;
         }
@@ -152,5 +152,14 @@ void World::unload(){
 }
 
 void World::resize(int width, int height) {
-    TraceLog(LOG_INFO, "HELLO FROM WORLD RESIZE %i %i", width, height);
+    Vector2 gridUnit = grid.getUnit();
+    for (auto& chip : chips) {
+        if (chip.active()) {
+            Vector2 newPosition = grid.getPosition(chip.getCurrentHex());
+            chip.setPosition(newPosition);
+        }
+        // TODO: make consistent grid.unit (Vector2) and chip.size + chip.scale
+        // should it be size*scale or a Vector2 size? Should be the same in both.
+        chip.setSize(gridUnit.x);
+    }
 }
