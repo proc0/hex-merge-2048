@@ -32,12 +32,43 @@ void Chip::place(Hex::Point hex, Vector2 position, int val) {
 	enable();
 }
 
-void Chip::update() {
+void Chip::move(Hex::Point hex, Vector2 position) {
+	currentHex = hex;
+	// current[POSX] = position.x;	
+	source[POSX] = current[POSX];	
+	target[POSX] = position.x;
 
+	// current[POSY] = position.y;	
+	source[POSY] = current[POSY];	
+	target[POSY] = position.y;
+
+	state = State::Chip::MOVING;
+
+	frame[POSX] = 60;
+	frame[POSY] = 60;
+}
+
+State::Chip Chip::update() {
+	for (int i = 0; i < PROPS_SIZE; ++i) {
+		int& currentFrame = frame[i];
+		if (currentFrame > 0) {
+			currentFrame--;
+			if (currentFrame <= 0) {
+				currentFrame = 0;
+
+				current[i] = target[i];
+				state = State::Chip::READY;
+			}
+		}
+	}
+
+	return state;
 }
 
 void Chip::merge(Chip& other) {
 	value += other.value;
+	other.move(currentHex, getPosition());
+	other.disable();
 }
 
 Hex::Point Chip::getCurrentHex() const {

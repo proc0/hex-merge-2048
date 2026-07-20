@@ -18,6 +18,8 @@ class World : public Layer {
 
     int attempts;
 
+    State::World state = State::World::WAIT;
+
 public:
     World(Window& window): window(window) {}
     ~World() = default;

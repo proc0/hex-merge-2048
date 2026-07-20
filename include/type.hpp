@@ -105,6 +105,17 @@ namespace State {
         DRAG,
         DROP
     };
+
+    enum World {
+        WAIT,
+        PROCESS,
+    };
+
+
+    enum Chip {
+        READY,
+        MOVING
+    };
 }
 
 struct InputEvent {

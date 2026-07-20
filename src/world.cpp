@@ -21,17 +21,17 @@ void World::load(){
     // createChip(Hex::Direction[DIR_UP_L], 6);
     // Hex::State hex = grid.getState(Hex::Direction[DIR_UP_L]);
     // Chip::State chip = chips.at(hex.key).getState();
-    int key1 = createChip(grid.corner(Hex::Basis::W()), 4);
+    int key1 = createChip(grid.corner(Hex::Basis::W()), 2);
     grid.place(grid.corner(Hex::Basis::W()), key1);
 
-    int key2 = createChip(grid.corner(Hex::Basis::E()), 2);
-    grid.place(grid.corner(Hex::Basis::E()), key2);
+    int key2 = createChip(Hex::Basis::W(), 2);
+    grid.place(Hex::Basis::W(), key2);
 
-    int key3 = createChip(grid.corner(Hex::Basis::D()), 2);
-    grid.place(grid.corner(Hex::Basis::D()), key3);
+    int key3 = createChip(Hex::Point(0, 0, 0), 2);
+    grid.place(Hex::Point(0, 0, 0), key3);
 
-    int key4 = createChip(grid.corner(Hex::Basis::Q()), 4);
-    grid.place(grid.corner(Hex::Basis::Q()), key4);
+    int key4 = createChip(Hex::Basis::S(), 2);
+    grid.place(Hex::Basis::S(), key4);
 
 }
 
@@ -101,8 +101,10 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
         if (targetChip == sourceChip) {
             grid.clear(sourceHex);
             targetChip.merge(sourceChip);
+            chipsIdxsMoving.push_back(sourceKey);
+            state = State::World::PROCESS;
             // NOTE: needs to be disabled after animation
-            sourceChip.disable();
+            // sourceChip.disable();
             // NOTE: might be needed for animations
             // sourceChip.setPosition(grid.getPosition(targetHex));
             // sourceChip.setCurrentHex(targetHex);
@@ -118,8 +120,11 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
     grid.clear(sourceHex);
     grid.place(targetHex, sourceKey);
     // update screen position and hex reference on chip
-    sourceChip.setPosition(grid.getPosition(targetHex));
-    sourceChip.setCurrentHex(targetHex);
+    sourceChip.move(targetHex, grid.getPosition(targetHex));
+    chipsIdxsMoving.push_back(sourceKey);
+    state = State::World::PROCESS;
+    // sourceChip.setPosition(grid.getPosition(targetHex));
+    // sourceChip.setCurrentHex(targetHex);
 }
 
 void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHex) {
@@ -202,28 +207,46 @@ WorldState World::updateHold(InputEvent inputEvent, Action::Surface action){
 
 WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
-    if (inputEvent.id == Event::Input::MOVE_UP || action == Action::Surface::MOVE_UP ) {
-            TraceLog(LOG_INFO, "MOVE UP");
-            updateMove(Hex::N);
-    } else if (inputEvent.id == Event::Input::MOVE_UP_RIGHT || action == Action::Surface::MOVE_UP_RIGHT ) {
-            TraceLog(LOG_INFO, "MOVE UP RIGHT");
-            updateMove(Hex::NE);
+    if (state == State::World::PROCESS) {
+        state = State::World::WAIT;
+        std::erase_if(chipsIdxsMoving, [this](int idx){
+            Chip& chip = chips[idx];
+            // Vector2 chipPos = chip.getPosition();
+            State::Chip chipState = chip.update();
+            if (chipState == State::Chip::MOVING) {
+                TraceLog(LOG_INFO, "MOVING CHIP %d (%d)", idx, chip.getValue());
+                state = State::World::PROCESS;
+            }
 
-    } else if (inputEvent.id == Event::Input::MOVE_RIGHT || action == Action::Surface::MOVE_RIGHT ) {
-            TraceLog(LOG_INFO, "MOVE RIGHT");
-            updateMove(Hex::SE);
+            return chipState == State::Chip::READY;
+        });
+        // for (auto& chip : chips) {
+        //     chip.update();
+        // }
+    } else if (state == State::World::WAIT) {        
+        if (inputEvent.id == Event::Input::MOVE_UP || action == Action::Surface::MOVE_UP ) {
+                TraceLog(LOG_INFO, "MOVE UP");
+                updateMove(Hex::N);
+        } else if (inputEvent.id == Event::Input::MOVE_UP_RIGHT || action == Action::Surface::MOVE_UP_RIGHT ) {
+                TraceLog(LOG_INFO, "MOVE UP RIGHT");
+                updateMove(Hex::NE);
 
-    } else if (inputEvent.id == Event::Input::MOVE_DOWN || action == Action::Surface::MOVE_DOWN ) {
-            TraceLog(LOG_INFO, "MOVE DOWN");
-            updateMove(Hex::S);
+        } else if (inputEvent.id == Event::Input::MOVE_RIGHT || action == Action::Surface::MOVE_RIGHT ) {
+                TraceLog(LOG_INFO, "MOVE RIGHT");
+                updateMove(Hex::SE);
 
-    } else if (inputEvent.id == Event::Input::MOVE_LEFT || action == Action::Surface::MOVE_LEFT ) {
-            TraceLog(LOG_INFO, "MOVE LEFT");
-            updateMove(Hex::SW);
+        } else if (inputEvent.id == Event::Input::MOVE_DOWN || action == Action::Surface::MOVE_DOWN ) {
+                TraceLog(LOG_INFO, "MOVE DOWN");
+                updateMove(Hex::S);
 
-    } else if (inputEvent.id == Event::Input::MOVE_UP_LEFT || action == Action::Surface::MOVE_UP_LEFT ) {
-            TraceLog(LOG_INFO, "MOVE UP LEFT");
-            updateMove(Hex::NW);
+        } else if (inputEvent.id == Event::Input::MOVE_LEFT || action == Action::Surface::MOVE_LEFT ) {
+                TraceLog(LOG_INFO, "MOVE LEFT");
+                updateMove(Hex::SW);
+
+        } else if (inputEvent.id == Event::Input::MOVE_UP_LEFT || action == Action::Surface::MOVE_UP_LEFT ) {
+                TraceLog(LOG_INFO, "MOVE UP LEFT");
+                updateMove(Hex::NW);
+        }
     }
 
     return { .reachedGoal = false };

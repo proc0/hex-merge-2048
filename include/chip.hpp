@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config.hpp"
+#include "type.hpp"
 #include "hex.hpp"
 
 #include "raylib.h"
@@ -41,6 +42,8 @@ class Chip {
 		COL4
 	};
 
+	State::Chip state = State::Chip::READY;
+
 public:
 	Chip(Hex::Point hex, Vector2 position, int id_, int value, bool active = false): 
 		currentHex(hex), 
@@ -60,7 +63,6 @@ public:
 	void load(Vector2 position);
 	void reload(Vector2 position, Vector2 scale, float size, float rotation, Color color);
 	// void reset(Hex::Point, Vector2 position, Vector2 scale, float rotation, int value);
-	void place(Hex::Point, Vector2 position, int value);
 
 	int getId() const;
 	int getValue() const;
@@ -78,9 +80,11 @@ public:
 	
 	void render() const;
 
-	void update();
+	State::Chip update();
 	void merge(Chip& other);
-	
+	void place(Hex::Point, Vector2 position, int value);
+	void move(Hex::Point, Vector2 position);
+
 	void enable();
 	void disable();
 	bool active() const;
