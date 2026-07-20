@@ -2,6 +2,7 @@
 
 #include "window.hpp"
 #include "type.hpp"
+#include "hex.hpp"
 
 #include <unordered_map>
 

@@ -147,7 +147,7 @@ void World::updateMove(Hex::Cardinal needle) {
     // direction of sweep walk through center hex column
     Hex::Basis backward = Hex::Reverse[needle];
     // TODO: why cant I use [dir]?
-    // Hex::Cardinal oppositeDir = Hex::Opposite.at(dir);
+    // Hex::Cardinal oppositeDir = Hex::Opposite[needle];
     // direction of side flank sweeps as we are stepping back
     Hex::Basis leftward = Hex::RotateCounterwise2[needle];
     Hex::Basis rightward = Hex::RotateClockwise2[needle];

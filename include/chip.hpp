@@ -1,7 +1,7 @@
 #pragma once
 
 #include "config.hpp"
-#include "type.hpp"
+#include "hex.hpp"
 
 #include "raylib.h"
 

@@ -1,6 +1,5 @@
 #pragma once
 
-// #include "config.hpp"
 #include "type.hpp"
 #include "window.hpp"
 #include "grid.hpp"
