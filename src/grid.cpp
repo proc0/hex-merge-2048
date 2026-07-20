@@ -24,9 +24,15 @@ void Grid::create(int k) {
 	}
 }
 
+void Grid::reset() {
+	for (auto &[hex, state] : map) {
+		state.key = 0;
+	}
+}
+
 void Grid::render() const {
-	for (auto &[point, hex] : map) {
-		renderHex(point, hex);
+	for (auto &[hex, state] : map) {
+		renderHex(hex, state);
 	}
 }
 

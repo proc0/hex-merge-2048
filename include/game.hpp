@@ -32,7 +32,7 @@ public:
     
     void load();
     void start();
-    void reset();
+    void restart();
     
     void renderUnit() const {};
     void renderGame() const;

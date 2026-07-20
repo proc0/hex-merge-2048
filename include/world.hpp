@@ -27,6 +27,7 @@ public:
     WorldState (World::*update)(InputEvent, Action::Surface) = &World::updateUnit;
 
     void load();
+    void reset();
     int spawnChip(Hex::Point hex, int value);
     int createChip(Hex::Point hex, int value);
     int respawnChip(Hex::Point hex, int value);

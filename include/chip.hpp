@@ -67,8 +67,7 @@ public:
 
 	void load(Vector2 position);
 	void reload(Vector2 position, Vector2 scale, float size, float rotation, Color color);
-	// void reset(Hex::Point, Vector2 position, Vector2 scale, float rotation, int value);
-	void clear();
+	void reset();
 	
 	int getId() const;
 	int getValue() const;
@@ -89,6 +88,7 @@ public:
 	void render() const;
 
 	State::Chip update();
+	void sync();
 	int merge(Chip& other);
 	void place(Hex::Point, Vector2 position, int value);
 	void move(Hex::Point, Vector2 position);

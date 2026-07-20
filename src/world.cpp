@@ -25,6 +25,18 @@ void World::load(){
     grid.place(Hex::Origin, createChip(Hex::Origin, 2));
 }
 
+void World::reset() {
+    grid.reset();
+    for (auto& chip : chips) {
+        chip.reset();
+    }
+    // seed chip
+    grid.place(Hex::Origin, createChip(Hex::Origin, 2));
+    meta.maxValue = 2;
+    meta.gridlock = false;
+    meta.state = State::World::WAIT;
+}
+
 int World::spawnChip(Hex::Point hex, int value) {
     int key = 0;
     if (static_cast<int>(chips.size()) > grid.size()) {
@@ -173,15 +185,19 @@ void World::updateMove(Hex::Cardinal needle) {
 
     // TraceLog(LOG_INFO, "----------- END TURN -----------");
     if (meta.state == State::World::WAIT) {
+        // TraceLog(LOG_INFO, "NO CHIP HAS MOVED!");
         if (grid.filled()) {
+            // TraceLog(LOG_INFO, "GRID IS FULL!");
             bool gridlock = true;
             for (auto& chip : chips) {
                 if (!chipLocked(chip)) {
                     gridlock = false;
+                    break;
                 }
             }
 
             if (gridlock) {
+                // TraceLog(LOG_INFO, "GRID IS LOCKED!");
                 meta.state = State::World::LOCKED;
                 meta.gridlock = true;
             }
@@ -217,14 +233,14 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
         if (chipsIdxsMoving.empty()) {
             meta.state = State::World::WAIT;
             for (auto& chip : chips) {
-                chip.clear();
+                chip.sync();
             }
 
-            Hex::Point nextHex = grid.findRandom();
-            if (nextHex == Hex::Absurd) {
-                meta.gridlock = true;
-            } else {
-                spawnChip(nextHex, getRandomValue());
+            for (int i = 0; i < 4; i++) {                
+                Hex::Point nextHex = grid.findRandom();
+                if (nextHex != Hex::Absurd) {
+                    spawnChip(nextHex, getRandomValue());
+                }
             }
         }
     }

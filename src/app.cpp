@@ -188,8 +188,8 @@ Clay_RenderCommandArray App::update() {
 
             surface.clearEvent();
             // reset any game state
-            game.reset();
-            game.start();
+            world.reset();
+            game.restart();
             game.transition(state, screen);
             world.transition(state, screen);
             surface.transition(state, screen);

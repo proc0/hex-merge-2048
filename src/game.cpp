@@ -11,10 +11,14 @@ void Game::load() {
 void Game::start() {
     meta.state = State::Game::PLAY;
     gameTimerId = window.timer.startWatch();
+    meta.totalTimeId = gameTimerId;
 }
 
-void Game::reset() {
+void Game::restart() {
     meta.score = 0;
+    meta.state = State::Game::PLAY;
+    gameTimerId = window.timer.startWatch();
+    meta.totalTimeId = gameTimerId;
 }
 
 void Game::renderMain() const {
@@ -46,11 +50,9 @@ GameState Game::updateGame(InputEvent inputEvent, WorldState worldState){
     if (worldState.maxValue == 2048) {
         window.timer.stopWatch(gameTimerId);
         meta.state = State::Game::WIN;
-        meta.totalTimeId = gameTimerId;
     } else if (worldState.gridlock) {
         window.timer.stopWatch(gameTimerId);
         meta.state = State::Game::OVER;
-        meta.totalTimeId = gameTimerId;
     }
 
     return meta;

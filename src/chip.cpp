@@ -21,14 +21,14 @@ void Chip::reload(Vector2 position, Vector2 scale, float size, float rotation, C
 	setColor(color);
 }
 
-// void Chip::reset(Hex::Point hex, Vector2 position, Vector2 scale, float rotation, int val) {
-// 	reload(position, scale, size, rotation, primaryColor);
-// 	currentHex = hex;
-// 	value = val;
-// 	enable();
-// }
+void Chip::reset() {
+	state = State::Chip::READY;
+	enabled = false;
+	absorbed = false;
+	merged = false;
+}
 
-void Chip::clear() {
+void Chip::sync() {
 	if (absorbed) {
 		value = nextValue;
 		absorbed = false;

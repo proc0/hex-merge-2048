@@ -56,10 +56,9 @@ using BUTTON_ID = WidgetId::ButtonId;
 		BUTTON_ID::QUIT,\
 	};
 
-#define BUTTONS_MENU_PAUSE const std::array<BUTTON_ID, 6> buttonsMenuPause{ \
+#define BUTTONS_MENU_PAUSE const std::array<BUTTON_ID, 5> buttonsMenuPause{ \
 		BUTTON_ID::RESUME,\
-		BUTTON_ID::SAVE_GAME,\
-		BUTTON_ID::RELOAD,\
+		BUTTON_ID::RESTART,\
 		BUTTON_ID::OPTIONS,\
 		BUTTON_ID::RETURN,\
 		BUTTON_ID::QUIT,\
