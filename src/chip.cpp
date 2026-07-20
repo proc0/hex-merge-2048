@@ -32,6 +32,14 @@ void Chip::place(Hex::Point hex, Vector2 position, int val) {
 	enable();
 }
 
+void Chip::update() {
+
+}
+
+void Chip::merge(Chip& other) {
+	value += other.value;
+}
+
 Hex::Point Chip::getCurrentHex() const {
 	return currentHex;
 }

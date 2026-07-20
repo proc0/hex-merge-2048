@@ -25,6 +25,7 @@ class Chip {
 	const int id;
 	int value = 0;
 	int size = HEX_SIZE;
+
 	bool enabled;
 
 	enum {
@@ -52,6 +53,10 @@ public:
 		}
 	~Chip() = default;
 
+	bool operator==(Chip& other) {
+		return this->value == other.value;
+	}
+
 	void load(Vector2 position);
 	void reload(Vector2 position, Vector2 scale, float size, float rotation, Color color);
 	// void reset(Hex::Point, Vector2 position, Vector2 scale, float rotation, int value);
@@ -74,7 +79,8 @@ public:
 	void render() const;
 
 	void update();
-
+	void merge(Chip& other);
+	
 	void enable();
 	void disable();
 	bool active() const;

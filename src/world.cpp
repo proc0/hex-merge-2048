@@ -76,12 +76,13 @@ int World::respawnChip(Hex::Point hex, int value) {
     return key;
 }
 
-void World::updateChip(Hex::Basis forward, Hex::Point chipHex) {
-
-    Hex::Point targetHex = grid.walk(forward, chipHex);
-
+void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
+    // source hex has a chip, check one hex forward
+    Hex::Point targetHex = grid.walk(forward, sourceHex);
+    // no movement possible for chip
     if (grid.occupied(targetHex)) return;
-
+    // start walking forward in the direction of player input
+    // save a backup slot for backtracking if target is occupied
     Hex::Point lastTargetHex = targetHex;
     while (!grid.walkEdge(forward, targetHex) && grid.vacant(targetHex)) {
         if (arrested()) break;
@@ -89,42 +90,41 @@ void World::updateChip(Hex::Basis forward, Hex::Point chipHex) {
         lastTargetHex = targetHex;
         targetHex = grid.walk(forward, targetHex);
     }
-
-    int sourceKey = grid.getState(chipHex).key;
+    // target hex is either the edge or occupied
+    int sourceKey = grid.getState(sourceHex).key;
     Chip& sourceChip = chips.at(sourceKey);
-
+    // if occupied, check if chips can merge
     if (grid.occupied(targetHex)) {
         int targetKey = grid.getState(targetHex).key;
         Chip& targetChip = chips.at(targetKey);
-        // TODO: right an isEqual on Chip
-        int targetValue = targetChip.getValue();
-        int sourceValue = sourceChip.getValue();
-        if (targetValue == sourceValue) {
-            grid.clear(chipHex);
-            // TODO: abstract addValue and value into a struct
-            // and a merge for future changes to using something other than numbers
-            targetChip.addValue(sourceValue);
+        // merge chips
+        if (targetChip == sourceChip) {
+            grid.clear(sourceHex);
+            targetChip.merge(sourceChip);
+            // NOTE: needs to be disabled after animation
             sourceChip.disable();
             // NOTE: might be needed for animations
             // sourceChip.setPosition(grid.getPosition(targetHex));
             // sourceChip.setCurrentHex(targetHex);
             return;
         } else if (grid.vacant(lastTargetHex)) {
+            // backtrack to last empty hex
             targetHex = lastTargetHex;
         } else {
             return;
         }
     } 
-
-    grid.clear(chipHex);
+    // move chip to the next empty hex
+    grid.clear(sourceHex);
     grid.place(targetHex, sourceKey);
+    // update screen position and hex reference on chip
     sourceChip.setPosition(grid.getPosition(targetHex));
     sourceChip.setCurrentHex(targetHex);
 }
 
 void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHex) {
+    // check both left and right wings of the current hex column
     Hex::Point sideHex = grid.walk(sideward, midHex);
-
     while (!grid.walkEdge(sideward, sideHex)) {
         if (arrested()) break;
         // TraceLog(LOG_INFO, "HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
@@ -133,12 +133,10 @@ void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHe
         }
         sideHex = grid.walk(sideward, sideHex);
     }
-
     // TraceLog(LOG_INFO, "HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
     if (grid.occupied(sideHex)){
         updateChip(forward, sideHex);
     } 
-
 }
 
 void World::updateMove(Hex::Cardinal needle) {
@@ -159,12 +157,12 @@ void World::updateMove(Hex::Cardinal needle) {
         if (grid.occupied(midHex)){
             updateChip(forward, midHex);
         }
+        // walk the grid sideways
         searchGrid(forward, rightward, midHex);
         searchGrid(forward, leftward, midHex);
-
+        // walk the grid backward
         midHex = grid.walk(backward, midHex);
     }
-
     // TraceLog(LOG_INFO, "END HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
     if (grid.occupied(midHex)){
         updateChip(forward, midHex);
