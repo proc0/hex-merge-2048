@@ -28,7 +28,8 @@ class Chip {
 	int size = HEX_SIZE;
 
 	bool enabled;
-
+	bool merged;
+	
 	enum {
 		POSX,
 		POSY,

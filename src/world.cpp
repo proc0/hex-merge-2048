@@ -214,7 +214,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
             // Vector2 chipPos = chip.getPosition();
             State::Chip chipState = chip.update();
             if (chipState == State::Chip::MOVING) {
-                TraceLog(LOG_INFO, "MOVING CHIP %d (%d)", idx, chip.getValue());
+                // TraceLog(LOG_INFO, "MOVING CHIP %d (%d)", idx, chip.getValue());
                 state = State::World::PROCESS;
             }
 

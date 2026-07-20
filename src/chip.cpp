@@ -1,6 +1,8 @@
 #include "chip.hpp"
+#include "tool.hpp"
 
 #include "raylib.h"
+#include "raymath.h"
 
 void Chip::load(Vector2 position) {
 	setPosition(position);
@@ -44,39 +46,43 @@ void Chip::move(Hex::Point hex, Vector2 position) {
 
 	state = State::Chip::MOVING;
 
-	frame[POSX] = 60;
-	frame[POSY] = 60;
-}
-
-State::Chip Chip::update() {
-	for (int i = 0; i < PROPS_SIZE; ++i) {
-		int& currentFrame = frame[i];
-		if (currentFrame > 0) {
-			currentFrame--;
-			if (currentFrame <= 0) {
-				currentFrame = 0;
-
-				current[i] = target[i];
-				state = State::Chip::READY;
-			}
-		}
-	}
-
-	return state;
+	frame[POSX] = 1;
+	frame[POSY] = 1;
 }
 
 void Chip::merge(Chip& other) {
 	value += other.value;
 	other.move(currentHex, getPosition());
-	other.disable();
+	other.merged = true;
+}
+
+State::Chip Chip::update() {
+
+	for (int i = 0; i < PROPS_SIZE; ++i) {
+		int& currentFrame = frame[i];
+		if (currentFrame > 0) {
+			// float progress = ANIM_FRAMES[i];
+			current[i] = Lerp(source[i], target[i], ANIM_FRAMES[currentFrame]);
+			currentFrame++;
+			if (currentFrame >= ANIM_FRAMES.size()-2) {
+				currentFrame = 0;
+				// current[i] = target[i];
+				state = State::Chip::READY;
+			}
+		}
+	}
+
+	// if (state == State::Chip::READY && merged) {
+	// 	TraceLog(LOG_INFO, "DISABLING CHIP %d (%d)", id, value);
+	// 	merged = false;
+	// 	enabled = false;
+	// }
+
+	return state;
 }
 
 Hex::Point Chip::getCurrentHex() const {
 	return currentHex;
-}
-
-void Chip::setCurrentHex(Hex::Point hex) {
-	currentHex = hex;
 }
 
 Vector2 Chip::getPosition() const {
@@ -89,6 +95,10 @@ int Chip::getId() const {
 
 int Chip::getValue() const {
 	return value;
+}
+
+void Chip::setCurrentHex(Hex::Point hex) {
+	currentHex = hex;
 }
 
 void Chip::setValue(int val) {
