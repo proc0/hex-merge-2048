@@ -50,7 +50,7 @@ public:
     Hex::Point walk(Hex::Basis, Hex::Point) const;
     Hex::Point corner(Hex::Point) const;
 
-    bool walkEnded(Hex::Basis dir, Hex::Point hex) const;
+    bool walkEdge(Hex::Basis dir, Hex::Point hex) const;
     bool vacant(Hex::Point) const;
     bool filled(Hex::Point) const;
 

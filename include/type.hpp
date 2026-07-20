@@ -195,12 +195,12 @@ namespace Hex {
       NORTH_WEST
     };
 
-    static inline constexpr Cardinal UP   = Cardinal::NORTH;
-    static inline constexpr Cardinal UP_R = Cardinal::NORTH_EAST;
-    static inline constexpr Cardinal DN_R = Cardinal::SOUTH_EAST;
-    static inline constexpr Cardinal DN   = Cardinal::SOUTH;
-    static inline constexpr Cardinal DN_L = Cardinal::SOUTH_WEST;
-    static inline constexpr Cardinal UP_L = Cardinal::NORTH_WEST;
+    static inline constexpr Cardinal N  = Cardinal::NORTH;
+    static inline constexpr Cardinal NE = Cardinal::NORTH_EAST;
+    static inline constexpr Cardinal SE = Cardinal::SOUTH_EAST;
+    static inline constexpr Cardinal S  = Cardinal::SOUTH;
+    static inline constexpr Cardinal SW = Cardinal::SOUTH_WEST;
+    static inline constexpr Cardinal NW = Cardinal::NORTH_WEST;
 
     static inline const std::unordered_map<Cardinal, Cardinal> Opposite = {
         { Cardinal::NORTH,      Cardinal::SOUTH      },

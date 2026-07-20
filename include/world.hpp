@@ -17,7 +17,7 @@ class World : public Layer {
     std::vector<int> chipsIdxsReady;
     std::vector<int> chipsIdxsMoving;
 
-    int dummyGoalTracker = 0;
+    int attempts;
 
 public:
     World(Window& window): window(window) {}
@@ -46,5 +46,7 @@ public:
     
     void resize(int width, int height) override;
     void transition(State::App, State::Screen);
+    bool arrested();
+    void arrest(int max);
     void unload();
 };

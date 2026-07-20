@@ -76,26 +76,21 @@ int World::respawnChip(Hex::Point hex, int value) {
     return key;
 }
 
-void World::updateChip(Hex::Basis moveStep, Hex::Point sourceHex) {
-    // TODO: make this safety mechanism a member field
-    // and just call one function within the while loop that increments
-    // and checks an upper bound across all while loops
-    int maxTries = 30;
+void World::updateChip(Hex::Basis forward, Hex::Point chipHex) {
 
-    Hex::Point targetHex = grid.walk(moveStep, sourceHex);
-    // TODO: rename vacant to grid.vacant? and add a counterpart grid.filled/occupied?
+    Hex::Point targetHex = grid.walk(forward, chipHex);
     if (!grid.vacant(targetHex)) {
         return;
     }
 
-    Hex::Point lastTarget = targetHex;
-    while (maxTries > 0 && !grid.walkEnded(moveStep, targetHex) && grid.vacant(targetHex)) {
-        lastTarget = targetHex;
-        targetHex = grid.walk(moveStep, targetHex);
-        maxTries--;
+    Hex::Point lastTargetHex = targetHex;
+    while (!grid.walkEdge(forward, targetHex) && grid.vacant(targetHex)) {
+        if (arrested()) break;
+        lastTargetHex = targetHex;
+        targetHex = grid.walk(forward, targetHex);
     }
 
-    int sourceKey = grid.getState(sourceHex).key;
+    int sourceKey = grid.getState(chipHex).key;
     Chip& sourceChip = chips.at(sourceKey);
 
     if (!grid.vacant(targetHex)) {
@@ -105,7 +100,7 @@ void World::updateChip(Hex::Basis moveStep, Hex::Point sourceHex) {
         int targetValue = targetChip.getValue();
         int sourceValue = sourceChip.getValue();
         if (targetValue == sourceValue) {
-            grid.clear(sourceHex);
+            grid.clear(chipHex);
             // TODO: abstract addValue and value into a struct
             // and a merge for future changes to using something other than numbers
             targetChip.addValue(sourceValue);
@@ -114,69 +109,68 @@ void World::updateChip(Hex::Basis moveStep, Hex::Point sourceHex) {
             // sourceChip.setPosition(grid.getPosition(targetHex));
             // sourceChip.setCurrentHex(targetHex);
             return;
-        } else if (grid.vacant(lastTarget)) {
-            targetHex = lastTarget;
+        } else if (grid.vacant(lastTargetHex)) {
+            targetHex = lastTargetHex;
         } else {
             return;
         }
     } 
 
-    grid.clear(sourceHex);
+    grid.clear(chipHex);
     grid.place(targetHex, sourceKey);
     sourceChip.setPosition(grid.getPosition(targetHex));
     sourceChip.setCurrentHex(targetHex);
 }
 
-void World::searchGrid(Hex::Basis forward, Hex::Basis step, Hex::Point center) {
-    int maxTries = 30;
-    
-    Hex::Point hex = grid.walk(step, center);
+void World::searchGrid(Hex::Basis forward, Hex::Basis side, Hex::Point midHex) {
+    Hex::Point sideHex = grid.walk(side, midHex);
 
-    while (maxTries > 0 && !grid.walkEnded(step, hex)) {
-        // TraceLog(LOG_INFO, "HEX WALK %d %d %d", hex.q, hex.r, hex.s);
-        if (!grid.vacant(hex)){
-            updateChip(forward, hex);
+    while (!grid.walkEdge(side, sideHex)) {
+        if (arrested()) break;
+        // TraceLog(LOG_INFO, "HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
+        if (!grid.vacant(sideHex)){
+            updateChip(forward, sideHex);
         }
-        hex = grid.walk(step, hex);
-        maxTries--;
+        sideHex = grid.walk(side, sideHex);
     }
 
-    // TraceLog(LOG_INFO, "HEX WALK %d %d %d", hex.q, hex.r, hex.s);
-    if (!grid.vacant(hex)){
-        updateChip(forward, hex);
+    // TraceLog(LOG_INFO, "HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
+    if (!grid.vacant(sideHex)){
+        updateChip(forward, sideHex);
     } 
 
 }
 
-void World::updateMove(Hex::Cardinal index) {
-    Hex::Basis forward = Hex::Direction[index];
+void World::updateMove(Hex::Cardinal needle) {
+    // direction of movement of chips and player input
+    Hex::Basis forward = Hex::Direction[needle];
     // direction of sweep walk through center hex column
-    Hex::Basis backward = Hex::Reverse[index];
+    Hex::Basis backward = Hex::Reverse[needle];
     // TODO: why cant I use [dir]?
     // Hex::Cardinal oppositeDir = Hex::Opposite.at(dir);
     // direction of side flank sweeps as we are stepping back
-    Hex::Basis leftward = Hex::RotateCounterwise2[index];
-    Hex::Basis rightward = Hex::RotateClockwise2[index];
+    Hex::Basis leftward = Hex::RotateCounterwise2[needle];
+    Hex::Basis rightward = Hex::RotateClockwise2[needle];
 
-    int maxTries = 30;
+    arrest(66);
     // start with the corner hex in the direction of movement
-    Hex::Point hex = grid.corner(forward);
-    while (maxTries > 0 && !grid.walkEnded(backward, hex)) {
+    Hex::Point midHex = grid.corner(forward);
+    while (!grid.walkEdge(backward, midHex)) {
+        if (arrested()) break;
 
-        TraceLog(LOG_INFO, "HEX WALK %d %d %d", hex.q, hex.r, hex.s);
-        if (!grid.vacant(hex)){
-            updateChip(forward, hex);
+        TraceLog(LOG_INFO, "HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
+        if (!grid.vacant(midHex)){
+            updateChip(forward, midHex);
         }
-        searchGrid(forward, rightward, hex);
-        searchGrid(forward, leftward, hex);
+        searchGrid(forward, rightward, midHex);
+        searchGrid(forward, leftward, midHex);
 
-        hex = grid.walk(backward, hex);
-        maxTries--;
+        midHex = grid.walk(backward, midHex);
     }
 
-    TraceLog(LOG_INFO, "END HEX WALK %d %d %d", hex.q, hex.r, hex.s);
-    if (!grid.vacant(hex)){
-        updateChip(forward, hex);
+    TraceLog(LOG_INFO, "END HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
+    if (!grid.vacant(midHex)){
+        updateChip(forward, midHex);
     }
     // std::erase_if(chipsIdxsReady, [this, dir](int idx){
     //     Chip& chip = chips[idx];
@@ -215,26 +209,26 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
     if (inputEvent.id == Event::Input::MOVE_UP || action == Action::Surface::MOVE_UP ) {
             TraceLog(LOG_INFO, "MOVE UP");
-            updateMove(Hex::UP);
+            updateMove(Hex::N);
     } else if (inputEvent.id == Event::Input::MOVE_UP_RIGHT || action == Action::Surface::MOVE_UP_RIGHT ) {
             TraceLog(LOG_INFO, "MOVE UP RIGHT");
-            updateMove(Hex::UP_R);
+            updateMove(Hex::NE);
 
     } else if (inputEvent.id == Event::Input::MOVE_RIGHT || action == Action::Surface::MOVE_RIGHT ) {
             TraceLog(LOG_INFO, "MOVE RIGHT");
-            updateMove(Hex::DN_R);
+            updateMove(Hex::SE);
 
     } else if (inputEvent.id == Event::Input::MOVE_DOWN || action == Action::Surface::MOVE_DOWN ) {
             TraceLog(LOG_INFO, "MOVE DOWN");
-            updateMove(Hex::DN);
+            updateMove(Hex::S);
 
     } else if (inputEvent.id == Event::Input::MOVE_LEFT || action == Action::Surface::MOVE_LEFT ) {
             TraceLog(LOG_INFO, "MOVE LEFT");
-            updateMove(Hex::DN_L);
+            updateMove(Hex::SW);
 
     } else if (inputEvent.id == Event::Input::MOVE_UP_LEFT || action == Action::Surface::MOVE_UP_LEFT ) {
             TraceLog(LOG_INFO, "MOVE UP LEFT");
-            updateMove(Hex::UP_L);
+            updateMove(Hex::NW);
     }
 
     // if (dummyGoalTracker >= 3) {
@@ -285,8 +279,13 @@ void World::transition(State::App appState, State::Screen screen) {
     };
 }
 
-void World::unload(){
-    UnloadSound(splat);
+bool World::arrested() {
+    attempts--;
+    return attempts < 0;
+}
+
+void World::arrest(int max) {
+    attempts = max;
 }
 
 void World::resize(int width, int height) {
@@ -300,4 +299,8 @@ void World::resize(int width, int height) {
         // should it be size*scale or a Vector2 size? Should be the same in both.
         chip.setSize(gridUnit.x);
     }
+}
+
+void World::unload(){
+    UnloadSound(splat);
 }
