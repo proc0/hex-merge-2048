@@ -19,6 +19,10 @@ namespace std {
 }
 
 class Grid : public Layer {
+    RenderTexture2D target;
+    Rectangle targetSource;
+    Rectangle targetDestination;
+
 	std::unordered_map<Hex::Point, HexState> map;
 
 	const Window& window;
@@ -35,10 +39,12 @@ public:
 	~Grid() = default;
 
 	void load();
+	void loadTarget();
 	void create(int extent);
 	void reset();
 
 	void render() const;
+	void renderGrid() const;
 	void renderHex(const Hex::Point&, const HexState&) const;
 
 	HexState getState(Hex::Point) const;

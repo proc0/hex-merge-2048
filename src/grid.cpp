@@ -8,6 +8,21 @@
 
 void Grid::load() {
 	create(extent);
+
+	loadTarget();
+}
+
+void Grid::loadTarget() {
+    // Render texture to draw, enables window scaling
+    // NOTE: If window is scaled, mouse input should be scaled proportionally
+    target = LoadRenderTexture(window.width, window.height);
+    targetSource = { 0, 0, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
+    targetDestination = { 0, 0, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height) };
+    SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
+
+    BeginTextureMode(target);
+        renderGrid();
+    EndTextureMode();
 }
 
 // k = extent = number of layers
@@ -31,13 +46,22 @@ void Grid::reset() {
 }
 
 void Grid::render() const {
+    DrawTexturePro(target.texture, targetSource, targetDestination, Vector2({}), 0.0f, WHITE);
+    // render hex effects
+	for (auto &[hex, state] : map) {
+		if (state.key == 0) continue;
+		DrawPoly(state.position, 6, unit.x, 0.0f, { 253, 249, 0, 150 });
+	}
+}
+
+void Grid::renderGrid() const {
 	for (auto &[hex, state] : map) {
 		renderHex(hex, state);
 	}
 }
 
 void Grid::renderHex(const Hex::Point& point, const HexState& state) const {
-	DrawPoly(state.position, 6, unit.x, 0.0f, state.key > 0 ? YELLOW : colorHex);
+	DrawPoly(state.position, 6, unit.x, 0.0f, colorHex);
 	DrawPolyLinesEx(state.position, 6, unit.x, 0.0f, 2.0f, colorLine);
 
 	// const char *pointLabel = TextFormat("(%d, %d, %d)", point.q, point.r, point.s);
@@ -196,4 +220,6 @@ void Grid::resize(int width, int height) {
 	for (auto &[point, state] : map) {
 		state.position = project(point, origin, unit);
 	}
+
+	loadTarget();
 }
