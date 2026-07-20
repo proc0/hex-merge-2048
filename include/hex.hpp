@@ -4,7 +4,6 @@
 
 #include <array>
 #include <cmath>
-#include <unordered_map>
 
 struct Matrix2x2Pair {
     const float f0, f1, f2, f3;
@@ -19,12 +18,11 @@ namespace Hex {
         constexpr Point(int q1, int r1, int s1): q(q1), r(r1), s(s1) {}
         bool operator==(const Point&) const = default;
         Point operator+(const Point& other) const {
-            return Point(
-                this->q + other.q, 
-                this->r + other.r, 
-                this->s + other.s);
+            return Point(this->q + other.q, this->r + other.r, this->s + other.s);
         }
     };
+
+    static inline constexpr Point Origin{ 0, 0, 0 };
 
     class Basis {
         // strong wrapper with implicit conversion
@@ -48,10 +46,7 @@ namespace Hex {
         operator Point() const { return Point(q, r, s); }
         // adding two basis hexes yields a non-basis point
         Point operator+(const Basis& other) const {
-            return Point(
-                this->q + other.q, 
-                this->r + other.r, 
-                this->s + other.s);
+            return Point(this->q + other.q, this->r + other.r, this->s + other.s);
         }
     };
 
@@ -71,67 +66,37 @@ namespace Hex {
     static inline constexpr Cardinal SW = Cardinal::SOUTH_WEST;
     static inline constexpr Cardinal NW = Cardinal::NORTH_WEST;
 
-    static inline const std::unordered_map<Cardinal, Cardinal> Opposite = {
-        { Cardinal::NORTH,      Cardinal::SOUTH      },
-        { Cardinal::NORTH_EAST, Cardinal::SOUTH_WEST },
-        { Cardinal::SOUTH_EAST, Cardinal::NORTH_WEST },
-        { Cardinal::SOUTH,      Cardinal::NORTH      },
-        { Cardinal::SOUTH_WEST, Cardinal::NORTH_EAST },
-        { Cardinal::NORTH_WEST, Cardinal::SOUTH_EAST },
+    // static inline const std::unordered_map<Cardinal, Cardinal> CardinalReversed = {
+    //     { Cardinal::NORTH,      Cardinal::SOUTH      },
+    //     { Cardinal::NORTH_EAST, Cardinal::SOUTH_WEST },
+    //     { Cardinal::SOUTH_EAST, Cardinal::NORTH_WEST },
+    //     { Cardinal::SOUTH,      Cardinal::NORTH      },
+    //     { Cardinal::SOUTH_WEST, Cardinal::NORTH_EAST },
+    //     { Cardinal::NORTH_WEST, Cardinal::SOUTH_EAST },
+    // };
+
+    static inline constexpr std::array<Basis, 6> BasisDirection = {
+        Basis::W(), Basis::E(), Basis::D(), Basis::S(), Basis::A(), Basis::Q()
     };
 
-    static inline constexpr std::array<Basis, 6> Direction = {
-        Basis::W(),
-        Basis::E(),
-        Basis::D(),
-        Basis::S(),
-        Basis::A(),
-        Basis::Q(),
-    };
-
-    static inline constexpr std::array<Basis, 6> Reverse = {
-        Basis::S(),
-        Basis::A(),
-        Basis::Q(),
-        Basis::W(),
-        Basis::E(),
-        Basis::D(),
+    static inline constexpr std::array<Basis, 6> BasisReversed = {
+        Basis::S(), Basis::A(), Basis::Q(), Basis::W(), Basis::E(), Basis::D()
     };
     
-    static inline constexpr std::array<Basis, 6> RotateClockwise1 = {
-        Basis::E(),
-        Basis::D(),
-        Basis::S(),
-        Basis::A(),
-        Basis::Q(),
-        Basis::W(),
+    static inline constexpr std::array<Basis, 6> BasisRotatedRight1 = {
+        Basis::E(), Basis::D(), Basis::S(), Basis::A(), Basis::Q(), Basis::W()
     };
 
-    static inline constexpr std::array<Basis, 6> RotateClockwise2 = {
-        Basis::D(),
-        Basis::S(),
-        Basis::A(),
-        Basis::Q(),
-        Basis::W(),
-        Basis::E(),
+    static inline constexpr std::array<Basis, 6> BasisRotatedRight2 = {
+        Basis::D(), Basis::S(), Basis::A(), Basis::Q(), Basis::W(), Basis::E()
     };
 
-    static inline constexpr std::array<Basis, 6> RotateCounterwise1 = {
-        Basis::Q(),
-        Basis::W(),
-        Basis::E(),
-        Basis::D(),
-        Basis::S(),
-        Basis::A(),
+    static inline constexpr std::array<Basis, 6> BasisRotatedLeft1 = {
+        Basis::Q(), Basis::W(), Basis::E(), Basis::D(), Basis::S(), Basis::A()
     };
 
-    static inline constexpr std::array<Basis, 6> RotateCounterwise2 = {
-        Basis::A(),
-        Basis::Q(),
-        Basis::W(),
-        Basis::E(),
-        Basis::D(),
-        Basis::S(),
+    static inline constexpr std::array<Basis, 6> BasisRotatedLeft2 = {
+        Basis::A(), Basis::Q(), Basis::W(), Basis::E(), Basis::D(), Basis::S()
     };
     
     // pointy top hex map

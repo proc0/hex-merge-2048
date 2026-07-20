@@ -87,7 +87,7 @@ public:
 	void render() const;
 
 	State::Chip update();
-	void merge(Chip& other);
+	int merge(Chip& other);
 	void place(Hex::Point, Vector2 position, int value);
 	void move(Hex::Point, Vector2 position);
 

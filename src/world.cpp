@@ -11,33 +11,22 @@ void World::load(){
     grid.load();
     window.enlist(&grid);
 
-    // reserve hex numbers plus shim chip
+    // reserve number of hexes plus shim chip
     int chipsCapacity = grid.size() + 1;
     chips.reserve(chipsCapacity);
-    chipsIdxsMoving.reserve(chipsCapacity-1);
+    // TODO: rename
+    chipsIdxsMoving.reserve(chipsCapacity);
+
     // shim chip
-    chips.emplace_back(Hex::Point(0, 0, 0), Vector2({}), 0, 0);
+    chips.emplace_back(Hex::Origin, Vector2({}), 0, 0);
 
-    // createChip(Hex::Direction[DIR_UP_L], 6);
-    // Hex::State hex = grid.getState(Hex::Direction[DIR_UP_L]);
-    // Chip::State chip = chips.at(hex.key).getState();
-    int key1 = createChip(grid.corner(Hex::Basis::W()), 2);
-    grid.place(grid.corner(Hex::Basis::W()), key1);
-
-    int key2 = createChip(Hex::Basis::W(), 2);
-    grid.place(Hex::Basis::W(), key2);
-
-    int key3 = createChip(Hex::Point(0, 0, 0), 2);
-    grid.place(Hex::Point(0, 0, 0), key3);
-
-    int key4 = createChip(Hex::Basis::S(), 2);
-    grid.place(Hex::Basis::S(), key4);
-
+    // seed chip
+    grid.place(Hex::Origin, createChip(Hex::Origin, 2));
 }
 
 int World::spawnChip(Hex::Point hex, int value) {
     int key = 0;
-    if (static_cast<int>(chips.size()) > grid.size()+1) {
+    if (static_cast<int>(chips.size()) > grid.size()) {
         key = respawnChip(hex, value);
     } else {
         key = createChip(hex, value);
@@ -56,7 +45,7 @@ int World::createChip(Hex::Point hex, int value) {
 
 int World::respawnChip(Hex::Point hex, int value) {
     int key = -1;
-    // WARNING: do not use ANCHOR sigil at 0!
+    // WARNING: do not use SHIM sigil at 0!
     int total = static_cast<int>(chips.size());
     for (int i = 1; i < total; ++i) {
         Chip& chip = chips.at(i);
@@ -102,9 +91,8 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
         if (targetChip == sourceChip && !targetChip.hasAbsorbed()) {
             // TraceLog(LOG_INFO, "MERGING %d and %d", targetKey, sourceKey);
             grid.clear(sourceHex);
-            targetChip.merge(sourceChip);
-
-            int resultValue = targetChip.getValue();
+            int resultValue = targetChip.merge(sourceChip);
+            // World book keeping
             if (resultValue > maxValue) {
                 maxValue = resultValue;
             }
@@ -131,6 +119,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
     grid.place(targetHex, sourceKey);
     // update screen position and hex reference on chip
     sourceChip.move(targetHex, grid.getPosition(targetHex));
+    // World book keeping
     chipsIdxsMoving.push_back(sourceKey);
     state = State::World::PROCESS;
 }
@@ -154,12 +143,12 @@ void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHe
 
 void World::updateMove(Hex::Cardinal needle) {
     // direction of movement of chips and player input
-    Hex::Basis forward = Hex::Direction[needle];
+    Hex::Basis forward = Hex::BasisDirection[needle];
     // direction of sweep walk through center hex column
-    Hex::Basis backward = Hex::Reverse[needle];
+    Hex::Basis backward = Hex::BasisReversed[needle];
     // direction of side flank sweeps as we are stepping back
-    Hex::Basis leftward = Hex::RotateCounterwise2[needle];
-    Hex::Basis rightward = Hex::RotateClockwise2[needle];
+    Hex::Basis leftward = Hex::BasisRotatedLeft2[needle];
+    Hex::Basis rightward = Hex::BasisRotatedRight2[needle];
 
     arrest(66);
     // start with the corner hex in the direction of movement

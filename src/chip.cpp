@@ -84,11 +84,13 @@ void Chip::move(Hex::Point hex, Vector2 position) {
 	framePropsActive = 2;
 }
 
-void Chip::merge(Chip& other) {
-	this->value += other.value;
-	other.move(this->currentHex, this->getTargetPosition());
+int Chip::merge(Chip& other) {
+	value += other.value;
+	other.move(currentHex, getTargetPosition());
 	other.merged = true;
 	absorbed = true;
+
+	return value;
 }
 
 bool Chip::hasAbsorbed() const {
