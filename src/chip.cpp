@@ -29,7 +29,10 @@ void Chip::reload(Vector2 position, Vector2 scale, float size, float rotation, C
 // }
 
 void Chip::clear() {
-	absorbed = false;
+	if (absorbed) {
+		value = nextValue;
+		absorbed = false;
+	}
 }
 
 State::Chip Chip::update() {
@@ -63,6 +66,7 @@ void Chip::place(Hex::Point hex, Vector2 position, int val) {
 	setPosition(position);
 	currentHex = hex;
 	value = val;
+	nextValue = val;
 	enable();
 }
 
@@ -85,12 +89,12 @@ void Chip::move(Hex::Point hex, Vector2 position) {
 }
 
 int Chip::merge(Chip& other) {
-	value += other.value;
+	nextValue += other.value;
 	other.move(currentHex, getTargetPosition());
 	other.merged = true;
 	absorbed = true;
 
-	return value;
+	return nextValue;
 }
 
 bool Chip::hasAbsorbed() const {

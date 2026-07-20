@@ -25,6 +25,7 @@ class Chip {
 
 	const int id;
 	int value = 0;
+	int nextValue = 0;
 	int size = HEX_SIZE;
 	int framePropsActive = 0;
 
@@ -53,6 +54,7 @@ public:
 		targetHex(hex), 
 		id(id_),
 		value(value),
+		nextValue(value),
 		enabled(active) {
     		// TraceLog(LOG_INFO, "CREATING CHIP %d: %f %f", value, position.x, position.y);
 			load(position);
