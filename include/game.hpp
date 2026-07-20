@@ -16,15 +16,7 @@ class Game : public Layer {
     float titleHintX;
     float titleHintY;
 
-    GameState gameState = {
-        .score = 0,
-        .state = State::Game::START
-    };
-    GameState defaultState = {
-        .score = 0,
-        .state = State::Game::START
-    };
-    State::Game state = State::Game::START;
+    GameState meta;
 
     const Window& window;
     TimerId gameTimerId;
@@ -47,7 +39,7 @@ public:
     void renderMain() const;
     void renderTitle() const;
 
-    GameState updateUnit(InputEvent, WorldState) { return defaultState; };
+    GameState updateUnit(InputEvent, WorldState) { return defaultGameState; };
     GameState updateMain(InputEvent, WorldState);
     GameState updateGame(InputEvent, WorldState);
     void updateTitle();

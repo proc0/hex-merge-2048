@@ -1,5 +1,6 @@
 #include "world.hpp"
 
+#include "hex.hpp"
 #include "index.h"
 #include "type.hpp"
 
@@ -93,11 +94,11 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
             grid.clear(sourceHex);
             int resultValue = targetChip.merge(sourceChip);
             // World book keeping
-            if (resultValue > maxValue) {
-                maxValue = resultValue;
+            if (resultValue > meta.maxValue) {
+                meta.maxValue = resultValue;
             }
             chipsIdxsMoving.push_back(sourceKey);
-            state = State::World::PROCESS;
+            meta.state = State::World::PROCESS;
 
             return;
         } else if (grid.vacant(lastTargetHex)) {
@@ -121,7 +122,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
     sourceChip.move(targetHex, grid.getPosition(targetHex));
     // World book keeping
     chipsIdxsMoving.push_back(sourceKey);
-    state = State::World::PROCESS;
+    meta.state = State::World::PROCESS;
 }
 
 void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHex) {
@@ -181,16 +182,16 @@ void World::renderHold() const {
 }
 
 WorldState World::updateMain(InputEvent, Action::Surface){
-    return { .reachedGoal = false };
+    return meta;
 }
 
 WorldState World::updateHold(InputEvent inputEvent, Action::Surface action){
-    return { .reachedGoal = false };
+    return meta;
 }
 
 WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
-    if (state == State::World::PROCESS) {
+    if (meta.state == State::World::PROCESS) {
         std::erase_if(chipsIdxsMoving, [this](int idx){
             Chip& chip = chips[idx];
             State::Chip chipState = chip.update();
@@ -199,13 +200,21 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
         });
 
         if (chipsIdxsMoving.empty()) {
-            state = State::World::WAIT;
+            meta.state = State::World::WAIT;
             for (auto& chip : chips) {
                 chip.clear();
             }
-            spawnChip(grid.findRandom(), getRandomValue());
+
+            Hex::Point nextHex = grid.findRandom();
+            if (nextHex == Hex::Absurd) {
+                meta.gridlock = true;
+            } else {
+                spawnChip(nextHex, getRandomValue());
+            }
         }
-    } else if (state == State::World::WAIT) {        
+    }
+
+    if (meta.state == State::World::WAIT) {        
         if (inputEvent.id == Event::Input::MOVE_UP || action == Action::Surface::MOVE_UP ) {
                 // TraceLog(LOG_INFO, "MOVE UP");
                 updateMove(Hex::N);
@@ -231,13 +240,13 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
         }
     }
 
-    return { .reachedGoal = false };
+    return meta;
 }
 
 int World::getRandomValue() const {
     int nextValue = 2;
     int chance = 0;
-    switch (maxValue) {
+    switch (meta.maxValue) {
     case 32:
         chance = GetRandomValue(0, 4);
         if (chance == 4) {

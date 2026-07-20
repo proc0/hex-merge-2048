@@ -22,7 +22,8 @@ namespace Hex {
         }
     };
 
-    static inline constexpr Point Origin{ 0, 0, 0 };
+    static inline constexpr Point Origin{ 0,  0,  0 };
+    static inline constexpr Point Absurd{-1, -1, -1 };
 
     class Basis {
         // strong wrapper with implicit conversion

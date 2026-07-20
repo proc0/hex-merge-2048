@@ -99,7 +99,7 @@ bool Grid::walkEdge(Hex::Basis dir, Hex::Point hex) const {
 }
 
 Hex::Point Grid::findAny() const {
-	Hex::Point result = Hex::Point(-1, -1, -1);
+	Hex::Point result = Hex::Absurd;
 
 	for (auto &[hex, state] : map) {
 		if (state.key == 0) {
@@ -112,16 +112,16 @@ Hex::Point Grid::findAny() const {
 }
 
 Hex::Point Grid::findCenter() const {
-	Hex::Point result = Hex::Point(-1, -1, -1);
+	Hex::Point result = Hex::Absurd;
 
 	for (auto &[hex, state] : map) {
-		if (abs(hex.q) + abs(hex.r) + abs(hex.s) <= 3 && state.key == 0) {
+		if (abs(hex.q) + abs(hex.r) + abs(hex.s) <= extent && state.key == 0) {
 			result = hex;
 			break;
 		}
 	}
 
-	if (result.q == -1 && result.r == -1 && result.s == -1) {
+	if (result == Hex::Absurd) {
 		result = findAny();
 	}
 
@@ -129,38 +129,32 @@ Hex::Point Grid::findCenter() const {
 }
 
 Hex::Point Grid::findRandom() const {
-	Hex::Point result = Hex::Point(-1, -1, -1);
-	int hq = GetRandomValue(-3, 3);
-	int hr = GetRandomValue(-3, 3);
-	int hs = -hq - hr;
+	Hex::Point candidate = Hex::Absurd;
 
-	Hex::Point candidate = Hex::Point(hq, hr, hs);
-	bool isOccupied = true;
-	bool verified = false;
-	if (inside(candidate)) {
-		isOccupied = map.at(candidate).key > 0;
-	}
+	bool found = false;
 	int maxRetry = 15;
-	while (maxRetry > 0 && isOccupied) {
-		int hq = GetRandomValue(-3, 3);
-		int hr = GetRandomValue(-3, 3);
+	while (maxRetry > 0) {
+		int hq = GetRandomValue(-extent, extent);
+		int hr = GetRandomValue(-extent, extent);
 		int hs = -hq - hr;
+		// satisfy hex grid constraint
+        if (hq + hr + hs != 0) continue;
 
 		candidate = Hex::Point(hq, hr, hs);
-		if (inside(candidate)) {
-			isOccupied = map.at(candidate).key > 0;
-			verified = !isOccupied;
+		// found random hex if it is inside and not occupied
+		if (inside(candidate) && map.at(candidate).key == 0) {
+			found = true;
+			break;
 		}
+
 		maxRetry--;
 	}
 
-	if (verified) {
-		result = candidate;
-	} else {
-		result = findCenter();
+	if (!found) {
+		candidate = findCenter();
 	}
 
-	return result;
+	return candidate;
 }
 
 

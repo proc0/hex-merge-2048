@@ -15,10 +15,9 @@ class World : public Layer {
     std::vector<Chip> chips;
     std::vector<int> chipsIdxsMoving;
 
-    int maxValue;
     int attempts;
 
-    State::World state = State::World::WAIT;
+    WorldState meta;
 
 public:
     World(Window& window): window(window) {}
@@ -40,7 +39,7 @@ public:
     void updateMove(Hex::Cardinal);
     void updateChip(Hex::Basis moveStep, Hex::Point source);
     void searchGrid(Hex::Basis moveStep, Hex::Basis searchStep, Hex::Point source);
-    WorldState updateUnit(InputEvent, Action::Surface) { return { .reachedGoal = false }; };
+    WorldState updateUnit(InputEvent, Action::Surface) { return defaultWorldState; };
     WorldState updateMain(InputEvent, Action::Surface);
     WorldState updateGame(InputEvent, Action::Surface);
     WorldState updateHold(InputEvent, Action::Surface);

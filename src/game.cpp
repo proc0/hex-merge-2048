@@ -9,13 +9,12 @@ void Game::load() {
 }
 
 void Game::start() {
-    state = State::Game::PLAY;
-    gameState.state = state;
+    meta.state = State::Game::PLAY;
     gameTimerId = window.timer.startWatch();
 }
 
 void Game::reset() {
-    gameState.score = 0;
+    meta.score = 0;
 }
 
 void Game::renderMain() const {
@@ -33,39 +32,28 @@ void Game::renderTitle() const {
 }
 
 GameState Game::updateMain(InputEvent, WorldState){
-    return gameState;
+    return meta;
 }
 
 GameState Game::updateGame(InputEvent inputEvent, WorldState worldState){
-    if (state != State::Game::PLAY) return gameState;
+    if (meta.state != State::Game::PLAY) return meta;
     
     if (paused) {
-        state = State::Game::PAUSE;
-        gameState.state = state;
-        return gameState;
-    }
-
-    if (worldState.reachedGoal) {
-        gameState.score++;
-    }
-
-    if (worldState.failedGoal) {
-        gameState.score--;
+        meta.state = State::Game::PAUSE;
+        return meta;
     }
  
-    if (gameState.score > 2) {
-        state = State::Game::WIN;
-        gameState.state = state;
+    if (worldState.maxValue == 2048) {
         window.timer.stopWatch(gameTimerId);
-        gameState.totalTimeId = gameTimerId;
-    } else if (gameState.score < -2) {
-        state = State::Game::OVER;
-        gameState.state = state;
+        meta.state = State::Game::WIN;
+        meta.totalTimeId = gameTimerId;
+    } else if (worldState.gridlock) {
         window.timer.stopWatch(gameTimerId);
-        gameState.totalTimeId = gameTimerId;
+        meta.state = State::Game::OVER;
+        meta.totalTimeId = gameTimerId;
     }
 
-    return gameState;
+    return meta;
 }
 
 void Game::updateTitle() {
