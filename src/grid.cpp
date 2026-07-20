@@ -98,6 +98,72 @@ bool Grid::walkEdge(Hex::Basis dir, Hex::Point hex) const {
 	return false;
 }
 
+Hex::Point Grid::findAny() const {
+	Hex::Point result = Hex::Point(-1, -1, -1);
+
+	for (auto &[hex, state] : map) {
+		if (state.key == 0) {
+			result = hex;
+			break;
+		}
+	}
+
+	return result;
+}
+
+Hex::Point Grid::findCenter() const {
+	Hex::Point result = Hex::Point(-1, -1, -1);
+
+	for (auto &[hex, state] : map) {
+		if (abs(hex.q) + abs(hex.r) + abs(hex.s) <= 3 && state.key == 0) {
+			result = hex;
+			break;
+		}
+	}
+
+	if (result.q == -1 && result.r == -1 && result.s == -1) {
+		result = findAny();
+	}
+
+	return result;
+}
+
+Hex::Point Grid::findRandom() const {
+	Hex::Point result = Hex::Point(-1, -1, -1);
+	int hq = GetRandomValue(-3, 3);
+	int hr = GetRandomValue(-3, 3);
+	int hs = -hq - hr;
+
+	Hex::Point candidate = Hex::Point(hq, hr, hs);
+	bool isOccupied = true;
+	bool verified = false;
+	if (inside(candidate)) {
+		isOccupied = map.at(candidate).key > 0;
+	}
+	int maxRetry = 15;
+	while (maxRetry > 0 && isOccupied) {
+		int hq = GetRandomValue(-3, 3);
+		int hr = GetRandomValue(-3, 3);
+		int hs = -hq - hr;
+
+		candidate = Hex::Point(hq, hr, hs);
+		if (inside(candidate)) {
+			isOccupied = map.at(candidate).key > 0;
+			verified = !isOccupied;
+		}
+		maxRetry--;
+	}
+
+	if (verified) {
+		result = candidate;
+	} else {
+		result = findCenter();
+	}
+
+	return result;
+}
+
+
 bool Grid::vacant(Hex::Point hex) const {
 	return map.at(hex).key == 0;
 }

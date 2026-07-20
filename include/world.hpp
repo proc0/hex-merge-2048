@@ -13,9 +13,9 @@ class World : public Layer {
     Grid grid{window};
 
     std::vector<Chip> chips;
-    std::vector<int> chipsIdxsReady;
     std::vector<int> chipsIdxsMoving;
 
+    int maxValue;
     int attempts;
 
     State::World state = State::World::WAIT;
@@ -45,6 +45,7 @@ public:
     WorldState updateGame(InputEvent, Action::Surface);
     WorldState updateHold(InputEvent, Action::Surface);
     
+    int getRandomValue() const;
     void resize(int width, int height) override;
     void transition(State::App, State::Screen);
     bool arrested();

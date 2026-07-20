@@ -7,17 +7,17 @@
 
 void World::load(){
     splat = LoadSound(PATH_ASSET(URI_SOUND_SPLAT));
-    grid.load();
 
+    grid.load();
     window.enlist(&grid);
 
     // reserve hex numbers plus shim chip
     int chipsCapacity = grid.size() + 1;
     chips.reserve(chipsCapacity);
-    chipsIdxsReady.reserve(chipsCapacity-1);
     chipsIdxsMoving.reserve(chipsCapacity-1);
     // shim chip
     chips.emplace_back(Hex::Point(0, 0, 0), Vector2({}), 0, 0);
+
     // createChip(Hex::Direction[DIR_UP_L], 6);
     // Hex::State hex = grid.getState(Hex::Direction[DIR_UP_L]);
     // Chip::State chip = chips.at(hex.key).getState();
@@ -36,8 +36,7 @@ void World::load(){
 }
 
 int World::spawnChip(Hex::Point hex, int value) {
-    // if (!grid.within(hex)) return TraceLog(LOG_ERROR, "Bad hex for spawning sigil!");
-    int key = -1;
+    int key = 0;
     if (static_cast<int>(chips.size()) > grid.size()+1) {
         key = respawnChip(hex, value);
     } else {
@@ -51,7 +50,6 @@ int World::createChip(Hex::Point hex, int value) {
     int key = static_cast<int>(chips.size());
     grid.place(hex, key);
     chips.emplace_back(hex, grid.getPosition(hex), key, value, true);
-    chipsIdxsReady.push_back(key);
 
     return key;
 }
@@ -67,7 +65,6 @@ int World::respawnChip(Hex::Point hex, int value) {
 
             grid.place(hex, i);
             chip.place(hex, grid.getPosition(hex), value);
-            chipsIdxsReady.push_back(i);
             key = i;
             break;
         }
@@ -79,7 +76,8 @@ int World::respawnChip(Hex::Point hex, int value) {
 void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
     // source hex has a chip, check one hex forward
     Hex::Point targetHex = grid.walk(forward, sourceHex);
-    // no movement possible for chip
+    // grid.walk will return source hex if no movement possible
+    // if no movement possible for chip, end walk
     if (targetHex == sourceHex) {
         return;
     }
@@ -87,7 +85,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
     // save a backup slot for backtracking if target is occupied
     Hex::Point lastTargetHex = targetHex;
     while (!grid.walkEdge(forward, targetHex) && grid.vacant(targetHex)) {
-        if (arrested() || targetHex == sourceHex) break;
+        if (arrested()) break;
 
         lastTargetHex = targetHex;
         targetHex = grid.walk(forward, targetHex);
@@ -102,23 +100,33 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
         Chip& targetChip = chips.at(targetKey);
         // merge chips
         if (targetChip == sourceChip) {
-            TraceLog(LOG_INFO, "MERGING %d and %d", targetKey, sourceKey);
+            // TraceLog(LOG_INFO, "MERGING %d and %d", targetKey, sourceKey);
             grid.clear(sourceHex);
             targetChip.merge(sourceChip);
 
+            int resultValue = targetChip.getValue();
+            if (resultValue > maxValue) {
+                maxValue = resultValue;
+            }
             chipsIdxsMoving.push_back(sourceKey);
             state = State::World::PROCESS;
 
             return;
         } else if (grid.vacant(lastTargetHex)) {
             // backtrack to last empty hex
+            // WARNING: this must continue to after conditional!
             targetHex = lastTargetHex;
+        } else {
+            // WARNING: this return must be in the else clause
+            // of this conditional to allow above conditional
+            // to continue and reuse the chip to empty hex move
+            return;
         }
-
     } 
 
-    TraceLog(LOG_INFO, "ONLY MOVING %d", sourceKey);
     // move chip to the next empty hex
+    // target hex can be either original targetHex
+    // from forward search, or the second to last (lastTargetHex)
     grid.clear(sourceHex);
     grid.place(targetHex, sourceKey);
     // update screen position and hex reference on chip
@@ -132,16 +140,14 @@ void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHe
     Hex::Point sideHex = grid.walk(sideward, midHex);
     while (!grid.walkEdge(sideward, sideHex)) {
         if (arrested()) break;
-        TraceLog(LOG_INFO, "SIDE HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
+        // TraceLog(LOG_INFO, "SIDE HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
         if (grid.occupied(sideHex)){
-            TraceLog(LOG_INFO, "GRID IS OCCUPIED");
             updateChip(forward, sideHex);
         }
         sideHex = grid.walk(sideward, sideHex);
     }
-    TraceLog(LOG_INFO, "END SIDE HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
+    // TraceLog(LOG_INFO, "END SIDE HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
     if (grid.occupied(sideHex)){
-        TraceLog(LOG_INFO, "GRID IS OCCUPIED 2");
         updateChip(forward, sideHex);
     } 
 }
@@ -160,7 +166,7 @@ void World::updateMove(Hex::Cardinal needle) {
     Hex::Point midHex = grid.corner(forward);
     while (!grid.walkEdge(backward, midHex)) {
         if (arrested()) break;
-        TraceLog(LOG_INFO, "MID HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
+        // TraceLog(LOG_INFO, "MID HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
         if (grid.occupied(midHex)){
             updateChip(forward, midHex);
         }
@@ -170,12 +176,12 @@ void World::updateMove(Hex::Cardinal needle) {
         // walk the grid backward
         midHex = grid.walk(backward, midHex);
     }
-    TraceLog(LOG_INFO, "END HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
+    // TraceLog(LOG_INFO, "END HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
     if (grid.occupied(midHex)){
         updateChip(forward, midHex);
     }
 
-    TraceLog(LOG_INFO, "----------- END TURN -----------");
+    // TraceLog(LOG_INFO, "----------- END TURN -----------");
 }
 
 void World::renderHold() const {
@@ -198,49 +204,86 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
     if (state == State::World::PROCESS) {
         std::erase_if(chipsIdxsMoving, [this](int idx){
             Chip& chip = chips[idx];
-            // Vector2 chipPos = chip.getPosition();
             State::Chip chipState = chip.update();
-            // if (chipState == State::Chip::MOVING) {
-            //     // TraceLog(LOG_INFO, "MOVING CHIP %d (%d)", idx, chip.getValue());
-            //     state = State::World::PROCESS;
-            // }
 
             return chipState == State::Chip::READY;
         });
 
         if (chipsIdxsMoving.empty()) {
             state = State::World::WAIT;
+
+            spawnChip(grid.findRandom(), getRandomValue());
         }
-        // for (auto& chip : chips) {
-        //     chip.update();
-        // }
     } else if (state == State::World::WAIT) {        
         if (inputEvent.id == Event::Input::MOVE_UP || action == Action::Surface::MOVE_UP ) {
-                TraceLog(LOG_INFO, "MOVE UP");
+                // TraceLog(LOG_INFO, "MOVE UP");
                 updateMove(Hex::N);
         } else if (inputEvent.id == Event::Input::MOVE_UP_RIGHT || action == Action::Surface::MOVE_UP_RIGHT ) {
-                TraceLog(LOG_INFO, "MOVE UP RIGHT");
+                // TraceLog(LOG_INFO, "MOVE UP RIGHT");
                 updateMove(Hex::NE);
 
         } else if (inputEvent.id == Event::Input::MOVE_RIGHT || action == Action::Surface::MOVE_RIGHT ) {
-                TraceLog(LOG_INFO, "MOVE RIGHT");
+                // TraceLog(LOG_INFO, "MOVE RIGHT");
                 updateMove(Hex::SE);
 
         } else if (inputEvent.id == Event::Input::MOVE_DOWN || action == Action::Surface::MOVE_DOWN ) {
-                TraceLog(LOG_INFO, "MOVE DOWN");
+                // TraceLog(LOG_INFO, "MOVE DOWN");
                 updateMove(Hex::S);
 
         } else if (inputEvent.id == Event::Input::MOVE_LEFT || action == Action::Surface::MOVE_LEFT ) {
-                TraceLog(LOG_INFO, "MOVE LEFT");
+                // TraceLog(LOG_INFO, "MOVE LEFT");
                 updateMove(Hex::SW);
 
         } else if (inputEvent.id == Event::Input::MOVE_UP_LEFT || action == Action::Surface::MOVE_UP_LEFT ) {
-                TraceLog(LOG_INFO, "MOVE UP LEFT");
+                // TraceLog(LOG_INFO, "MOVE UP LEFT");
                 updateMove(Hex::NW);
         }
     }
 
     return { .reachedGoal = false };
+}
+
+int World::getRandomValue() const {
+    int nextValue = 2;
+    int chance = 0;
+    switch (maxValue) {
+    case 32:
+        chance = GetRandomValue(0, 4);
+        if (chance == 4) {
+            nextValue = 4;
+        } else {
+            nextValue = 2;
+        }
+        break;
+    case 128:
+        chance = GetRandomValue(0, 6);
+        if (chance == 6) {
+            nextValue = 8;
+        }
+        else if (chance == 3 || chance == 4 || chance == 5) {
+            nextValue = 4;
+        }
+        else {
+            nextValue = 2;
+        }
+        break;
+    case 512:
+        chance = GetRandomValue(0, 6);
+        if (chance == 6) {
+            nextValue = 16;
+        } else if (chance == 5 || chance == 4) {
+            nextValue = 8;
+        } else if (chance == 3 || chance == 2) {
+            nextValue = 4;
+        } else {
+            nextValue = 2;
+        }
+        break;
+    default:
+        nextValue = 2;
+    }
+
+    return nextValue;
 }
 
 void World::renderMain() const {

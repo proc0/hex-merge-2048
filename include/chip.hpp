@@ -53,7 +53,7 @@ public:
 		id(id_),
 		value(value),
 		enabled(active) {
-    		TraceLog(LOG_INFO, "CREATING CHIP %d: %f %f", value, position.x, position.y);
+    		// TraceLog(LOG_INFO, "CREATING CHIP %d: %f %f", value, position.x, position.y);
 			load(position);
 		}
 	~Chip() = default;
