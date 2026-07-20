@@ -11,7 +11,6 @@ struct Matrix2x2Pair {
     const float b0, b1, b2, b3;
 };
 
-// TODO: separate into hex.hpp
 namespace Hex {
     struct Point { 
         int q, r, s; // cube coordinates storage

@@ -79,13 +79,13 @@ int World::respawnChip(Hex::Point hex, int value) {
 void World::updateChip(Hex::Basis forward, Hex::Point chipHex) {
 
     Hex::Point targetHex = grid.walk(forward, chipHex);
-    if (!grid.vacant(targetHex)) {
-        return;
-    }
+
+    if (grid.occupied(targetHex)) return;
 
     Hex::Point lastTargetHex = targetHex;
     while (!grid.walkEdge(forward, targetHex) && grid.vacant(targetHex)) {
         if (arrested()) break;
+
         lastTargetHex = targetHex;
         targetHex = grid.walk(forward, targetHex);
     }
@@ -93,7 +93,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point chipHex) {
     int sourceKey = grid.getState(chipHex).key;
     Chip& sourceChip = chips.at(sourceKey);
 
-    if (!grid.vacant(targetHex)) {
+    if (grid.occupied(targetHex)) {
         int targetKey = grid.getState(targetHex).key;
         Chip& targetChip = chips.at(targetKey);
         // TODO: right an isEqual on Chip
@@ -122,20 +122,20 @@ void World::updateChip(Hex::Basis forward, Hex::Point chipHex) {
     sourceChip.setCurrentHex(targetHex);
 }
 
-void World::searchGrid(Hex::Basis forward, Hex::Basis side, Hex::Point midHex) {
-    Hex::Point sideHex = grid.walk(side, midHex);
+void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHex) {
+    Hex::Point sideHex = grid.walk(sideward, midHex);
 
-    while (!grid.walkEdge(side, sideHex)) {
+    while (!grid.walkEdge(sideward, sideHex)) {
         if (arrested()) break;
         // TraceLog(LOG_INFO, "HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
-        if (!grid.vacant(sideHex)){
+        if (grid.occupied(sideHex)){
             updateChip(forward, sideHex);
         }
-        sideHex = grid.walk(side, sideHex);
+        sideHex = grid.walk(sideward, sideHex);
     }
 
     // TraceLog(LOG_INFO, "HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
-    if (!grid.vacant(sideHex)){
+    if (grid.occupied(sideHex)){
         updateChip(forward, sideHex);
     } 
 
@@ -146,8 +146,6 @@ void World::updateMove(Hex::Cardinal needle) {
     Hex::Basis forward = Hex::Direction[needle];
     // direction of sweep walk through center hex column
     Hex::Basis backward = Hex::Reverse[needle];
-    // TODO: why cant I use [dir]?
-    // Hex::Cardinal oppositeDir = Hex::Opposite[needle];
     // direction of side flank sweeps as we are stepping back
     Hex::Basis leftward = Hex::RotateCounterwise2[needle];
     Hex::Basis rightward = Hex::RotateClockwise2[needle];
@@ -157,9 +155,8 @@ void World::updateMove(Hex::Cardinal needle) {
     Hex::Point midHex = grid.corner(forward);
     while (!grid.walkEdge(backward, midHex)) {
         if (arrested()) break;
-
-        TraceLog(LOG_INFO, "HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
-        if (!grid.vacant(midHex)){
+        // TraceLog(LOG_INFO, "HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
+        if (grid.occupied(midHex)){
             updateChip(forward, midHex);
         }
         searchGrid(forward, rightward, midHex);
@@ -168,8 +165,8 @@ void World::updateMove(Hex::Cardinal needle) {
         midHex = grid.walk(backward, midHex);
     }
 
-    TraceLog(LOG_INFO, "END HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
-    if (!grid.vacant(midHex)){
+    // TraceLog(LOG_INFO, "END HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
+    if (grid.occupied(midHex)){
         updateChip(forward, midHex);
     }
     // std::erase_if(chipsIdxsReady, [this, dir](int idx){
@@ -230,15 +227,6 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
             TraceLog(LOG_INFO, "MOVE UP LEFT");
             updateMove(Hex::NW);
     }
-
-    // if (dummyGoalTracker >= 3) {
-    //     PlaySound(splat);
-    //     dummyGoalTracker = 0;
-    //     return { .reachedGoal = true };
-    // } else if (dummyGoalTracker < -2) {
-    //     dummyGoalTracker = 0;
-    //     return { .failedGoal = true };
-    // }
 
     return { .reachedGoal = false };
 }

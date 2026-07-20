@@ -55,32 +55,29 @@ Vector2 Grid::getUnit() const {
 void Grid::place(Hex::Point point, int key) {
 	// TODO: change to map[hex] and/or add DEBUG guard
 	HexState& state = map.at(point);
-	// state.position = project(point);
 	state.key = key;
 }
 
 void Grid::clear(Hex::Point point) {
 	// TODO: change to map[hex] and/or add DEBUG guard
 	HexState& state = map.at(point);
-	// state.position = project(point);
 	state.key = 0;
 }
 
 Hex::Point Grid::walk(Hex::Basis direction, Hex::Point departure) const {
-	// Hex::Point destination = Hex::add(departure, direction);
 	Hex::Point destination = departure + direction;
 
-	return within(destination) ? destination : departure;
+	return inside(destination) ? destination : departure;
 }
 
 // get a corner based on unit direction hex
 Hex::Point Grid::corner(Hex::Point source) const {
 	Hex::Point target = Hex::multiply(source, extent);
 
-	return within(target) ? target : source;
+	return inside(target) ? target : source;
 }
 
-bool Grid::within(Hex::Point point) const {
+bool Grid::inside(Hex::Point point) const {
 	return abs(point.q) <= extent && abs(point.r) <= extent && abs(point.s) <= extent;
 }
 
@@ -105,7 +102,7 @@ bool Grid::vacant(Hex::Point hex) const {
 	return map.at(hex).key == 0;
 }
 
-bool Grid::filled(Hex::Point hex) const {
+bool Grid::occupied(Hex::Point hex) const {
 	return map.at(hex).key > 0;
 }
 

@@ -53,9 +53,9 @@ public:
 
     bool walkEdge(Hex::Basis dir, Hex::Point hex) const;
     bool vacant(Hex::Point) const;
-    bool filled(Hex::Point) const;
+    bool occupied(Hex::Point) const;
+    bool inside(Hex::Point point) const;
 
     int size() const;
-    bool within(Hex::Point point) const;
     void resize(int width, int height) override;
 };
