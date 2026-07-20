@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include "raymath.h"
+#include "type.hpp"
 
 void Chip::load(Vector2 position) {
 	setPosition(position);
@@ -27,6 +28,33 @@ void Chip::reload(Vector2 position, Vector2 scale, float size, float rotation, C
 // 	enable();
 // }
 
+State::Chip Chip::update() {
+	// bool stillMoving = state == State::Chip::MOVING;
+	for (int i = 0; i < PROPS_SIZE; ++i) {
+		int& currentFrame = frame[i];
+		if (currentFrame > 0) {
+			// float progress = ANIM_FRAMES[i];
+			current[i] = Lerp(source[i], target[i], ANIM_FRAMES[currentFrame]);
+			currentFrame++;
+			if (currentFrame >= ANIM_FRAMES.size()-2) {
+				currentFrame = 0;
+				framePropsActive--;
+				// current[i] = target[i];
+			}
+		}
+	}
+
+	if (state == State::Chip::MOVING && framePropsActive <= 0) {
+		state = State::Chip::READY;
+		if (merged) {
+			merged = false;
+			enabled = false;
+		}
+	}
+
+	return state;
+}
+
 void Chip::place(Hex::Point hex, Vector2 position, int val) {
 	setPosition(position);
 	currentHex = hex;
@@ -48,37 +76,14 @@ void Chip::move(Hex::Point hex, Vector2 position) {
 
 	frame[POSX] = 1;
 	frame[POSY] = 1;
+
+	framePropsActive = 2;
 }
 
 void Chip::merge(Chip& other) {
-	value += other.value;
-	other.move(currentHex, getPosition());
+	this->value += other.value;
+	other.move(this->currentHex, this->getTargetPosition());
 	other.merged = true;
-}
-
-State::Chip Chip::update() {
-
-	for (int i = 0; i < PROPS_SIZE; ++i) {
-		int& currentFrame = frame[i];
-		if (currentFrame > 0) {
-			// float progress = ANIM_FRAMES[i];
-			current[i] = Lerp(source[i], target[i], ANIM_FRAMES[currentFrame]);
-			currentFrame++;
-			if (currentFrame >= ANIM_FRAMES.size()-2) {
-				currentFrame = 0;
-				// current[i] = target[i];
-				state = State::Chip::READY;
-			}
-		}
-	}
-
-	// if (state == State::Chip::READY && merged) {
-	// 	TraceLog(LOG_INFO, "DISABLING CHIP %d (%d)", id, value);
-	// 	merged = false;
-	// 	enabled = false;
-	// }
-
-	return state;
 }
 
 Hex::Point Chip::getCurrentHex() const {
@@ -87,6 +92,10 @@ Hex::Point Chip::getCurrentHex() const {
 
 Vector2 Chip::getPosition() const {
 	return { current[POSX], current[POSY] };
+}
+
+Vector2 Chip::getTargetPosition() const {
+	return { target[POSX], target[POSY] };
 }
 
 int Chip::getId() const {

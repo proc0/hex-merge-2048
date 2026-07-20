@@ -80,16 +80,19 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
     // source hex has a chip, check one hex forward
     Hex::Point targetHex = grid.walk(forward, sourceHex);
     // no movement possible for chip
-    if (grid.occupied(targetHex)) return;
+    if (targetHex == sourceHex) {
+        return;
+    }
     // start walking forward in the direction of player input
     // save a backup slot for backtracking if target is occupied
     Hex::Point lastTargetHex = targetHex;
     while (!grid.walkEdge(forward, targetHex) && grid.vacant(targetHex)) {
-        if (arrested()) break;
+        if (arrested() || targetHex == sourceHex) break;
 
         lastTargetHex = targetHex;
         targetHex = grid.walk(forward, targetHex);
     }
+
     // target hex is either the edge or occupied
     int sourceKey = grid.getState(sourceHex).key;
     Chip& sourceChip = chips.at(sourceKey);
@@ -99,23 +102,22 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
         Chip& targetChip = chips.at(targetKey);
         // merge chips
         if (targetChip == sourceChip) {
+            TraceLog(LOG_INFO, "MERGING %d and %d", targetKey, sourceKey);
             grid.clear(sourceHex);
             targetChip.merge(sourceChip);
+
             chipsIdxsMoving.push_back(sourceKey);
             state = State::World::PROCESS;
-            // NOTE: needs to be disabled after animation
-            // sourceChip.disable();
-            // NOTE: might be needed for animations
-            // sourceChip.setPosition(grid.getPosition(targetHex));
-            // sourceChip.setCurrentHex(targetHex);
+
             return;
         } else if (grid.vacant(lastTargetHex)) {
             // backtrack to last empty hex
             targetHex = lastTargetHex;
-        } else {
-            return;
         }
+
     } 
+
+    TraceLog(LOG_INFO, "ONLY MOVING %d", sourceKey);
     // move chip to the next empty hex
     grid.clear(sourceHex);
     grid.place(targetHex, sourceKey);
@@ -123,8 +125,6 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
     sourceChip.move(targetHex, grid.getPosition(targetHex));
     chipsIdxsMoving.push_back(sourceKey);
     state = State::World::PROCESS;
-    // sourceChip.setPosition(grid.getPosition(targetHex));
-    // sourceChip.setCurrentHex(targetHex);
 }
 
 void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHex) {
@@ -132,14 +132,16 @@ void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHe
     Hex::Point sideHex = grid.walk(sideward, midHex);
     while (!grid.walkEdge(sideward, sideHex)) {
         if (arrested()) break;
-        // TraceLog(LOG_INFO, "HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
+        TraceLog(LOG_INFO, "SIDE HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
         if (grid.occupied(sideHex)){
+            TraceLog(LOG_INFO, "GRID IS OCCUPIED");
             updateChip(forward, sideHex);
         }
         sideHex = grid.walk(sideward, sideHex);
     }
-    // TraceLog(LOG_INFO, "HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
+    TraceLog(LOG_INFO, "END SIDE HEX WALK %d %d %d", sideHex.q, sideHex.r, sideHex.s);
     if (grid.occupied(sideHex)){
+        TraceLog(LOG_INFO, "GRID IS OCCUPIED 2");
         updateChip(forward, sideHex);
     } 
 }
@@ -158,7 +160,7 @@ void World::updateMove(Hex::Cardinal needle) {
     Hex::Point midHex = grid.corner(forward);
     while (!grid.walkEdge(backward, midHex)) {
         if (arrested()) break;
-        // TraceLog(LOG_INFO, "HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
+        TraceLog(LOG_INFO, "MID HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
         if (grid.occupied(midHex)){
             updateChip(forward, midHex);
         }
@@ -168,25 +170,11 @@ void World::updateMove(Hex::Cardinal needle) {
         // walk the grid backward
         midHex = grid.walk(backward, midHex);
     }
-    // TraceLog(LOG_INFO, "END HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
+    TraceLog(LOG_INFO, "END HEX WALK %d %d %d", midHex.q, midHex.r, midHex.s);
     if (grid.occupied(midHex)){
         updateChip(forward, midHex);
     }
-    // std::erase_if(chipsIdxsReady, [this, dir](int idx){
-    //     Chip& chip = chips[idx];
-    //     Vector2 chipPos = chip.getPosition();
-    //     TraceLog(LOG_INFO, "READY CHIP %d (%d) at %f %f", idx, chip.getValue(), chipPos.x, chipPos.y);
-    //     chipsIdxsMoving.push_back(idx);
-    //     return dir == Hex::UP;
-    // });
-    // std::erase_if(chipsIdxsMoving, [this, dir](int idx){
-    //     Chip& chip = chips[idx];
-    //     // Vector2 chipPos = chip.getPosition();
-    //     TraceLog(LOG_INFO, "MOVING CHIP %d (%d)", idx, chip.getValue());
 
-    //     return dir == Hex::DN;
-    // });
-    
     TraceLog(LOG_INFO, "----------- END TURN -----------");
 }
 
@@ -208,18 +196,21 @@ WorldState World::updateHold(InputEvent inputEvent, Action::Surface action){
 WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
     if (state == State::World::PROCESS) {
-        state = State::World::WAIT;
         std::erase_if(chipsIdxsMoving, [this](int idx){
             Chip& chip = chips[idx];
             // Vector2 chipPos = chip.getPosition();
             State::Chip chipState = chip.update();
-            if (chipState == State::Chip::MOVING) {
-                // TraceLog(LOG_INFO, "MOVING CHIP %d (%d)", idx, chip.getValue());
-                state = State::World::PROCESS;
-            }
+            // if (chipState == State::Chip::MOVING) {
+            //     // TraceLog(LOG_INFO, "MOVING CHIP %d (%d)", idx, chip.getValue());
+            //     state = State::World::PROCESS;
+            // }
 
             return chipState == State::Chip::READY;
         });
+
+        if (chipsIdxsMoving.empty()) {
+            state = State::World::WAIT;
+        }
         // for (auto& chip : chips) {
         //     chip.update();
         // }

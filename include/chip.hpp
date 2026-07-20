@@ -26,10 +26,11 @@ class Chip {
 	const int id;
 	int value = 0;
 	int size = HEX_SIZE;
+	int framePropsActive = 0;
 
 	bool enabled;
-	bool merged;
-	
+	bool merged = false;
+
 	enum {
 		POSX,
 		POSY,
@@ -69,6 +70,7 @@ public:
 	int getValue() const;
 	Hex::Point getCurrentHex() const;
 	Vector2 getPosition() const;
+	Vector2 getTargetPosition() const;
 
 	void addValue(int);
 	void setValue(int);
