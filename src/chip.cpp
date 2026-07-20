@@ -28,6 +28,10 @@ void Chip::reload(Vector2 position, Vector2 scale, float size, float rotation, C
 // 	enable();
 // }
 
+void Chip::clear() {
+	absorbed = false;
+}
+
 State::Chip Chip::update() {
 	// bool stillMoving = state == State::Chip::MOVING;
 	for (int i = 0; i < PROPS_SIZE; ++i) {
@@ -84,6 +88,11 @@ void Chip::merge(Chip& other) {
 	this->value += other.value;
 	other.move(this->currentHex, this->getTargetPosition());
 	other.merged = true;
+	absorbed = true;
+}
+
+bool Chip::hasAbsorbed() const {
+	return absorbed;
 }
 
 Hex::Point Chip::getCurrentHex() const {

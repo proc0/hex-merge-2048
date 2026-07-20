@@ -30,6 +30,7 @@ class Chip {
 
 	bool enabled;
 	bool merged = false;
+	bool absorbed = false;
 
 	enum {
 		POSX,
@@ -65,12 +66,14 @@ public:
 	void load(Vector2 position);
 	void reload(Vector2 position, Vector2 scale, float size, float rotation, Color color);
 	// void reset(Hex::Point, Vector2 position, Vector2 scale, float rotation, int value);
-
+	void clear();
+	
 	int getId() const;
 	int getValue() const;
 	Hex::Point getCurrentHex() const;
 	Vector2 getPosition() const;
 	Vector2 getTargetPosition() const;
+	bool hasAbsorbed() const;
 
 	void addValue(int);
 	void setValue(int);

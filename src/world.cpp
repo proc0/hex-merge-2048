@@ -99,7 +99,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
         int targetKey = grid.getState(targetHex).key;
         Chip& targetChip = chips.at(targetKey);
         // merge chips
-        if (targetChip == sourceChip) {
+        if (targetChip == sourceChip && !targetChip.hasAbsorbed()) {
             // TraceLog(LOG_INFO, "MERGING %d and %d", targetKey, sourceKey);
             grid.clear(sourceHex);
             targetChip.merge(sourceChip);
@@ -211,7 +211,9 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
         if (chipsIdxsMoving.empty()) {
             state = State::World::WAIT;
-
+            for (auto& chip : chips) {
+                chip.clear();
+            }
             spawnChip(grid.findRandom(), getRandomValue());
         }
     } else if (state == State::World::WAIT) {        
