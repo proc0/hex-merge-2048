@@ -223,3 +223,7 @@ void Grid::resize(int width, int height) {
 
 	loadTarget();
 }
+
+void Grid::unload() {
+    UnloadRenderTexture(target);
+}

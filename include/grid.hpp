@@ -68,4 +68,5 @@ public:
     
     int size() const;
     void resize(int width, int height) override;
+    void unload();
 };

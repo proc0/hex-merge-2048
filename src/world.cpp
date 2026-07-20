@@ -207,9 +207,9 @@ void World::updateMove(Hex::Cardinal needle) {
 
 void World::renderHold() const {
     renderGame();
-    const char* pausedText = TextFormat("PAUSED");
-    float pausedTextWidth = MeasureText(pausedText, 200);
-    DrawText(pausedText, window.halfWidthf-pausedTextWidth*0.5f, window.halfHeightf-100.0f, 200, RAYWHITE);
+    // const char* pausedText = TextFormat("PAUSED");
+    // float pausedTextWidth = MeasureText(pausedText, 200);
+    // DrawText(pausedText, window.halfWidthf-pausedTextWidth*0.5f, window.halfHeightf-100.0f, 200, RAYWHITE);
 }
 
 WorldState World::updateMain(InputEvent, Action::Surface){
@@ -351,7 +351,13 @@ void World::renderGame() const {
     grid.render();
     
     for (auto& chip : chips) {
-        if (chip.active()) {
+        if (chip.active() && chip.hasAbsorbed()) {
+            chip.render();
+        }
+    }
+
+    for (auto& chip : chips) {
+        if (chip.active() && !chip.hasAbsorbed()) {
             chip.render();
         }
     }
@@ -401,5 +407,6 @@ void World::resize(int width, int height) {
 }
 
 void World::unload(){
+    grid.unload();
     UnloadSound(splat);
 }
