@@ -25,7 +25,7 @@ class Grid : public Layer {
 	Vector2 origin = { window.halfWidthf, window.halfHeightf };
 
 	Color colorHex = BEIGE;
-	Color colorLine = BLACK;
+	Color colorLine = DARKGRAY;
 
 	Vector2 unit = { HEX_SIZE, HEX_SIZE };
 	int extent = GRID_EXTENT;

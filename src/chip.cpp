@@ -185,7 +185,7 @@ void Chip::setColor(Color color) {
 
 void Chip::render() const {
 	DrawPoly({ current[POSX], current[POSY] }, 6, current[SIZE], current[ROT], { static_cast<unsigned char>(current[COL1]), static_cast<unsigned char>(current[COL2]), static_cast<unsigned char>(current[COL3]), static_cast<unsigned char>(current[COL4]) });
-	DrawPolyLines({ current[POSX], current[POSY] }, 6, current[SIZE], current[ROT], BLACK);
+	DrawPolyLinesEx({ current[POSX], current[POSY] }, 6, current[SIZE], current[ROT], 1.0f, BLACK);
 	
 	const char* sigilValue = TextFormat("%d", value);
 	float fontWidth = MeasureText(sigilValue, 42);
