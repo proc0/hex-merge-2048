@@ -58,7 +58,8 @@ public:
     bool vacant(Hex::Point) const;
     bool occupied(Hex::Point) const;
     bool inside(Hex::Point point) const;
-
+    bool filled() const;
+    
     int size() const;
     void resize(int width, int height) override;
 };

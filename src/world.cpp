@@ -172,6 +172,21 @@ void World::updateMove(Hex::Cardinal needle) {
     }
 
     // TraceLog(LOG_INFO, "----------- END TURN -----------");
+    if (meta.state == State::World::WAIT) {
+        if (grid.filled()) {
+            bool gridlock = true;
+            for (auto& chip : chips) {
+                if (!chipLocked(chip)) {
+                    gridlock = false;
+                }
+            }
+
+            if (gridlock) {
+                meta.state = State::World::LOCKED;
+                meta.gridlock = true;
+            }
+        }
+    }
 }
 
 void World::renderHold() const {
@@ -241,6 +256,31 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
     }
 
     return meta;
+}
+
+bool World::chipLocked(Chip& chip) const {
+    bool locked = true;
+
+    Hex::Point chipHex = chip.getCurrentHex();
+    for (auto& direction : Hex::BasisDirection) {
+        Hex::Point neighbor = chipHex + direction;
+        if (grid.inside(neighbor)) {
+            if (grid.vacant(neighbor)) {
+                locked = false;
+                break;
+            }
+
+            int key = grid.getState(neighbor).key;
+            const Chip& nextChip = chips.at(key);
+            bool canMerge = nextChip.getValue() == chip.getValue();
+            if (canMerge) {
+                locked = false;
+                break;
+            }
+        }
+    }
+
+    return locked;
 }
 
 int World::getRandomValue() const {

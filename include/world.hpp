@@ -44,6 +44,7 @@ public:
     WorldState updateGame(InputEvent, Action::Surface);
     WorldState updateHold(InputEvent, Action::Surface);
     
+    bool chipLocked(Chip&) const;
     int getRandomValue() const;
     void resize(int width, int height) override;
     void transition(State::App, State::Screen);

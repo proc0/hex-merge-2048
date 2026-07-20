@@ -166,6 +166,18 @@ bool Grid::occupied(Hex::Point hex) const {
 	return map.at(hex).key > 0;
 }
 
+bool Grid::filled() const {
+	bool isFull = true;
+	for (auto& [hex, state] : map) {
+		if (state.key == 0) {
+			isFull = false;
+			break;
+		}
+	}
+
+	return isFull;
+}
+
 int Grid::size() const {
 	return 1 + 6 * summation(extent);
 }
