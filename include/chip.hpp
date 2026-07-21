@@ -9,7 +9,7 @@
 #include <array>
 
 // WARNING: must equal the properties enum size
-#define PROPS_SIZE 10
+#define PROPS_SIZE 14
 
 class Chip {
 	std::array<float, PROPS_SIZE> source{0};
@@ -29,6 +29,11 @@ class Chip {
 	int size = HEX_SIZE;
 	int framePropsActive = 0;
 
+	float fontXOne = 0;
+	float fontXTwo = 0;
+	float fontXThree = 0;
+	float fontXFour = 0;
+
 	bool enabled;
 	bool merged = false;
 	bool absorbed = false;
@@ -36,14 +41,18 @@ class Chip {
 	enum {
 		POSX,
 		POSY,
-		SCALEX,
-		SCALEY,
 		SIZE,
+		SCALE,
+		FONTX,
+		FONTY,
+		FONTSIZE,
+		FONTSCALE,
+		BORDERSIZE,
 		ROT,
-		COL1,
-		COL2,
-		COL3,
-		COL4
+		COLR,
+		COLG,
+		COLB,
+		COLA
 	};
 
 	State::Chip state = State::Chip::READY;
@@ -66,7 +75,7 @@ public:
 	}
 
 	void load(Vector2 position);
-	void reload(Vector2 position, Vector2 scale, float size, float rotation, Color color);
+	// void reload(Vector2 position, float scale, float size, float fontSize, float rotation, Color color);
 	void reset();
 	
 	int getId() const;
@@ -74,14 +83,19 @@ public:
 	Hex::Point getCurrentHex() const;
 	Vector2 getPosition() const;
 	Vector2 getTargetPosition() const;
+	float getFontSize() const;
 	bool hasAbsorbed() const;
 
 	void addValue(int);
 	void setValue(int);
 	void setCurrentHex(Hex::Point);
 	void setPosition(Vector2);
-	void setScale(Vector2);
+	void setScale(float);
+	void setFontProps(Vector2 position, float fontSize, float fontScale);
+	void setFontTargetProps(Vector2 position, float fontSize, float fontScale);
+	void setFontSyncProps();
 	void setSize(float);
+	void setFontSize(float);
 	void setRotation(float);
 	void setColor(Color);
 	
@@ -90,8 +104,9 @@ public:
 	State::Chip update();
 	void sync();
 	int merge(Chip& other);
-	void place(Hex::Point, Vector2 position, int value);
+	void place(Hex::Point, Vector2 position, int val);
 	void move(Hex::Point, Vector2 position);
+	void updateFont(float fontSize);
 
 	void enable();
 	void disable();

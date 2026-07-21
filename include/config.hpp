@@ -18,3 +18,5 @@
 // Hex grid extent (half width/height) - 1 (center hex)
 // or number of onion hex layers around center hex
 #define GRID_EXTENT 2
+
+#define CHIP_FONT_SIZE 52

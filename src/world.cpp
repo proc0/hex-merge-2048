@@ -400,6 +400,7 @@ void World::resize(int width, int height) {
         // TODO: make consistent grid.unit (Vector2) and chip.size + chip.scale
         // should it be size*scale or a Vector2 size? Should be the same in both.
         chip.setSize(gridUnit.x);
+        chip.updateFont(window.scale(CHIP_FONT_SIZE));
     }
 }
 

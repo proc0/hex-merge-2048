@@ -7,19 +7,28 @@
 
 void Chip::load(Vector2 position) {
 	setPosition(position);
-	setScale({ 1.0f, 1.0f });
+	setScale(1.0f);
 	setSize(HEX_SIZE);
+
+	float fontXOne = MeasureText("2", CHIP_FONT_SIZE);
+	setFontProps({ fontXOne*-0.5f, CHIP_FONT_SIZE*-0.5f }, CHIP_FONT_SIZE, 1.0f);
+
+	source[BORDERSIZE] = 1.0f;
+	current[BORDERSIZE] = 1.0f;
+	target[BORDERSIZE] = 1.0f;
+
 	setRotation(0.0f);
 	setColor(primaryColor);
 }
 
-void Chip::reload(Vector2 position, Vector2 scale, float size, float rotation, Color color) {
-	setPosition(position);
-	setScale(scale);
-	setSize(size);
-	setRotation(rotation);
-	setColor(color);
-}
+// void Chip::reload(Vector2 position, float scale, float size, float fontSize, float rotation, Color color) {
+// 	setPosition(position);
+// 	setScale(scale);
+// 	setSize(size);
+// 	setFontSize(size);
+// 	setRotation(rotation);
+// 	setColor(color);
+// }
 
 void Chip::reset() {
 	state = State::Chip::READY;
@@ -32,7 +41,18 @@ void Chip::sync() {
 	if (absorbed) {
 		value = nextValue;
 		absorbed = false;
+		setFontSyncProps();
 	}
+}
+
+void Chip::render() const {
+	float radius = current[SIZE]*current[SCALE];
+	DrawPoly({ current[POSX], current[POSY] }, 6, radius, current[ROT], { static_cast<unsigned char>(current[COLR]), static_cast<unsigned char>(current[COLG]), static_cast<unsigned char>(current[COLB]), static_cast<unsigned char>(current[COLA]) });
+	DrawPolyLinesEx({ current[POSX], current[POSY] }, 6, radius, current[ROT], current[BORDERSIZE], BLACK);
+	
+	const char* textValue = TextFormat("%d", value);
+	// float fontWidth = MeasureText(textValue, current[FONTSIZE]);
+	DrawText(textValue, current[POSX]+current[FONTX], current[POSY]+current[FONTY], current[FONTSIZE]*current[FONTSCALE], secondaryColor);
 }
 
 State::Chip Chip::update() {
@@ -52,7 +72,20 @@ State::Chip Chip::update() {
 	}
 
 	if (state == State::Chip::MOVING && framePropsActive <= 0) {
+		// NOTE: this only gets called for MOVING chips
+		// if non-moving chips need prop sync, use sync()
+		// TODO: refactor this pattern into more consistent/obvious
 		state = State::Chip::READY;
+		// sync prop states
+		// TODO: abstract this pattern
+		// 1. set target props in merge or move
+		// 2. current props get copied to source props
+		// 3. (optional) source and target are lerped into current
+		// 4. at some endpoint (i.e. right here) current is set to target
+		current[SCALE] = target[SCALE];
+		setFontSyncProps();
+		current[BORDERSIZE] = target[BORDERSIZE];
+
 		if (merged) {
 			merged = false;
 			enabled = false;
@@ -86,6 +119,18 @@ void Chip::move(Hex::Point hex, Vector2 position) {
 	frame[POSY] = 1;
 
 	framePropsActive = 2;
+
+	// none-animated props
+	// TODO: abstract this into a 
+	// generic setTargetProps of some kind
+	current[SCALE] = 1.08f;
+	target[SCALE] = 1.0f;
+
+	current[FONTSCALE] = 1.08f;
+	target[FONTSCALE] = 1.0f;
+	
+	current[BORDERSIZE] = 2.5f;
+	target[BORDERSIZE] = 1.0f;
 }
 
 int Chip::merge(Chip& other) {
@@ -94,7 +139,18 @@ int Chip::merge(Chip& other) {
 	other.merged = true;
 	absorbed = true;
 
+	// update font properties 
+	float fontWidth = MeasureText(TextFormat("%d", nextValue), current[FONTSIZE]);
+	setFontTargetProps({ fontWidth*-0.5f, current[FONTSIZE]*-0.5f }, current[FONTSIZE], current[FONTSCALE]);
+
 	return nextValue;
+}
+
+void Chip::updateFont(float fontSize) {
+
+	// update font properties 
+	float fontWidth = MeasureText(TextFormat("%d", value), fontSize);
+	setFontProps({ fontWidth*-0.5f, fontSize*-0.5f }, fontSize, current[FONTSCALE]);
 }
 
 bool Chip::hasAbsorbed() const {
@@ -111,6 +167,10 @@ Vector2 Chip::getPosition() const {
 
 Vector2 Chip::getTargetPosition() const {
 	return { target[POSX], target[POSY] };
+}
+
+float Chip::getFontSize() const {
+	return current[FONTSIZE];
 }
 
 int Chip::getId() const {
@@ -143,20 +203,61 @@ void Chip::setPosition(Vector2 position) {
 	target[POSY] = position.y;
 }
 
-void Chip::setScale(Vector2 scale) {
-	current[SCALEX] = scale.x;	
-	source[SCALEX] = scale.x;	
-	target[SCALEX] = scale.x;
-
-	current[SCALEY] = scale.y;	
-	source[SCALEY] = scale.y;	
-	target[SCALEY] = scale.y;
+void Chip::setScale(float scale) {
+	current[SCALE] = scale;	
+	source[SCALE] = scale;	
+	target[SCALE] = scale;
 }
 
 void Chip::setSize(float size) {
 	current[SIZE] = size;	
 	source[SIZE] = size;	
 	target[SIZE] = size;
+}
+
+void Chip::setFontSize(float fontSize) {
+	current[FONTSIZE] = fontSize;	
+	source[FONTSIZE] = fontSize;	
+	target[FONTSIZE] = fontSize;
+}
+
+void Chip::setFontProps(Vector2 position, float fontSize, float fontScale) {
+	current[FONTX] = position.x;	
+	source[FONTX] = position.x;	
+	target[FONTX] = position.x;
+
+	current[FONTY] = position.y;	
+	source[FONTY] = position.y;	
+	target[FONTY] = position.y;
+
+	current[FONTSIZE] = fontSize;	
+	source[FONTSIZE] = fontSize;	
+	target[FONTSIZE] = fontSize;
+
+	current[FONTSCALE] = fontScale;	
+	source[FONTSCALE] = fontScale;	
+	target[FONTSCALE] = fontScale;
+}
+
+void Chip::setFontSyncProps() {
+	current[FONTX] = target[FONTX];	
+	current[FONTY] = target[FONTY];	
+	// current[FONTSIZE] = target[FONTSIZE];	
+	current[FONTSCALE] = target[FONTSCALE];	
+}
+
+void Chip::setFontTargetProps(Vector2 position, float fontSize, float fontScale) {
+	source[FONTX] = current[FONTX];	
+	target[FONTX] = position.x;
+
+	source[FONTY] = current[FONTY];	
+	target[FONTY] = position.y;
+
+	source[FONTSIZE] = current[FONTSIZE];	
+	target[FONTSIZE] = fontSize;
+
+	source[FONTSCALE] = current[FONTSCALE];	
+	target[FONTSCALE] = fontScale;
 }
 
 void Chip::setRotation(float rotation) {
@@ -166,30 +267,21 @@ void Chip::setRotation(float rotation) {
 }
 
 void Chip::setColor(Color color) {
-	current[COL1] = color.r;	
-	source[COL1] = color.r;	
-	target[COL1] = color.r;
+	current[COLR] = color.r;	
+	source[COLR] = color.r;	
+	target[COLR] = color.r;
 
-	current[COL2] = color.g;	
-	source[COL2] = color.g;	
-	target[COL2] = color.g;
+	current[COLG] = color.g;	
+	source[COLG] = color.g;	
+	target[COLG] = color.g;
 
-	current[COL3] = color.b;	
-	source[COL3] = color.b;	
-	target[COL3] = color.b;
+	current[COLB] = color.b;	
+	source[COLB] = color.b;	
+	target[COLB] = color.b;
 
-	current[COL4] = color.a;	
-	source[COL4] = color.a;	
-	target[COL4] = color.a;
-}
-
-void Chip::render() const {
-	DrawPoly({ current[POSX], current[POSY] }, 6, current[SIZE], current[ROT], { static_cast<unsigned char>(current[COL1]), static_cast<unsigned char>(current[COL2]), static_cast<unsigned char>(current[COL3]), static_cast<unsigned char>(current[COL4]) });
-	DrawPolyLinesEx({ current[POSX], current[POSY] }, 6, current[SIZE], current[ROT], 1.0f, BLACK);
-	
-	const char* sigilValue = TextFormat("%d", value);
-	float fontWidth = MeasureText(sigilValue, 42);
-	DrawText(sigilValue, current[POSX]-fontWidth*0.5f, current[POSY]-21.0f, 42, secondaryColor);
+	current[COLA] = color.a;	
+	source[COLA] = color.a;	
+	target[COLA] = color.a;
 }
 
 void Chip::enable() {
