@@ -104,8 +104,9 @@ void Chip::place(Hex::Point hex, Vector2 position, int val) {
 	enable();
 
 	// update font properties 
-	float fontWidth = MeasureText(TextFormat("%d", value), current[FONTSIZE]);
-	setFontProps({ fontWidth*-0.5f, current[FONTSIZE]*-0.5f }, current[FONTSIZE], current[FONTSCALE]);
+	// float fontWidth = MeasureText(TextFormat("%d", value), current[FONTSIZE]);
+	// setFontProps({ fontWidth*-0.5f, current[FONTSIZE]*-0.5f }, current[FONTSIZE], current[FONTSCALE]);
+	updateFont(current[FONTSIZE]);
 
 	state = State::Chip::MOVING;
 
@@ -121,6 +122,27 @@ void Chip::place(Hex::Point hex, Vector2 position, int val) {
 
 	framePropsActive += 2;
 }
+
+// NOTES: there are two kinds of property changes
+// 1. Property changes that animate
+// These will set current to source, then set the new value on target
+// Then the animation frame flags are set to one in frame array
+// Then the global animation flag counter is incremented by how many props were set (framePropsActive)
+// Along with setting the state to MOVING, World will also know when Chip is MOVING and load it on its own array to process
+// It will keep calling update where the props will be Lerped until framePropsActive is 0, then it chagnes back to READY
+
+// 2. Property changes that do not animate
+// These just need to be delayed applied
+// First you set current to source, then set the new value on target (technically source is not needed as there is no animation)
+// Note that no animation flag is set, or state set to MOVING either, or framePropsActive incremented
+// Then in a sync function, the properties update according to the configuration, the target is set to current etc.
+
+// Summary: Two kinds of proprety changes, ones that need animated, ones that just need delayed
+// There are two kinds of animations, going from source to target, and from target to source, 
+// in the sense that one of them will have the changed property, and either the property will 
+// animate into the target, i.e. source (unchanged) -> target (new value), or animate away from source,
+// i.e. source (new value) -> target (unchanged)
+// current value will store the intermediate Lerp value, or in the case of a delay, do nothing
 
 void Chip::move(Hex::Point hex, Vector2 position) {
 	currentHex = hex;

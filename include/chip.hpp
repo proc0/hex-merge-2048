@@ -29,10 +29,10 @@ class Chip {
 	int size = HEX_SIZE;
 	int framePropsActive = 0;
 
-	float fontXOne = 0;
-	float fontXTwo = 0;
-	float fontXThree = 0;
-	float fontXFour = 0;
+	// float fontXOne = 0;
+	// float fontXTwo = 0;
+	// float fontXThree = 0;
+	// float fontXFour = 0;
 
 	bool enabled;
 	bool merged = false;
@@ -108,7 +108,7 @@ public:
 	void place(Hex::Point, Vector2 position, int val);
 	void move(Hex::Point, Vector2 position);
 	void updateFont(float fontSize);
-
+	
 	void enable();
 	void disable();
 	bool active() const;
