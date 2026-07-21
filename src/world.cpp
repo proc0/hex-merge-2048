@@ -184,25 +184,6 @@ void World::updateMove(Hex::Cardinal needle) {
     }
 
     // TraceLog(LOG_INFO, "----------- END TURN -----------");
-    if (meta.state == State::World::WAIT) {
-        // TraceLog(LOG_INFO, "NO CHIP HAS MOVED!");
-        if (grid.filled()) {
-            // TraceLog(LOG_INFO, "GRID IS FULL!");
-            bool gridlock = true;
-            for (auto& chip : chips) {
-                if (!chipLocked(chip)) {
-                    gridlock = false;
-                    break;
-                }
-            }
-
-            if (gridlock) {
-                // TraceLog(LOG_INFO, "GRID IS LOCKED!");
-                meta.state = State::World::LOCKED;
-                meta.gridlock = true;
-            }
-        }
-    }
 }
 
 void World::renderHold() const {
@@ -240,6 +221,22 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
                 Hex::Point nextHex = grid.findRandom();
                 if (nextHex != Hex::Absurd) {
                     spawnChip(nextHex, getRandomValue());
+                }
+            }
+
+            // check gridlock
+            if (grid.filled()) {
+                bool gridlock = true;
+                for (auto& chip : chips) {
+                    if (!chipLocked(chip)) {
+                        gridlock = false;
+                        break;
+                    }
+                }
+
+                if (gridlock) {
+                    meta.state = State::World::LOCKED;
+                    meta.gridlock = true;
                 }
             }
         }

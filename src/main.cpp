@@ -38,3 +38,11 @@ int main(void){
 // cache the chip backgrounds for every number
 
 // TODO: scale spawning chips, i.e. like they are landing on the board
+
+// TODO: add phases, changing color as maxValue increases
+// change board and bg color
+// grayscale light -> cool pastels -> warm pastels -> cool saturated -> light grayscale high contrast -> hot saturated -> dark grayscale high contrast
+
+// LAB: add particle effects on background for phase effect
+// particles get faster and faster as phase changes 
+// background goes from cool colors to warm colors
