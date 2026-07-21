@@ -82,6 +82,7 @@ State::Chip Chip::update() {
 		// 2. current props get copied to source props
 		// 3. (optional) source and target are lerped into current
 		// 4. at some endpoint (i.e. right here) current is set to target
+		// TODO: is this block for syncing even needed if it can move to sync()?
 		current[SCALE] = target[SCALE];
 		setFontSyncProps();
 		current[BORDERSIZE] = target[BORDERSIZE];
@@ -101,6 +102,24 @@ void Chip::place(Hex::Point hex, Vector2 position, int val) {
 	value = val;
 	nextValue = val;
 	enable();
+
+	// update font properties 
+	float fontWidth = MeasureText(TextFormat("%d", value), current[FONTSIZE]);
+	setFontProps({ fontWidth*-0.5f, current[FONTSIZE]*-0.5f }, current[FONTSIZE], current[FONTSCALE]);
+
+	state = State::Chip::MOVING;
+
+	source[SCALE] = 1.12f;
+	current[SCALE] = 1.12f;
+	target[SCALE] = 1.0f;
+	frame[SCALE] = 1;
+
+	source[FONTSCALE] = 1.12f;
+	current[FONTSCALE] = 1.12f;
+	target[FONTSCALE] = 1.0f;
+	frame[FONTSCALE] = 1;
+
+	framePropsActive += 2;
 }
 
 void Chip::move(Hex::Point hex, Vector2 position) {
@@ -118,7 +137,7 @@ void Chip::move(Hex::Point hex, Vector2 position) {
 	frame[POSX] = 1;
 	frame[POSY] = 1;
 
-	framePropsActive = 2;
+	framePropsActive += 2;
 
 	// none-animated props
 	// TODO: abstract this into a 

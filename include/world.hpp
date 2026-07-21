@@ -14,6 +14,7 @@ class World : public Layer {
 
     std::vector<Chip> chips;
     std::vector<int> chipsIdxsMoving;
+    std::vector<int> chipsIdxsUpdating;
 
     int attempts;
 

@@ -29,11 +29,11 @@ int main(void){
 // moving is done on the beat?
 // could be combined with time based?
 
-// TODO: move gridlock logic to somewhere that does not depend on move inputs
+// DONE: move gridlock logic to somewhere that does not depend on move inputs
 // right now the game over screen only shows up after pressing a key
+// DONE: scale chip numbers with screen
+// DONE: scale chip size when moving (get bigger 1.1f scale)
 
-// TODO: scale chip numbers with screen
-// TODO: scale chip size when moving (get bigger 1.1f scale)
 // LAB: set a render target for chip backgrounds, only render text and effects every frame
 // cache the chip backgrounds for every number
 

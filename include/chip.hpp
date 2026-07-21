@@ -58,15 +58,16 @@ class Chip {
 	State::Chip state = State::Chip::READY;
 
 public:
-	Chip(Hex::Point hex, Vector2 position, int id_, int value, bool active = false): 
+	Chip(Hex::Point hex, Vector2 position, int id_, int val, bool active = false): 
 		currentHex(hex), 
 		targetHex(hex), 
 		id(id_),
-		value(value),
-		nextValue(value),
+		value(val),
+		nextValue(val),
 		enabled(active) {
     		// TraceLog(LOG_INFO, "CREATING CHIP %d: %f %f", value, position.x, position.y);
 			load(position);
+			if (active) place(hex, position, val);
 		}
 	~Chip() = default;
 
