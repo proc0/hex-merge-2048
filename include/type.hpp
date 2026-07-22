@@ -108,8 +108,8 @@ namespace State {
 
     enum World {
         WAIT,
-        PROCESS_TURN,
-        PROCESS_CHIPS,
+        PROCESS_MOVES,
+        PROCESS_SPAWN,
         LOCKED
     };
 

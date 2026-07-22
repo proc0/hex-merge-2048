@@ -46,3 +46,7 @@ int main(void){
 // LAB: add particle effects on background for phase effect
 // particles get faster and faster as phase changes 
 // background goes from cool colors to warm colors
+
+// LAB: "RPG" mode, where different types of hexes show up
+// some hexes explode and clear, others crystalize and obstruct
+// hexes would have a few different types and show up randomly

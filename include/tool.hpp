@@ -2,6 +2,9 @@
 
 #include <cmath> // IWYU pragma: export
 #include <array>
+#include <algorithm>
+#include <optional>
+#include <span>
 
 #define INTERSECTS(a, b) ((a.x > b.x) && (a.x < b.x + b.width) && (a.y > b.y) && (a.y < b.y + b.height))
 
@@ -18,3 +21,44 @@ static constexpr std::array<float, 43> ANIM_EASE_IN_QUAD = { 0.0f, 0.000054f, 0.
 // by convention animations start at 1
 // so max index is i.e. 42-1
 #define ANIM_EASE_IN_QUAD_MAX_IDX 41
+
+
+template<typename K, typename V, size_t Capacity>
+struct StackMap {
+    std::array<std::pair<K, V>, Capacity> data;
+    size_t size = 0;
+
+    void insert(K key, V value) {
+        auto it = std::lower_bound(data.begin(), data.begin() + size, key, 
+            [](const auto& pair, const K& k) { return pair.first < k; });
+        
+        if (it != data.begin() + size && it->first == key) {
+            it->second = value; // Update existing
+        } else {
+            // Shift elements to maintain sort (O(N), but fast for small N)
+            std::move_backward(it, data.begin() + size, data.begin() + size + 1);
+            *it = {key, value};
+            size++;
+        }
+    }
+
+    std::optional<V> get(const K& key) const {
+        auto it = std::lower_bound(data.begin(), data.begin() + size, key, 
+            [](const auto& pair, const K& k) { return pair.first < k; });
+        
+        if (it != data.begin() + size && it->first == key) return it->second;
+        return std::nullopt;
+    }
+};
+
+template<typename K, typename V>
+struct FlatMapView {
+    std::span<const std::pair<K, V>> data;
+
+    std::optional<V> get(const K& key) const {
+        auto it = std::lower_bound(data.begin(), data.end(), key, 
+            [](const auto& pair, const K& k) { return pair.first < k; });
+        if (it != data.end() && it->first == key) return it->second;
+        return std::nullopt;
+    }
+};

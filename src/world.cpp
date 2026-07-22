@@ -21,9 +21,6 @@ void World::load(){
 
     // shim chip
     chips.emplace_back(Hex::Origin, Vector2({}), 0, 0);
-
-    // // seed chip
-    // grid.place(Hex::Origin, createChip(Hex::Origin, 2));
 }
 
 void World::reset() {
@@ -31,10 +28,12 @@ void World::reset() {
     for (auto& chip : chips) {
         chip.reset();
     }
-    // seed chip
-    grid.place(Hex::Origin, createChip(Hex::Origin, 2));
     meta.maxValue = 2;
     meta.gridlock = false;
+    chipsIdxsUpdating.clear();
+    chipsIdxsMoving.clear();
+    // seed chip
+    grid.place(Hex::Origin, spawnChip(Hex::Origin, 2));
     meta.state = State::World::WAIT;
 }
 
@@ -114,7 +113,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
                 meta.maxValue = resultValue;
             }
             chipsIdxsMoving.push_back(sourceKey);
-            meta.state = State::World::PROCESS_TURN;
+            meta.state = State::World::PROCESS_MOVES;
 
             return;
         } else if (grid.vacant(lastTargetHex)) {
@@ -138,7 +137,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
     sourceChip.move(targetHex, grid.getPosition(targetHex));
     // World book keeping
     chipsIdxsMoving.push_back(sourceKey);
-    meta.state = State::World::PROCESS_TURN;
+    meta.state = State::World::PROCESS_MOVES;
 }
 
 void World::searchGrid(Hex::Basis forward, Hex::Basis sideward, Hex::Point midHex) {
@@ -207,15 +206,21 @@ WorldState World::updateHold(InputEvent inputEvent, Action::Surface action){
 
 WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
-    if (chipsIdxsUpdating.size()) {
+    if (chipsIdxsUpdating.size() && meta.state == State::World::PROCESS_SPAWN) {
+        // TraceLog(LOG_INFO, "Updating non-movement chips.");
         std::erase_if(chipsIdxsUpdating, [this](int idx){
             Chip& chip = chips[idx];
             State::Chip chipState = chip.update();
             return chipState == State::Chip::READY;
-        });  
+        });
+
+        if (chipsIdxsUpdating.empty()) {
+            meta.state = State::World::WAIT;
+        }
     }
 
-    if (meta.state == State::World::PROCESS_TURN) {
+    if (chipsIdxsMoving.size() && meta.state == State::World::PROCESS_MOVES) {
+        // TraceLog(LOG_INFO, "Processing movement chips.");
         std::erase_if(chipsIdxsMoving, [this](int idx){
             Chip& chip = chips[idx];
             State::Chip chipState = chip.update();
@@ -223,13 +228,20 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
             return chipState == State::Chip::READY;
         });
 
+
         if (chipsIdxsMoving.empty()) {
-            meta.state = State::World::WAIT;
+            meta.state = State::World::PROCESS_SPAWN;
+            // TraceLog(LOG_INFO, "DONE Processing movement chips. Size: %d", chipsIdxsMoving.size());
+
             for (auto& chip : chips) {
-                chip.sync();
+                if (chip.active()) {
+                    chip.sync();
+                }
             }
 
-            for (int i = 0; i < 2; i++) {                
+            chipsIdxsUpdating.clear();
+
+            for (int i = 0; i < 4; i++) {                
                 Hex::Point nextHex = grid.findRandom();
                 if (nextHex != Hex::Absurd) {
                     spawnChip(nextHex, getRandomValue());
@@ -240,7 +252,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
             if (grid.filled()) {
                 bool gridlock = true;
                 for (auto& chip : chips) {
-                    if (!chipLocked(chip)) {
+                    if (chip.active() && !chipLocked(chip)) {
                         gridlock = false;
                         break;
                     }
@@ -254,7 +266,9 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
         }
     }
 
-    if (meta.state == State::World::WAIT) {        
+    // NOTE: remove PROCESS_SPAWN state check to make it wait for all animations and make it feel "turn-based"
+    // if (meta.state == State::World::WAIT) {        
+    if (meta.state == State::World::WAIT || meta.state == State::World::PROCESS_SPAWN) {        
         if (inputEvent.id == Event::Input::MOVE_UP || action == Action::Surface::MOVE_UP ) {
                 // TraceLog(LOG_INFO, "MOVE UP");
                 updateMove(Hex::N);

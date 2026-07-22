@@ -3,6 +3,7 @@
 #include "config.hpp"
 #include "type.hpp"
 #include "hex.hpp"
+#include "tool.hpp"
 
 #include "raylib.h"
 
@@ -29,10 +30,9 @@ class Chip {
 	int size = HEX_SIZE;
 	int framePropsActive = 0;
 
-	// float fontXOne = 0;
-	// float fontXTwo = 0;
-	// float fontXThree = 0;
-	// float fontXFour = 0;
+	// StackMap<int, float, 2> moveTargets;
+	// StackMap<int, float, 2> delayMoveSources;
+	// StackMap<int, float, 2> fontPosTargets;
 
 	bool enabled;
 	bool merged = false;
@@ -92,14 +92,15 @@ public:
 	void setCurrentHex(Hex::Point);
 	void setPosition(Vector2);
 	void setScale(float);
-	void setFontProps(Vector2 position, float fontSize, float fontScale);
-	void setFontTargetProps(Vector2 position, float fontSize, float fontScale);
+	void setFontProps(Vector2 position, float fontSize);
+	// void setFontTargetProps(Vector2 position, float fontSize, float fontScale);
 	void setFontSyncProps();
 	void setSize(float);
-	void setFontSize(float);
+	// void setFontSize(float);
 	void setRotation(float);
 	void setColor(Color);
-	
+	void setProps(FlatMapView<int, float> propMap, bool setSource, bool setCurrent, bool setTarget);
+
 	void render() const;
 
 	State::Chip update();
@@ -108,7 +109,11 @@ public:
 	void place(Hex::Point, Vector2 position, int val);
 	void move(Hex::Point, Vector2 position);
 	void updateFont(float fontSize);
-	
+	void animatePropTargets(FlatMapView<int, float>);
+	void animatePropSources(FlatMapView<int, float>);
+	void delayPropChange(FlatMapView<int, float>);
+	void delayPropRestore(FlatMapView<int, float>);
+
 	void enable();
 	void disable();
 	bool active() const;
