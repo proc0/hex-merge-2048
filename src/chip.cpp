@@ -119,13 +119,13 @@ void Chip::render() const {
 	DrawPoly({ current[POSX], current[POSY] }, 6, radius, current[ROT], { static_cast<unsigned char>(current[COLR]), static_cast<unsigned char>(current[COLG]), static_cast<unsigned char>(current[COLB]), static_cast<unsigned char>(current[COLA]) });
 	DrawPolyLinesEx({ current[POSX], current[POSY] }, 6, radius, current[ROT], current[BORDERSIZE], BLACK);
 	
-	const char* textValue = TextFormat("%d", value);
-	// float fontWidth = MeasureText(textValue, current[FONTSIZE]);
-	DrawText(textValue, current[POSX]+current[FONTX], current[POSY]+current[FONTY], current[FONTSIZE]*current[FONTSCALE], secondaryColor);
+	DrawText(TextFormat("%d", value), current[POSX]+current[FONTX], current[POSY]+current[FONTY], current[FONTSIZE]*current[FONTSCALE], secondaryColor);
 }
 
 State::Chip Chip::update() {
-	// bool stillMoving = state == State::Chip::MOVING;
+	// TODO: add another std::array of indices to a 2D array of different animation easings and functions
+	// that can be set in one of the animation functions i.e. animatePropTargets, and would be selected in 
+	// the loop to get the value to Lerp on. i.e. idx = animationIndex[i].. animationFunction[idx][currentFrame]
 	for (int i = 0; i < PROPS_SIZE; ++i) {
 		int& currentFrame = frame[i];
 		if (currentFrame > 0) {
@@ -135,7 +135,6 @@ State::Chip Chip::update() {
 			if (currentFrame >= ANIM_EASE_IN_QUAD_MAX_IDX) {
 				currentFrame = 0;
 				framePropsActive--;
-				// current[i] = target[i];
 			}
 		}
 	}
@@ -147,7 +146,7 @@ State::Chip Chip::update() {
 		// TODO: refactor this pattern into more consistent/obvious
 		state = State::Chip::READY;
 		// sync prop states
-		// TODO: abstract this pattern
+		// DONE: abstract this pattern
 		// 1. set target props in merge or move
 		// 2. current props get copied to source props
 		// 3. (optional) source and target are lerped into current
@@ -155,7 +154,7 @@ State::Chip Chip::update() {
 		
 		// NOTE: this is for syncing the delay prop change for MOVE
 		// maybe the restore value could be on source instead?
-		// TODO: create a generic applyPropChanges, and perhaps one for restoring from target, and one from restoring from source
+		// DONE: create a generic applyPropChanges, and perhaps one for restoring from target, and one from restoring from source
 		// current[SCALE] = target[SCALE];
 		// setFontSyncProps();
 		// current[BORDERSIZE] = target[BORDERSIZE];
@@ -339,7 +338,7 @@ void Chip::applyPropChanges(const std::span<const int> syncKeys) {
 	}
 }
 
-// TODO: replace all the other getters and setters with setProps if possible
+// DONE: replace all the other getters and setters with setProps if possible
 void Chip::setProps(FlatMapView<int, float> propMap, bool setSource, bool setCurrent, bool setTarget) {
 
 	auto it = propMap.data.begin();

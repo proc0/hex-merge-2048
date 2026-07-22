@@ -33,11 +33,18 @@ int main(void){
 // right now the game over screen only shows up after pressing a key
 // DONE: scale chip numbers with screen
 // DONE: scale chip size when moving (get bigger 1.1f scale)
+// DONE: scale spawning chips, i.e. like they are landing on the board
 
 // LAB: set a render target for chip backgrounds, only render text and effects every frame
 // cache the chip backgrounds for every number
 
-// TODO: scale spawning chips, i.e. like they are landing on the board
+// TODO: add basic game, with an easy way to balance that can be calculated at compile time
+// some kind of config that initializes the game, and potentially sets it up for other modes
+// i.e. number of chips spawning; fine tuning the propabilites of which chips spawn;
+// might require to think about phases to use phases as a way to configure these settings
+
+// TODO: make animations frame independent
+// TODO: add a way for different kinds of animation functions per prop, i.e. some ease in others ease out, etc
 
 // TODO: add phases, changing color as maxValue increases
 // change board and bg color
