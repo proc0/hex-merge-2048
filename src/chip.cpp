@@ -1,4 +1,5 @@
 #include "chip.hpp"
+#include "config.hpp"
 #include "tool.hpp"
 
 #include "raylib.h"
@@ -6,22 +7,40 @@
 #include "type.hpp"
 
 void Chip::load(Vector2 position) {
-	setPosition(position);
-	setScale(1.0f);
-	setSize(HEX_SIZE);
+	// setPosition(position);
+	// setScale(1.0f);
+	// setSize(HEX_SIZE);
+
+	// setFontProps({ fontXOne*-0.5f, CHIP_FONT_SIZE*-0.5f }, CHIP_FONT_SIZE);
+	// current[FONTSCALE] = 1.0f;	
+	// source[FONTSCALE] = 1.0f;	
+	// target[FONTSCALE] = 1.0f;
+
+	// source[BORDERSIZE] = 1.0f;
+	// current[BORDERSIZE] = 1.0f;
+	// target[BORDERSIZE] = 1.0f;
+
+	// setRotation(0.0f);
+	// setColor(primaryColor);
 
 	float fontXOne = MeasureText("2", CHIP_FONT_SIZE);
-	setFontProps({ fontXOne*-0.5f, CHIP_FONT_SIZE*-0.5f }, CHIP_FONT_SIZE);
-	current[FONTSCALE] = 1.0f;	
-	source[FONTSCALE] = 1.0f;	
-	target[FONTSCALE] = 1.0f;
 
-	source[BORDERSIZE] = 1.0f;
-	current[BORDERSIZE] = 1.0f;
-	target[BORDERSIZE] = 1.0f;
-
-	setRotation(0.0f);
-	setColor(primaryColor);
+	StackMap<int, float, PROPS_SIZE> initProps;
+	initProps.insert(POSX, position.x);
+	initProps.insert(POSY, position.y);
+	initProps.insert(SCALE, 1.0f);
+	initProps.insert(SIZE, HEX_SIZE);
+	initProps.insert(FONTX, fontXOne*-0.5f);
+	initProps.insert(FONTY, CHIP_FONT_SIZE*-0.5f);
+	initProps.insert(FONTSIZE, CHIP_FONT_SIZE);
+	initProps.insert(FONTSCALE, 1.0f);
+	initProps.insert(BORDERSIZE, 1.0f);
+	initProps.insert(ROT, 0.0f);
+	initProps.insert(COLR, primaryColor.r);
+	initProps.insert(COLG, primaryColor.g);
+	initProps.insert(COLB, primaryColor.b);
+	initProps.insert(COLA, primaryColor.a);
+	setProps({{ initProps.data.data(), initProps.size }}, true, true, true);
 }
 
 // void Chip::reload(Vector2 position, float scale, float size, float fontSize, float rotation, Color color) {
@@ -46,9 +65,22 @@ void Chip::reset() {
 }
 
 void Chip::sync() {
-	current[SCALE] = target[SCALE];
-	setFontSyncProps();
-	current[BORDERSIZE] = target[BORDERSIZE];
+	// current[SCALE] = target[SCALE];
+	// setFontSyncProps();
+	// current[BORDERSIZE] = target[BORDERSIZE];
+
+	// TODO: this could be a constexpr since it's always the same
+	constexpr std::array<int, 6> syncMap = {
+		SCALE,
+		BORDERSIZE,
+		SCALE,
+		FONTX,
+		FONTY,
+		FONTSCALE,
+	};
+	applyPropChanges(syncMap);
+	// applyPropChanges({{ syncMap.data.data(), syncMap.size }});
+
 	// TraceLog(LOG_INFO, "CHIP: END MOVE SYNC");
 	if (merged) {
 		merged = false;
@@ -106,7 +138,7 @@ State::Chip Chip::update() {
 		
 		// NOTE: this is for syncing the delay prop change for MOVE
 		// maybe the restore value could be on source instead?
-		// TODO: create a generic syncProps, and perhaps one for restoring from target, and one from restoring from source
+		// TODO: create a generic applyPropChanges, and perhaps one for restoring from target, and one from restoring from source
 		// current[SCALE] = target[SCALE];
 		// setFontSyncProps();
 		// current[BORDERSIZE] = target[BORDERSIZE];
@@ -174,7 +206,7 @@ void Chip::place(Hex::Point hex, Vector2 position, int val) {
 // i.e. source (new value) -> target (unchanged)
 // current value will store the intermediate Lerp value, or in the case of a delay, do nothing
 
-void Chip::move(Hex::Point hex, Vector2 position) {
+void Chip::translate(Hex::Point hex, Vector2 position) {
 	currentHex = hex;
 	
 	// source[POSX] = current[POSX];	
@@ -208,13 +240,13 @@ void Chip::move(Hex::Point hex, Vector2 position) {
 	// delayMoveSources.insert(SCALE, 1.00f);
 	// delayMoveSources.insert(FONTSCALE, 1.00f);
 	// delayMoveSources.insert(BORDERSIZE, 1.00f);
-	// delayPropChange({{ delayMoveSources.data.data(), delayMoveSources.size }});
+	// delayPropChanges({{ delayMoveSources.data.data(), delayMoveSources.size }});
 	delayMoveSources.insert(SCALE, 1.08f);
 	delayMoveSources.insert(FONTSCALE, 1.08f);
 	delayMoveSources.insert(BORDERSIZE, 1.08f);
-	delayPropRestore({{ delayMoveSources.data.data(), delayMoveSources.size }});
+	// delayPropRestore({{ delayMoveSources.data.data(), delayMoveSources.size }});
 	// TODO: Why does setProps not work the same way as delayPropRestore
-	// setProps({{ delayMoveSources.data.data(), delayMoveSources.size }}, false, true, false);
+	setProps({{ delayMoveSources.data.data(), delayMoveSources.size }}, false, true, false);
 
 
 	/// backup
@@ -230,7 +262,7 @@ void Chip::move(Hex::Point hex, Vector2 position) {
 
 int Chip::merge(Chip& other) {
 	nextValue += other.value;
-	other.move(currentHex, getTargetPosition());
+	other.translate(currentHex, getTargetPosition());
 	other.merged = true;
 	absorbed = true;
 
@@ -240,7 +272,7 @@ int Chip::merge(Chip& other) {
 	StackMap<int, float, 2> fontPosTargets;
 	fontPosTargets.insert(FONTX, fontWidth*-0.5f);
 	fontPosTargets.insert(FONTY, current[FONTSIZE]*-0.5f);
-	delayPropChange({{ fontPosTargets.data.data(), fontPosTargets.size }});
+	delayPropChanges({{ fontPosTargets.data.data(), fontPosTargets.size }});
 
 	return nextValue;
 }
@@ -249,18 +281,42 @@ void Chip::updateFont(float fontSize) {
 
 	// update font properties 
 	float fontWidth = MeasureText(TextFormat("%d", value), fontSize);
-	setFontProps({ fontWidth*-0.5f, fontSize*-0.5f }, fontSize);
+	float fontX = fontWidth*-0.5f;
+	float fontY = fontSize*-0.5f;
+
+	current[FONTX] = fontX;	
+	source[FONTX] = fontX;	
+	target[FONTX] = fontX;
+
+	current[FONTY] = fontY;	
+	source[FONTY] = fontY;	
+	target[FONTY] = fontY;
+
+	current[FONTSIZE] = fontSize;	
+	source[FONTSIZE] = fontSize;	
+	target[FONTSIZE] = fontSize;
 }
 
-void Chip::delayPropRestore(FlatMapView<int, float> sourceMap) {
+// void Chip::applyPropChanges(FlatMapView<int, float> propMap) {
 
-	auto it = sourceMap.data.begin();
-	while(it != sourceMap.data.end()) {
-		int key = it->first;
-		float sourceVal = it->second;
+// 	auto it = propMap.data.begin();
+// 	while(it != propMap.data.end()) {
+// 		int key = it->first;
+// 		// float sourceVal = it->second;
 
-		// target[key] = current[key];
-		current[key] = sourceVal;
+// 		current[key] = target[key];
+
+// 		it++;
+// 	}
+// }
+
+void Chip::applyPropChanges(const std::span<const int> syncKeys) {
+
+	auto it = syncKeys.begin();
+	while(it != syncKeys.end()) {
+		int key = *it;
+
+		current[key] = target[key];
 
 		it++;
 	}
@@ -290,7 +346,7 @@ void Chip::setProps(FlatMapView<int, float> propMap, bool setSource, bool setCur
 	}
 }
 
-void Chip::delayPropChange(FlatMapView<int, float> targetMap) {
+void Chip::delayPropChanges(FlatMapView<int, float> targetMap) {
 
 	auto it = targetMap.data.begin();
 	while(it != targetMap.data.end()) {
@@ -390,11 +446,11 @@ void Chip::setPosition(Vector2 position) {
 	target[POSY] = position.y;
 }
 
-void Chip::setScale(float scale) {
-	current[SCALE] = scale;	
-	source[SCALE] = scale;	
-	target[SCALE] = scale;
-}
+// void Chip::setScale(float scale) {
+// 	current[SCALE] = scale;	
+// 	source[SCALE] = scale;	
+// 	target[SCALE] = scale;
+// }
 
 void Chip::setSize(float size) {
 	current[SIZE] = size;	
@@ -408,35 +464,35 @@ void Chip::setSize(float size) {
 // 	target[FONTSIZE] = fontSize;
 // }
 
-void Chip::setFontProps(Vector2 position, float fontSize) {
-	current[FONTX] = position.x;	
-	source[FONTX] = position.x;	
-	target[FONTX] = position.x;
+// void Chip::setFontProps(Vector2 position, float fontSize) {
+// 	current[FONTX] = position.x;	
+// 	source[FONTX] = position.x;	
+// 	target[FONTX] = position.x;
 
-	current[FONTY] = position.y;	
-	source[FONTY] = position.y;	
-	target[FONTY] = position.y;
+// 	current[FONTY] = position.y;	
+// 	source[FONTY] = position.y;	
+// 	target[FONTY] = position.y;
 
-	current[FONTSIZE] = fontSize;	
-	source[FONTSIZE] = fontSize;	
-	target[FONTSIZE] = fontSize;
+// 	current[FONTSIZE] = fontSize;	
+// 	source[FONTSIZE] = fontSize;	
+// 	target[FONTSIZE] = fontSize;
 
-	// current[FONTSCALE] = fontScale;	
-	// source[FONTSCALE] = fontScale;	
-	// target[FONTSCALE] = fontScale;
-}
+// 	// current[FONTSCALE] = fontScale;	
+// 	// source[FONTSCALE] = fontScale;	
+// 	// target[FONTSCALE] = fontScale;
+// }
 
 // NOTE: this syncs delayed prop changes
 // but could be used to sync animations (animations animate to their destination, in theory)
 // It also syncs delay on SOURCE prop changes
 // TODO: have one that syncs TARGTE prop changes? i.e. current[PROP] = source[PROP] ...
 // would this be needed?
-void Chip::setFontSyncProps() {
-	current[FONTX] = target[FONTX];	
-	current[FONTY] = target[FONTY];	
-	// current[FONTSIZE] = target[FONTSIZE];	
-	current[FONTSCALE] = target[FONTSCALE];	
-}
+// void Chip::setFontSyncProps() {
+// 	current[FONTX] = target[FONTX];	
+// 	current[FONTY] = target[FONTY];	
+// 	// current[FONTSIZE] = target[FONTSIZE];	
+// 	current[FONTSCALE] = target[FONTSCALE];	
+// }
 
 // void Chip::setFontTargetProps(Vector2 position, float fontSize, float fontScale) {
 // 	source[FONTX] = current[FONTX];	
@@ -452,29 +508,29 @@ void Chip::setFontSyncProps() {
 // 	target[FONTSCALE] = fontScale;
 // }
 
-void Chip::setRotation(float rotation) {
-	current[ROT] = rotation;	
-	source[ROT] = rotation;	
-	target[ROT] = rotation;
-}
+// void Chip::setRotation(float rotation) {
+// 	current[ROT] = rotation;	
+// 	source[ROT] = rotation;	
+// 	target[ROT] = rotation;
+// }
 
-void Chip::setColor(Color color) {
-	current[COLR] = color.r;	
-	source[COLR] = color.r;	
-	target[COLR] = color.r;
+// void Chip::setColor(Color color) {
+// 	current[COLR] = color.r;	
+// 	source[COLR] = color.r;	
+// 	target[COLR] = color.r;
 
-	current[COLG] = color.g;	
-	source[COLG] = color.g;	
-	target[COLG] = color.g;
+// 	current[COLG] = color.g;	
+// 	source[COLG] = color.g;	
+// 	target[COLG] = color.g;
 
-	current[COLB] = color.b;	
-	source[COLB] = color.b;	
-	target[COLB] = color.b;
+// 	current[COLB] = color.b;	
+// 	source[COLB] = color.b;	
+// 	target[COLB] = color.b;
 
-	current[COLA] = color.a;	
-	source[COLA] = color.a;	
-	target[COLA] = color.a;
-}
+// 	current[COLA] = color.a;	
+// 	source[COLA] = color.a;	
+// 	target[COLA] = color.a;
+// }
 
 void Chip::enable() {
 	enabled = true;

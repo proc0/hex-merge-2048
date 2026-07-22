@@ -91,14 +91,14 @@ public:
 	void setValue(int);
 	void setCurrentHex(Hex::Point);
 	void setPosition(Vector2);
-	void setScale(float);
-	void setFontProps(Vector2 position, float fontSize);
+	// void setScale(float);
+	// void setFontProps(Vector2 position, float fontSize);
 	// void setFontTargetProps(Vector2 position, float fontSize, float fontScale);
-	void setFontSyncProps();
+	// void setFontSyncProps();
 	void setSize(float);
 	// void setFontSize(float);
-	void setRotation(float);
-	void setColor(Color);
+	// void setRotation(float);
+	// void setColor(Color);
 	void setProps(FlatMapView<int, float> propMap, bool setSource, bool setCurrent, bool setTarget);
 
 	void render() const;
@@ -107,12 +107,12 @@ public:
 	void sync();
 	int merge(Chip& other);
 	void place(Hex::Point, Vector2 position, int val);
-	void move(Hex::Point, Vector2 position);
+	void translate(Hex::Point, Vector2 position);
 	void updateFont(float fontSize);
 	void animatePropTargets(FlatMapView<int, float>);
 	void animatePropSources(FlatMapView<int, float>);
-	void delayPropChange(FlatMapView<int, float>);
-	void delayPropRestore(FlatMapView<int, float>);
+	void delayPropChanges(FlatMapView<int, float>);
+	void applyPropChanges(const std::span<const int>);
 
 	void enable();
 	void disable();

@@ -134,7 +134,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
     grid.clear(sourceHex);
     grid.place(targetHex, sourceKey);
     // update screen position and hex reference on chip
-    sourceChip.move(targetHex, grid.getPosition(targetHex));
+    sourceChip.translate(targetHex, grid.getPosition(targetHex));
     // World book keeping
     chipsIdxsMoving.push_back(sourceKey);
     meta.state = State::World::PROCESS_MOVES;
