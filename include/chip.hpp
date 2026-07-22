@@ -19,7 +19,6 @@ class Chip {
 	std::array<int, PROPS_SIZE> frame{0};
 
 	Hex::Point currentHex;
-	Hex::Point targetHex;
 
 	Color primaryColor = LIGHTGRAY;
 	Color secondaryColor = RAYWHITE;
@@ -60,7 +59,6 @@ class Chip {
 public:
 	Chip(Hex::Point hex, Vector2 position, int id_, int val, bool active = false): 
 		currentHex(hex), 
-		targetHex(hex), 
 		id(id_),
 		value(val),
 		nextValue(val),

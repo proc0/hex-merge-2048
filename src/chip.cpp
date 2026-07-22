@@ -25,21 +25,38 @@ void Chip::load(Vector2 position) {
 
 	float fontXOne = MeasureText("2", CHIP_FONT_SIZE);
 
-	StackMap<int, float, PROPS_SIZE> initProps;
-	initProps.insert(POSX, position.x);
-	initProps.insert(POSY, position.y);
-	initProps.insert(SCALE, 1.0f);
-	initProps.insert(SIZE, HEX_SIZE);
-	initProps.insert(FONTX, fontXOne*-0.5f);
-	initProps.insert(FONTY, CHIP_FONT_SIZE*-0.5f);
-	initProps.insert(FONTSIZE, CHIP_FONT_SIZE);
-	initProps.insert(FONTSCALE, 1.0f);
-	initProps.insert(BORDERSIZE, 1.0f);
-	initProps.insert(ROT, 0.0f);
-	initProps.insert(COLR, primaryColor.r);
-	initProps.insert(COLG, primaryColor.g);
-	initProps.insert(COLB, primaryColor.b);
-	initProps.insert(COLA, primaryColor.a);
+	// std::array<std::pair<int, float>, PROPS_SIZE> initP = {
+	// 	std::make_pair(POSX, position.x),
+	// 	{ POSY, position.y },
+	// 	{ SCALE, 1.0f },
+	// 	{ SIZE, HEX_SIZE },
+	// 	{ FONTX, fontXOne*-0.5f },
+	// 	{ FONTY, CHIP_FONT_SIZE*-0.5f },
+	// 	{ FONTSIZE, CHIP_FONT_SIZE },
+	// 	{ FONTSCALE, 1.0f },
+	// 	{ BORDERSIZE, 1.0f },
+	// 	{ ROT, 0.0f },
+	// 	{ COLR, primaryColor.r },
+	// 	{ COLG, primaryColor.g },
+	// 	{ COLB, primaryColor.b },
+	// 	{ COLA, primaryColor.a },
+	// };
+	StackMap<int, float, PROPS_SIZE> initProps = {
+		{ POSX, position.x },
+		{ POSY, position.y },
+		{ SCALE, 1.0f },
+		{ SIZE, HEX_SIZE },
+		{ FONTX, fontXOne*-0.5f },
+		{ FONTY, CHIP_FONT_SIZE*-0.5f },
+		{ FONTSIZE, CHIP_FONT_SIZE },
+		{ FONTSCALE, 1.0f },
+		{ BORDERSIZE, 1.0f },
+		{ ROT, 0.0f },
+		{ COLR, primaryColor.r },
+		{ COLG, primaryColor.g },
+		{ COLB, primaryColor.b },
+		{ COLA, primaryColor.a },
+	};
 	setProps({{ initProps.data.data(), initProps.size }}, true, true, true);
 }
 

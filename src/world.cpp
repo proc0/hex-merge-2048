@@ -419,6 +419,7 @@ void World::arrest(int max) {
 void World::resize(int width, int height) {
     Vector2 gridUnit = grid.getUnit();
     for (auto& chip : chips) {
+        // TODO: add chip.resize, pass in the diff grid calculations
         if (chip.active()) {
             Vector2 newPosition = grid.getPosition(chip.getCurrentHex());
             chip.setPosition(newPosition);
