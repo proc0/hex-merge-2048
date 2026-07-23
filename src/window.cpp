@@ -66,6 +66,7 @@ void Window::update(InputEvent input) {
         int newWidth = GetScreenWidth();
         int newHeight = GetScreenHeight();
 #endif
+    // TraceLog(LOG_INFO, "WINDOW UPDATE ABLAAL %dx%d SI AOS DAIS DOASI DOA %dx%d ", width, height, newWidth, newHeight);
 
     if(newWidth != diagonal.x || newHeight != diagonal.y){
         if (!timer.isRunning(resizeTimerId)) {

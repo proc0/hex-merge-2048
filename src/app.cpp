@@ -23,7 +23,6 @@ void App::load() {
     
     SetExitKey(KEY_NULL);
 
-	window.load();
     surface.load();
 	world.load();
 	game.load();
@@ -34,6 +33,8 @@ void App::load() {
     window.enlist(&world);
     window.enlist(&game);
     window.enlist(&logo);
+    
+    window.load();
 
     loadTarget();
 }

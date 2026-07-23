@@ -230,8 +230,12 @@ if(IS_WEB)
         -sUSE_GLFW=3 
         -sWASM=1
         # -sASYNCIFY=1
-        # 12MB
+        # ~12MB
         # -sINITIAL_HEAP=100663296
+        # ~8MB
+        -sINITIAL_HEAP=67108864
+        # ~3MB
+        # -sINITIAL_HEAP=25165824
         -sEXPORT_ES6=1
         -sEXPORTED_RUNTIME_METHODS=["ccall","cwrap","HEAPF32","requestFullscreen"]
         -sEXPORTED_FUNCTIONS=_main
