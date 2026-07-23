@@ -13,10 +13,45 @@
 #define PROPS_SIZE 14
 
 class Chip {
+
+	// TODO: name the enum and refactor
+	enum {
+		POSX,
+		POSY,
+		SIZE,
+		SCALE,
+		FONTX,
+		FONTY,
+		FONTSIZE,
+		FONTSCALE,
+		BORDERSIZE,
+		ROT,
+		COLR,
+		COLG,
+		COLB,
+		COLA
+	};
+
 	std::array<float, PROPS_SIZE> source{0};
 	std::array<float, PROPS_SIZE> target{0};
 	std::array<float, PROPS_SIZE> current{0};
 	std::array<int, PROPS_SIZE> frame{0};
+	static constexpr std::array<ANIMATION::QUAD, PROPS_SIZE> animIndex{
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_OUT,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+		ANIMATION::QUAD::EASE_IN,
+	};
 
 	Hex::Point currentHex;
 
@@ -36,23 +71,6 @@ class Chip {
 	bool enabled;
 	bool merged = false;
 	bool absorbed = false;
-
-	enum {
-		POSX,
-		POSY,
-		SIZE,
-		SCALE,
-		FONTX,
-		FONTY,
-		FONTSIZE,
-		FONTSCALE,
-		BORDERSIZE,
-		ROT,
-		COLR,
-		COLG,
-		COLB,
-		COLA
-	};
 
 	State::Chip state = State::Chip::READY;
 

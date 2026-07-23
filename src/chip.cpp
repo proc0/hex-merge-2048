@@ -129,11 +129,12 @@ State::Chip Chip::update() {
 	for (int i = 0; i < PROPS_SIZE; ++i) {
 		int& currentFrame = frame[i];
 		if (currentFrame > 0) {
-			// float progress = ANIM_EASE_IN_QUAD[i];
-			current[i] = Lerp(source[i], target[i], ANIM_EASE_IN_QUAD[currentFrame]);
+			auto& animFunction = Animations[animIndex[i]];
+			current[i] = Lerp(source[i], target[i], animFunction[currentFrame]);
 			currentFrame++;
-			if (currentFrame >= ANIM_EASE_IN_QUAD_MAX_IDX) {
+			if (currentFrame >= ANIMATION_MAX_INDEX) {
 				currentFrame = 0;
+				
 				framePropsActive--;
 			}
 		}
