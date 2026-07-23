@@ -25,19 +25,19 @@ class Chip {
 		COLOR_B,
 		COLOR_A
 	};
-	static constexpr std::array<ANIMATION::FUNC, PROP_COUNT> animIndex{
-		ANIMATION::FUNC::EASE_IN_OUT_CUBIC,
-		ANIMATION::FUNC::EASE_IN_OUT_CUBIC,
-		ANIMATION::FUNC::EASE_IN_QUAD,
-		ANIMATION::FUNC::EASE_IN_OUT_BACK,
-		ANIMATION::FUNC::EASE_IN_QUAD,
-		ANIMATION::FUNC::EASE_IN_QUAD,
-		ANIMATION::FUNC::EASE_IN_QUAD,
-		ANIMATION::FUNC::EASE_IN_QUAD,
-		ANIMATION::FUNC::EASE_IN_QUAD,
-		ANIMATION::FUNC::EASE_IN_QUAD,
+	static constexpr std::array<Anime::Curve, PROP_COUNT> curveSelect{
+		Anime::Curve::EASE_IN_OUT_CUBIC,
+		Anime::Curve::EASE_IN_OUT_CUBIC,
+		Anime::Curve::EASE_IN_QUAD,
+		Anime::Curve::EASE_IN_OUT_BACK,
+		Anime::Curve::EASE_IN_QUAD,
+		Anime::Curve::EASE_IN_QUAD,
+		Anime::Curve::EASE_IN_QUAD,
+		Anime::Curve::EASE_IN_QUAD,
+		Anime::Curve::EASE_IN_QUAD,
+		Anime::Curve::EASE_IN_QUAD,
 	};
-	static constexpr std::array<float, PROP_COUNT> animDuration{
+	static constexpr std::array<float, PROP_COUNT> duration{
 		0.3f,
 		0.3f,
 		0.2f,
@@ -52,8 +52,8 @@ class Chip {
 	std::array<float, PROP_COUNT> source{0};
 	std::array<float, PROP_COUNT> actual{0};
 	std::array<float, PROP_COUNT> target{0};
-	std::array<float, PROP_COUNT> animEllapsed{0};
-	std::array<int, PROP_COUNT> frame{0};
+	std::array<float, PROP_COUNT> elapsed{0};
+	std::array<int,   PROP_COUNT> animate{0};
 
 	// StackMap<int, float, 2> moveTargets;
 	// StackMap<int, float, 2> delayMoveSources;
@@ -70,7 +70,7 @@ class Chip {
 	const int id;
 	int value = 0;
 	int nextValue = 0;
-	int framePropsActive = 0;
+	int animatePropCount = 0;
 
 	State::Chip state = State::Chip::READY;
 

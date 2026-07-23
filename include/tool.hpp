@@ -18,12 +18,12 @@ static inline int summation(int n) {
 }
 
 // number of frames
-#define ANIMATION_LENGTH 43
-#define ANIMATION_MAX_INDEX 42
+#define ANIME_CURVE_LENGTH 43
+#define ANIME_CURVE_MAX_INDEX 42
 // WARNING: count must equal enum items
-#define ANIMATIONS_COUNT 9
-namespace ANIMATION {
-    enum FUNC {
+#define ANIME_CURVE_COUNT 9
+namespace Anime {
+    enum Curve {
         EASE_IN_QUAD,
         EASE_IN_CUBIC,
         EASE_OUT_QUAD,
@@ -49,7 +49,7 @@ namespace ANIMATION {
 // function easeInOutCubic(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
 
 // WARNING: first value is always 0.0f!
-static inline constexpr std::array<std::array<float, ANIMATION_LENGTH>, ANIMATIONS_COUNT> Animations = {{
+static inline constexpr std::array<std::array<float, ANIME_CURVE_LENGTH>, ANIME_CURVE_COUNT> ANIME_CURVES = {{
     // ease-in quad
     { 0.0f, 0.0022f, 0.0049f, 0.0087f, 0.014f, 0.019f, 0.027f, 0.035f, 0.044f, 0.054f, 0.065f, 0.078f, 0.091f, 0.11f, 0.12f, 0.14f, 0.16f, 0.18f, 0.20f, 0.22f, 0.24f, 0.26f, 0.29f, 0.31f, 0.34f, 0.37f, 0.39f, 0.42f, 0.45f, 0.49f, 0.52f, 0.55f, 0.59f, 0.63f, 0.66f, 0.70f, 0.74f, 0.78f, 0.82f, 0.87f, 0.91f, 0.95f, 1.0f },
     // ease-in cubic
