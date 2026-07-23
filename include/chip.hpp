@@ -81,16 +81,15 @@ class Chip {
 	bool absorbed = false;
 
 public:
-	// TODO: hexSize is passed in due to window resize, refactor constructor params and add a 
-	// resize function to call right after it is constructed by World
-	Chip(Hex::Point point, Vector2 hexSize, Vector2 position, int id_, int val, bool active = false): 
+	
+	Chip(Hex::Point point, Vector2 position, int chipId, int chipValue, bool active = false): 
 		hex(point), 
-		id(id_),
-		value(val),
-		nextValue(val),
+		id(chipId),
+		value(chipValue),
+		nextValue(chipValue),
 		enabled(active) {
-			load(hexSize, position);
-			if (active) place(hex, position, val);
+			load(position);
+			if (active) place(hex, position, chipValue);
 		}
 	~Chip() = default;
 
@@ -98,7 +97,7 @@ public:
 		return this->value == other.value;
 	}
 
-	void load(Vector2 hexSize, Vector2 position);
+	void load(Vector2 position);
 	void reset();
 	void sync();
 
@@ -135,6 +134,6 @@ public:
 	bool active() const;
 	bool available() const;
 
-	void resize();
+	void resize(Vector2 newSize, int newFontSize);
 	void unload();
 };

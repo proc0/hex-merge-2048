@@ -6,8 +6,7 @@
 #include "raymath.h"
 #include "type.hpp"
 
-void Chip::load(Vector2 chipSize, Vector2 position) {
-	size = chipSize;
+void Chip::load(Vector2 position) {
 	// initial font width measurement
 	float fontXOne = MeasureText("2", CHIP_FONT_SIZE);
 	StackMap<int, float, PROPS_SIZE> initProps = {
@@ -371,6 +370,11 @@ bool Chip::active() const {
 
 bool Chip::available() const {
 	return !enabled;
+}
+
+void Chip::resize(Vector2 newSize, int newFontSize) {
+	size = newSize;
+	setFontSize(newFontSize);
 }
 
 void Chip::unload() {
