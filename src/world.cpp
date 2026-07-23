@@ -421,16 +421,14 @@ void World::arrest(int max) {
 }
 
 void World::resize(int width, int height) {
-    Vector2 gridUnit = grid.getUnit();
+    Vector2 unitHex = grid.getUnit();
     for (auto& chip : chips) {
         // TODO: add chip.resize, pass in the diff grid calculations
         if (chip.active()) {
             Vector2 newPosition = grid.getPosition(chip.getCurrentHex());
             chip.setPosition(newPosition);
         }
-        // TODO: make consistent grid.unit (Vector2) and chip.size + chip.scale
-        // should it be size*scale or a Vector2 size? Should be the same in both.
-        chip.setSize(gridUnit.x);
+        chip.setSize(unitHex);
         chip.setFontSize(window.scale(CHIP_FONT_SIZE));
     }
 }
