@@ -253,7 +253,16 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
             chipsIdxsUpdating.clear();
 
-            for (int i = 0; i < 2; i++) {                
+            // TODO: separate spawning into its own method
+            // potentially have another config for number of chips that spawn
+            // like using the log of maxValue
+            int numberOfChips = 1;
+            if (meta.maxValue > 32) {
+                numberOfChips = 2;
+            } else if (meta.maxValue > 512) {
+                numberOfChips = 3;
+            }
+            for (int i = 0; i < numberOfChips; i++) {                
                 Hex::Point nextHex = grid.findRandom();
                 if (nextHex != Hex::Absurd) {
                     spawnChip(nextHex, getRandomValue());
@@ -338,7 +347,7 @@ int World::getRandomValue() const {
     // get the phase index
     // TODO: separate into a different method to get phase index from other places
     // subtract min chip value (2) and take the min between the value and max chip value (1024)
-    int currentPhase = static_cast<int>(fmin(fmax(log2(meta.maxValue-2), 0), 1024));
+    int currentPhase = static_cast<int>(fmin(fmax(log2(meta.maxValue), 0), PHASE_COUNT))-1;
     
     if (currentPhase > PHASE_COUNT-1) {
         // clamp the phase to the last one
@@ -352,51 +361,8 @@ int World::getRandomValue() const {
         newValue = randomizedPhaseMap[currentPhase][randomIndex];
     }
 
-    return newValue;
+    return fmax(newValue, 2);
 }
-// TODO: review and add actual random phase config after reviewing
-// int World::getRandomValue() const {
-//     int nextValue = 2;
-//     int chance = 0;
-//     switch (meta.maxValue) {
-//     case 32:
-//         chance = GetRandomValue(0, 4);
-//         if (chance == 4) {
-//             nextValue = 4;
-//         } else {
-//             nextValue = 2;
-//         }
-//         break;
-//     case 128:
-//         chance = GetRandomValue(0, 6);
-//         if (chance == 6) {
-//             nextValue = 8;
-//         }
-//         else if (chance == 3 || chance == 4 || chance == 5) {
-//             nextValue = 4;
-//         }
-//         else {
-//             nextValue = 2;
-//         }
-//         break;
-//     case 512:
-//         chance = GetRandomValue(0, 6);
-//         if (chance == 6) {
-//             nextValue = 16;
-//         } else if (chance == 5 || chance == 4) {
-//             nextValue = 8;
-//         } else if (chance == 3 || chance == 2) {
-//             nextValue = 4;
-//         } else {
-//             nextValue = 2;
-//         }
-//         break;
-//     default:
-//         nextValue = 2;
-//     }
-
-//     return nextValue;
-// }
 
 void World::renderMain() const {
     DrawRectangleGradientV(0, 0, window.width, window.height, DARKBLUE, DARKGRAY);
