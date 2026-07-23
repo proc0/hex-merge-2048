@@ -1,10 +1,13 @@
 #include "world.hpp"
 
+#include "config.hpp"
 #include "hex.hpp"
 #include "index.h"
 #include "type.hpp"
 
 #include "raylib.h"
+
+#include <string>
 
 void World::load(){
     splat = LoadSound(PATH_ASSET(URI_SOUND_SPLAT));
@@ -21,6 +24,15 @@ void World::load(){
 
     // shim chip
     chips.emplace_back(Hex::Origin, Vector2({}), 0, 0);
+
+    for (int i = 0; i < randomizedPhaseMap.size(); ++i) {
+        std::string tempStr = "";
+        auto& randMap = randomizedPhaseMap[i];
+        for (int j = 0; j < randMap.size(); ++j) {
+            tempStr = std::format("{} {}", tempStr, randMap[j]);
+        }
+        TraceLog(LOG_INFO, "%d: %s", i, tempStr.c_str());
+    }
 }
 
 void World::reset() {
