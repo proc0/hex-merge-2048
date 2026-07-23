@@ -25,9 +25,10 @@ int main(void){
 // DONE: add a continue when you win a game to continue until gridlock
 // DONE: add a way for different kinds of animation functions per prop, i.e. some ease in others ease out, etc
 // DONE: fine tune animations, add multiple types
+// DONE: make animations frame independent
 
-
-// TODO: make animations frame independent
+// TODO: remove unecessary chip props that do not animate
+// TODO: rename chip animation related variables to reflect function better
 // TODO: add multiple game modes starting with difficulty of classic, easy/medium/hard
 
 // TODO: add phases, changing color as maxValue increases

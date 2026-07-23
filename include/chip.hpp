@@ -35,6 +35,23 @@ class Chip {
 	std::array<float, PROPS_SIZE> target{0};
 	std::array<float, PROPS_SIZE> current{0};
 	std::array<int, PROPS_SIZE> frame{0};
+	std::array<float, PROPS_SIZE> animEllapsed{0};
+	static constexpr std::array<float, PROPS_SIZE> animDuration{
+		0.3f,
+		0.3f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,		
+	};
 	static constexpr std::array<ANIMATION::FUNC, PROPS_SIZE> animIndex{
 		ANIMATION::FUNC::EASE_IN_OUT_CUBIC,
 		ANIMATION::FUNC::EASE_IN_OUT_CUBIC,

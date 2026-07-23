@@ -76,19 +76,35 @@ void Chip::render() const {
 
 State::Chip Chip::update() {
 	// animate props
+	float frameTime = GetFrameTime();
 	for (int i = 0; i < PROPS_SIZE; ++i) {
 		// NOTE: the first value is a flag
 		int& currentFrame = frame[i];
 		// then it counts the current frame based on 
 		// the total values in the animation function array
 		if (currentFrame > 0) {
+			// update ellapsed animation time
+			animEllapsed[i] += frameTime;
+			// calculate progress based on the animation duration
+			float progress = animEllapsed[i]/animDuration[i];
+			// clamp
+			bool done = false;
+			if (progress >= 1.0f) {
+				animEllapsed[i] = 1.0f;
+				done = true;
+			}
+			// calculating resulting animation index from the easing curve
+			currentFrame = static_cast<int>(progress*ANIMATION_MAX_INDEX);
+			// clamp to 1 because 0 means end of animation
+			if (currentFrame < 1) currentFrame = 1;
+			if (currentFrame > ANIMATION_MAX_INDEX) currentFrame = ANIMATION_MAX_INDEX;
+			// update the property value
 			auto& animFunction = Animations[animIndex[i]];
 			current[i] = Lerp(source[i], target[i], animFunction[currentFrame]);
-			// increment frame count
-			currentFrame++;
 			// on the last frame reset back to 'off'
-			if (currentFrame > ANIMATION_MAX_INDEX) {
+			if (done || currentFrame >= ANIMATION_MAX_INDEX) {
 				currentFrame = 0;
+				animEllapsed[i] = 0;
 				// global counter of all props
 				// currently being animated
 				framePropsActive--;

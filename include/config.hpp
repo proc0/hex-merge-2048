@@ -3,7 +3,7 @@
 #include <array>
 #include <cassert>
 
-#define TARGET_FPS 120
+#define TARGET_FPS 60
 // screen defaults
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
