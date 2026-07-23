@@ -43,6 +43,8 @@ int main(void){
 // i.e. number of chips spawning; fine tuning the propabilites of which chips spawn;
 // might require to think about phases to use phases as a way to configure these settings
 
+// TODO: add a continue when you win a game to continue until gridlock
+
 // TODO: make animations frame independent
 // TODO: add a way for different kinds of animation functions per prop, i.e. some ease in others ease out, etc
 
