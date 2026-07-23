@@ -17,24 +17,57 @@ static inline int summation(int n) {
 	return (n*(n+1))/2;
 }
 
+// number of frames
 #define ANIMATION_LENGTH 43
-// by convention animations start at 1
-// so max index is LENGTH - 2 i.e. 43-2=41
-#define ANIMATION_MAX_INDEX 41
-// number of animation types in enum
-#define ANIMATIONS_COUNT 2
+#define ANIMATION_MAX_INDEX 42
+// WARNING: count must equal enum items
+#define ANIMATIONS_COUNT 9
 namespace ANIMATION {
-    enum QUAD {
-        EASE_IN,
-        EASE_OUT
+    enum FUNC {
+        EASE_IN_QUAD,
+        EASE_IN_CUBIC,
+        EASE_OUT_QUAD,
+        EASE_OUT_CUBIC,
+        EASE_OUT_EXPO,
+        EASE_OUT_ELASTIC,
+        EASE_IN_OUT_CUBIC,
+        EASE_IN_OUT_EXPO,
+        EASE_IN_OUT_BACK,
     };
 }
-// TODO: recalculate these and check they are their proper labels
+
+// JS helper function for generating animation curve values
+// function generateAnimCurve(totalFrames, animFunc) { return Array.from({ length: totalFrames }, (_, i) => animFunc(i/totalFrames)).reduce((mem, val) => { return `${mem}, ${val.toPrecision(2)}f`; }) }
+//
+// https://easings.net
+// -------------------
+// function easeInQuad(x) { return x * x; }
+// function easeOutQuad(x) { return 1 - (1 - x) * (1 - x); }
+// function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+// function easeInCubic(x) { return x * x * x; }
+// function easeOutElastic(x) { const c4 = (2 * Math.PI) / 3; return x === 0 ? 0 : x === 1 ? 1 : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1; }
+// function easeInOutCubic(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+
+// WARNING: first value is always 0.0f!
 static inline constexpr std::array<std::array<float, ANIMATION_LENGTH>, ANIMATIONS_COUNT> Animations = {{
-    // ease in quad
-    { 0.0f, 0.000054f, 0.00043f, 0.0015f, 0.0035f, 0.0067f, 0.012f, 0.019f, 0.028f, 0.039f, 0.054f, 0.072f, 0.093f, 0.12f, 0.15f, 0.18f, 0.22f, 0.27f, 0.31f, 0.37f, 0.43f, 0.50f, 0.57f, 0.63f, 0.69f, 0.73f, 0.78f, 0.82f, 0.85f, 0.88f, 0.91f, 0.93f, 0.95f, 0.96f, 0.97f, 0.98f, 0.99f, 0.99f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f },
-    // ease out quad
-    { 0.0f, 1.0f, 0.50f, 0.11f, 0.036f, 0.015f, 0.0079f, 0.0046f, 0.0029f, 0.0019f, 0.0014f, 0.0010f, 0.00075f, 0.00058f, 0.00045f, 0.00036f, 0.00030f, 0.00024f, 0.00020f, 0.00017f, 0.00015f, 0.00012f, 0.00011f, 0.000094f, 0.000082f, 0.000072f, 0.000064f, 0.000057f, 0.000051f, 0.000046f, 0.000041f, 0.000037f, 0.000034f, 0.000031f, 0.000028f, 0.000025f, 0.000023f, 0.000021f, 0.000020f, 0.000018f, 0.000017f, 0.000016f, 0.000015f },
+    // ease-in quad
+    { 0.0f, 0.0022f, 0.0049f, 0.0087f, 0.014f, 0.019f, 0.027f, 0.035f, 0.044f, 0.054f, 0.065f, 0.078f, 0.091f, 0.11f, 0.12f, 0.14f, 0.16f, 0.18f, 0.20f, 0.22f, 0.24f, 0.26f, 0.29f, 0.31f, 0.34f, 0.37f, 0.39f, 0.42f, 0.45f, 0.49f, 0.52f, 0.55f, 0.59f, 0.63f, 0.66f, 0.70f, 0.74f, 0.78f, 0.82f, 0.87f, 0.91f, 0.95f, 1.0f },
+    // ease-in cubic
+    { 0.0f, 0.00010f, 0.00034f, 0.00080f, 0.0016f, 0.0027f, 0.0043f, 0.0064f, 0.0092f, 0.013f, 0.017f, 0.022f, 0.028f, 0.035f, 0.042f, 0.052f, 0.062f, 0.073f, 0.086f, 0.10f, 0.12f, 0.13f, 0.15f, 0.17f, 0.20f, 0.22f, 0.25f, 0.28f, 0.31f, 0.34f, 0.37f, 0.41f, 0.45f, 0.49f, 0.54f, 0.59f, 0.64f, 0.69f, 0.75f, 0.80f, 0.87f, 0.93f, 1.0f },
+    // ease-out quad
+    { 0.0f, 0.046f, 0.091f, 0.13f, 0.18f, 0.22f, 0.26f, 0.30f, 0.34f, 0.37f, 0.41f, 0.45f, 0.48f, 0.51f, 0.55f, 0.58f, 0.61f, 0.63f, 0.66f, 0.69f, 0.71f, 0.74f, 0.76f, 0.78f, 0.80f, 0.82f, 0.84f, 0.86f, 0.88f, 0.89f, 0.91f, 0.92f, 0.93f, 0.95f, 0.96f, 0.97f, 0.97f, 0.98f, 0.99f, 0.99f, 1.0f, 1.0f, 1.0f },
+    // ease-out cubic
+    { 0.0f, 0.07f, 0.13f, 0.20f, 0.25f, 0.31f, 0.36f, 0.41f, 0.46f, 0.51f, 0.55f, 0.59f, 0.63f, 0.66f, 0.69f, 0.72f, 0.75f, 0.78f, 0.80f, 0.83f, 0.85f, 0.87f, 0.88f, 0.90f, 0.91f, 0.93f, 0.94f, 0.95f, 0.96f, 0.97f, 0.97f, 0.98f, 0.98f, 0.99f, 0.99f, 0.99f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f },
+    // ease-out expo
+    { 0.0f, 0.15f, 0.28f, 0.38f, 0.48f, 0.55f, 0.62f, 0.68f, 0.72f, 0.77f, 0.80f, 0.83f, 0.86f, 0.88f, 0.90f, 0.91f, 0.92f, 0.94f, 0.95f, 0.95f, 0.96f, 0.97f, 0.97f, 0.98f, 0.98f, 0.98f, 0.98f, 0.99f, 0.99f, 0.99f, 0.99f, 0.99f, 0.99f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f },
+    // ease-out elastic
+    { 0.0f, 0.25f, 0.59f, 0.93f, 1.2f, 1.3f, 1.4f, 1.3f, 1.2f, 1.1f, 0.97f, 0.90f, 0.87f, 0.88f, 0.91f, 0.95f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.99f, 0.99f, 0.98f, 0.98f, 0.99f, 0.99f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f },
+    // ease-in-out cubic
+    { 0.0f, 0.000050f, 0.00040f, 0.0014f, 0.0032f, 0.0063f, 0.011f, 0.017f, 0.026f, 0.037f, 0.050f, 0.067f, 0.087f, 0.11f, 0.14f, 0.17f, 0.21f, 0.25f, 0.29f, 0.35f, 0.40f, 0.47f, 0.53f, 0.60f, 0.65f, 0.71f, 0.75f, 0.79f, 0.83f, 0.86f, 0.89f, 0.91f, 0.93f, 0.95f, 0.96f, 0.97f, 0.98f, 0.99f, 0.99f, 1.0f, 1.0f, 1.0f, 1.0f },
+    // ease-in-out expo
+    { 0.0f, 0.00067f, 0.00093f, 0.0013f, 0.0018f, 0.0024f, 0.0034f, 0.0047f, 0.0064f, 0.0089f, 0.012f, 0.017f, 0.023f, 0.032f, 0.045f, 0.062f, 0.085f, 0.12f, 0.16f, 0.22f, 0.31f, 0.43f, 0.57f, 0.69f, 0.78f, 0.84f, 0.88f, 0.92f, 0.94f, 0.96f, 0.97f, 0.98f, 0.98f, 0.99f, 0.99f, 0.99f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f },
+    // ease-in-out back
+    { 0.0f, -0.0026f, -0.0098f, -0.020f, -0.033f, -0.048f, -0.062f, -0.075f, -0.087f, -0.096f, -0.10f, -0.099f, -0.092f, -0.077f, -0.054f, -0.021f, 0.022f, 0.077f, 0.15f, 0.23f, 0.32f, 0.44f, 0.56f, 0.68f, 0.77f, 0.85f, 0.92f, 0.98f, 1.0f, 1.1f, 1.1f, 1.1f, 1.1f, 1.1f, 1.1f, 1.1f, 1.1f, 1.1f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f },
 }};
 
 template<typename K, typename V, size_t Capacity>

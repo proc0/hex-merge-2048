@@ -36,21 +36,21 @@ class Chip {
 	std::array<float, PROPS_SIZE> target{0};
 	std::array<float, PROPS_SIZE> current{0};
 	std::array<int, PROPS_SIZE> frame{0};
-	static constexpr std::array<ANIMATION::QUAD, PROPS_SIZE> animIndex{
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_OUT,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
-		ANIMATION::QUAD::EASE_IN,
+	static constexpr std::array<ANIMATION::FUNC, PROPS_SIZE> animIndex{
+		ANIMATION::FUNC::EASE_IN_OUT_CUBIC,
+		ANIMATION::FUNC::EASE_IN_OUT_CUBIC,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_OUT_BACK,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_QUAD,
+		ANIMATION::FUNC::EASE_IN_QUAD,
 	};
 
 	Hex::Point currentHex;
@@ -81,7 +81,6 @@ public:
 		value(val),
 		nextValue(val),
 		enabled(active) {
-    		// TraceLog(LOG_INFO, "CREATING CHIP %d: %f %f", value, position.x, position.y);
 			load(position);
 			if (active) place(hex, position, val);
 		}
@@ -92,7 +91,6 @@ public:
 	}
 
 	void load(Vector2 position);
-	// void reload(Vector2 position, float scale, float size, float fontSize, float rotation, Color color);
 	void reset();
 	
 	int getId() const;

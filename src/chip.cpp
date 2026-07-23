@@ -127,14 +127,20 @@ State::Chip Chip::update() {
 	// that can be set in one of the animation functions i.e. animatePropTargets, and would be selected in 
 	// the loop to get the value to Lerp on. i.e. idx = animationIndex[i].. animationFunction[idx][currentFrame]
 	for (int i = 0; i < PROPS_SIZE; ++i) {
+		// NOTE: the first value is a flag
 		int& currentFrame = frame[i];
+		// then it counts the current frame based on 
+		// the total values in the animation function array
 		if (currentFrame > 0) {
 			auto& animFunction = Animations[animIndex[i]];
 			current[i] = Lerp(source[i], target[i], animFunction[currentFrame]);
+			// increment frame count
 			currentFrame++;
-			if (currentFrame >= ANIMATION_MAX_INDEX) {
+			// on the last frame reset back to 'off'
+			if (currentFrame > ANIMATION_MAX_INDEX) {
 				currentFrame = 0;
-				
+				// global counter of all props
+				// currently being animated
 				framePropsActive--;
 			}
 		}

@@ -24,9 +24,9 @@ int main(void){
 // might require to think about phases to use phases as a way to configure these settings
 // DONE: add a continue when you win a game to continue until gridlock
 // DONE: add a way for different kinds of animation functions per prop, i.e. some ease in others ease out, etc
+// DONE: fine tune animations, add multiple types
 
 
-// TODO: fine tune animations, add multiple types
 // TODO: make animations frame independent
 // TODO: add multiple game modes starting with difficulty of classic, easy/medium/hard
 
