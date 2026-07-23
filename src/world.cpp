@@ -23,7 +23,7 @@ void World::load(){
     chipsIdxsUpdating.reserve(chipsCapacity);
 
     // shim chip
-    chips.emplace_back(Hex::Origin, Vector2({}), 0, 0);
+    chips.emplace_back(Hex::Origin, Vector2({}), Vector2({}), 0, 0);
 
     for (int i = 0; i < randomizedPhaseMap.size(); ++i) {
         std::string tempStr = "";
@@ -63,7 +63,12 @@ int World::spawnChip(Hex::Point hex, int value) {
 int World::createChip(Hex::Point hex, int value) {
     int key = static_cast<int>(chips.size());
     grid.place(hex, key);
-    chips.emplace_back(hex, grid.getPosition(hex), key, value, true);
+    // scale the hexSize in case window was resized
+    // before all chips have been created.
+    float hexSize = window.scale(HEX_SIZE);
+    // TODO: the font size needs to be scaled by window also
+    // refactor the way to construct, and just call a resize function here
+    chips.emplace_back(hex, Vector2({ hexSize, hexSize }), grid.getPosition(hex), key, value, true);
 
     chipsIdxsUpdating.push_back(key);
     return key;
@@ -426,11 +431,15 @@ void World::resize(int width, int height) {
         // TODO: make consistent grid.unit (Vector2) and chip.size + chip.scale
         // should it be size*scale or a Vector2 size? Should be the same in both.
         chip.setSize(gridUnit.x);
-        chip.updateFont(window.scale(CHIP_FONT_SIZE));
+        chip.setFontSize(window.scale(CHIP_FONT_SIZE));
     }
 }
 
 void World::unload(){
+    for (auto& chip : chips) {
+        chip.unload();
+    }
+    chips.clear();
     grid.unload();
     UnloadSound(splat);
 }

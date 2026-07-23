@@ -62,7 +62,7 @@ void Grid::renderGrid() const {
 
 void Grid::renderHex(const Hex::Point& point, const HexState& state) const {
 	DrawPoly(state.position, 6, unit.x, 0.0f, colorHex);
-	DrawPolyLinesEx(state.position, 6, unit.x, 0.0f, 2.0f, colorLine);
+	DrawPolyLinesEx(state.position, 6, unit.x, 0.0f, 1.0f, colorLine);
 
 	// const char *pointLabel = TextFormat("(%d, %d, %d)", point.q, point.r, point.s);
 	// DrawText(pointLabel, state.position.x - 30.0f, state.position.y - 9.0f, 18, BLACK);
