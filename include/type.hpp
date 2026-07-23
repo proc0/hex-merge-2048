@@ -17,7 +17,7 @@ namespace Action {
         MOVE_UP_LEFT,
         LOAD_GAME,
         RESTART,
-        SAVE_GAME,
+        GAME_CONTINUE,
         OPTIONS,
         RESUME_GAME,
         MAIN_MENU,
@@ -96,6 +96,7 @@ namespace State {
         PAUSE,
         OVER,
         WIN,
+        STAY,
         FINISH
     };
 

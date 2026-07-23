@@ -21,6 +21,10 @@ void Game::restart() {
     meta.totalTimeId = gameTimerId;
 }
 
+void Game::continueGame() {
+    meta.state = State::Game::STAY;
+}
+
 void Game::renderMain() const {
     DrawText(title, titleX, titleY, titleFontSize, RAYWHITE);
 }
@@ -40,14 +44,14 @@ GameState Game::updateMain(InputEvent, WorldState){
 }
 
 GameState Game::updateGame(InputEvent inputEvent, WorldState worldState){
-    if (meta.state != State::Game::PLAY) return meta;
+    if (meta.state != State::Game::PLAY && meta.state != State::Game::STAY) return meta;
     
     if (paused) {
         meta.state = State::Game::PAUSE;
         return meta;
     }
  
-    if (worldState.maxValue == 2048) {
+    if (meta.state != State::Game::STAY && worldState.maxValue == 2048) {
         window.timer.stopWatch(gameTimerId);
         meta.state = State::Game::WIN;
     } else if (worldState.gridlock) {

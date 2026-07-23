@@ -33,7 +33,8 @@ public:
     void load();
     void start();
     void restart();
-    
+    void continueGame();
+
     void renderUnit() const {};
     void renderGame() const;
     void renderMain() const;

@@ -403,6 +403,10 @@ Action::Surface Surface::updateMenu(const InputEvent& inputEvent) {
     // handle mouse cursor, if there is an action
     // this function might not be called again
     auto action = widget.consumeButtonAction();
+
+    if (currentGameState == State::Game::WIN && action == Action::Surface::GAME_CONTINUE) {
+        layoutMenu = &Surface::layoutMenuUnit;
+    }
     // default mouse cursor before returning
     if (widget.onButtonJustHovered()) {
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
@@ -488,6 +492,9 @@ void Surface::layoutWinLose() {
             },
         }) {        
             widget.layoutButton(BUTTON_ID::RESTART);
+            if (currentGameState == State::Game::WIN) {
+                widget.layoutButton(BUTTON_ID::GAME_CONTINUE);
+            }
         }
     }
 }

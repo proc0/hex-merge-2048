@@ -253,7 +253,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
             chipsIdxsUpdating.clear();
 
-            for (int i = 0; i < 4; i++) {                
+            for (int i = 0; i < 2; i++) {                
                 Hex::Point nextHex = grid.findRandom();
                 if (nextHex != Hex::Absurd) {
                     spawnChip(nextHex, getRandomValue());

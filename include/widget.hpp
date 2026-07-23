@@ -29,7 +29,7 @@ namespace WidgetId {
 		RETURN,
 		RELOAD,
 		RESTART,
-		SAVE_GAME,
+		GAME_CONTINUE,
 		OPTIONS,
 		CONFIRM_RETURN,
 		CONFIRM_TUTORIAL,
@@ -91,7 +91,7 @@ BUTTON(MOVE_LEFT, 	   "HUDMoveLeft",  		MOVE_LEFT,				  "Left") \
 BUTTON(RETURN, 		   "ButtonMainMenu", 	MAIN_MENU, "Return to Main Menu") \
 BUTTON(RELOAD, 		   "ButtonGameLoad", 	LOAD_GAME,			 "Load Game") \
 BUTTON(RESTART, 	   "ButtonGameRestart", RESTART,			   "Restart") \
-BUTTON(SAVE_GAME, 	   "ButtonGameSave", 	SAVE_GAME,			 "Save Game") \
+BUTTON(GAME_CONTINUE,  "ButtonGameContinue", GAME_CONTINUE,		  "Continue") \
 BUTTON(OPTIONS, 	   "ButtonOptions", 	OPTIONS, 			   "Options") \
 BUTTON(CONFIRM_RETURN, "ButtonConfirmReturn", CONFIRM_RETURN,	       "Yes") \
 BUTTON(CONFIRM_TUTORIAL, "ButtonConfirmTutorial", CONFIRM_TUTORIAL,  "Begin") \
