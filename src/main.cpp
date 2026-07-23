@@ -26,8 +26,8 @@ int main(void){
 // DONE: add a way for different kinds of animation functions per prop, i.e. some ease in others ease out, etc
 // DONE: fine tune animations, add multiple types
 // DONE: make animations frame independent
+// DONE: remove unecessary chip props that do not animate
 
-// TODO: remove unecessary chip props that do not animate
 // TODO: rename chip animation related variables to reflect function better
 // TODO: add multiple game modes starting with difficulty of classic, easy/medium/hard
 

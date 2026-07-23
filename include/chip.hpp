@@ -10,41 +10,22 @@
 #include <array>
 
 // WARNING: must equal the properties enum size
-#define PROPS_SIZE 10
+#define PROP_COUNT 10
 
 class Chip {
-	// TODO: name the enum and refactor
-	enum {
-		POSX,
-		POSY,
+	enum PROPERTY {
+		X,
+		Y,
 		SCALE,
-		FONTX,
-		FONTY,
-		ROT,
-		COLR,
-		COLG,
-		COLB,
-		COLA
+		FONT_X,
+		FONT_Y,
+		ROTATION,
+		COLOR_R,
+		COLOR_G,
+		COLOR_B,
+		COLOR_A
 	};
-
-	std::array<float, PROPS_SIZE> source{0};
-	std::array<float, PROPS_SIZE> current{0};
-	std::array<float, PROPS_SIZE> target{0};
-	std::array<int, PROPS_SIZE> frame{0};
-	std::array<float, PROPS_SIZE> animEllapsed{0};
-	static constexpr std::array<float, PROPS_SIZE> animDuration{
-		0.3f,
-		0.3f,
-		0.2f,
-		0.2f,
-		0.2f,
-		0.2f,
-		0.2f,
-		0.2f,
-		0.2f,
-		0.2f,
-	};
-	static constexpr std::array<ANIMATION::FUNC, PROPS_SIZE> animIndex{
+	static constexpr std::array<ANIMATION::FUNC, PROP_COUNT> animIndex{
 		ANIMATION::FUNC::EASE_IN_OUT_CUBIC,
 		ANIMATION::FUNC::EASE_IN_OUT_CUBIC,
 		ANIMATION::FUNC::EASE_IN_QUAD,
@@ -56,6 +37,23 @@ class Chip {
 		ANIMATION::FUNC::EASE_IN_QUAD,
 		ANIMATION::FUNC::EASE_IN_QUAD,
 	};
+	static constexpr std::array<float, PROP_COUNT> animDuration{
+		0.3f,
+		0.3f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+		0.2f,
+	};
+	std::array<float, PROP_COUNT> source{0};
+	std::array<float, PROP_COUNT> actual{0};
+	std::array<float, PROP_COUNT> target{0};
+	std::array<float, PROP_COUNT> animEllapsed{0};
+	std::array<int, PROP_COUNT> frame{0};
 
 	// StackMap<int, float, 2> moveTargets;
 	// StackMap<int, float, 2> delayMoveSources;
@@ -81,7 +79,7 @@ class Chip {
 	bool absorbed = false;
 
 public:
-	
+
 	Chip(Hex::Point point, Vector2 position, int chipId, int chipValue, bool active = false): 
 		hex(point), 
 		id(chipId),
@@ -117,7 +115,7 @@ public:
 	void setPosition(Vector2);
 	void setFontSize(float fontSize);
 	void setSize(Vector2 hexSize);
-	void setCurrentHex(Hex::Point);
+	void setHex(Hex::Point);
 	void setValue(int);
 	void addValue(int);
 	// getters

@@ -7,21 +7,20 @@
 #include "type.hpp"
 
 void Chip::load(Vector2 position) {
-	// initial font width measurement
-	float fontXOne = MeasureText("2", CHIP_FONT_SIZE);
-	StackMap<int, float, PROPS_SIZE> initProps = {
-		{ POSX, position.x },
-		{ POSY, position.y },
+	float fontWidth = MeasureText("2", CHIP_FONT_SIZE);
+	StackMap<int, float, PROP_COUNT> loadProps = {
+		{ X, position.x },
+		{ Y, position.y },
 		{ SCALE, 1.0f },
-		{ FONTX, fontXOne*-0.5f },
-		{ FONTY, CHIP_FONT_SIZE*-0.5f },
-		{ ROT, 0.0f },
-		{ COLR, primaryColor.r },
-		{ COLG, primaryColor.g },
-		{ COLB, primaryColor.b },
-		{ COLA, primaryColor.a },
+		{ FONT_X, fontWidth*-0.5f },
+		{ FONT_Y, CHIP_FONT_SIZE*-0.5f },
+		{ ROTATION, 0.0f },
+		{ COLOR_R, primaryColor.r },
+		{ COLOR_G, primaryColor.g },
+		{ COLOR_B, primaryColor.b },
+		{ COLOR_A, primaryColor.a },
 	};
-	setProps({{ initProps.data.data(), initProps.size }}, true, true, true);
+	setProps({{ loadProps.data.data(), loadProps.size }}, true, true, true);
 }
 
 void Chip::reset() {
@@ -40,8 +39,8 @@ void Chip::sync() {
 	// sync all the props that changed
 	constexpr std::array<int, 3> syncMap = {
 		SCALE,
-		FONTX,
-		FONTY,
+		FONT_X,
+		FONT_Y,
 	};
 
 	applyPropChanges(syncMap);
@@ -59,17 +58,17 @@ void Chip::sync() {
 }
 
 void Chip::render() const {
-	float radius = size.x*current[SCALE];
-	DrawPoly({ current[POSX], current[POSY] }, 6, radius, current[ROT], { static_cast<unsigned char>(current[COLR]), static_cast<unsigned char>(current[COLG]), static_cast<unsigned char>(current[COLB]), static_cast<unsigned char>(current[COLA]) });
-	DrawPolyLinesEx({ current[POSX], current[POSY] }, 6, radius, current[ROT], current[SCALE], BLACK);
+	float radius = size.x*actual[SCALE];
+	DrawPoly({ actual[X], actual[Y] }, 6, radius, actual[ROTATION], { static_cast<unsigned char>(actual[COLOR_R]), static_cast<unsigned char>(actual[COLOR_G]), static_cast<unsigned char>(actual[COLOR_B]), static_cast<unsigned char>(actual[COLOR_A]) });
+	DrawPolyLinesEx({ actual[X], actual[Y] }, 6, radius, actual[ROTATION], actual[SCALE], BLACK);
 	
-	DrawText(TextFormat("%d", value), current[POSX]+current[FONTX], current[POSY]+current[FONTY], fontSize*current[SCALE], secondaryColor);
+	DrawText(TextFormat("%d", value), actual[X]+actual[FONT_X], actual[Y]+actual[FONT_Y], fontSize*actual[SCALE], secondaryColor);
 }
 
 State::Chip Chip::update() {
 	// animate props
 	float frameTime = GetFrameTime();
-	for (int i = 0; i < PROPS_SIZE; ++i) {
+	for (int i = 0; i < PROP_COUNT; ++i) {
 		// NOTE: the first value is a flag
 		int& currentFrame = frame[i];
 		// then it counts the current frame based on 
@@ -92,7 +91,7 @@ State::Chip Chip::update() {
 			if (currentFrame > ANIMATION_MAX_INDEX) currentFrame = ANIMATION_MAX_INDEX;
 			// update the property value
 			auto& animFunction = Animations[animIndex[i]];
-			current[i] = Lerp(source[i], target[i], animFunction[currentFrame]);
+			actual[i] = Lerp(source[i], target[i], animFunction[currentFrame]);
 			// on the last frame reset back to 'off'
 			if (done || currentFrame >= ANIMATION_MAX_INDEX) {
 				currentFrame = 0;
@@ -136,8 +135,8 @@ void Chip::translate(Hex::Point point, Vector2 position) {
 	// animate movement
 	// TODO: memoize this in a member field
 	StackMap<int, float, 2> moveAnimation;
-	moveAnimation.insert(POSX, position.x);
-	moveAnimation.insert(POSY, position.y);
+	moveAnimation.insert(X, position.x);
+	moveAnimation.insert(Y, position.y);
 	animatePropTargets({{ moveAnimation.data.data(), moveAnimation.size }});
 
 	// set the these props to a different value
@@ -164,8 +163,8 @@ int Chip::merge(Chip& other) {
 	float fontWidth = MeasureText(TextFormat("%d", nextValue), fontSize);
 	// TODO: memoize this in a member field
 	StackMap<int, float, 2> fontPropChanges;
-	fontPropChanges.insert(FONTX, fontWidth*-0.5f);
-	fontPropChanges.insert(FONTY, fontSize*-0.5f);
+	fontPropChanges.insert(FONT_X, fontWidth*-0.5f);
+	fontPropChanges.insert(FONT_Y, fontSize*-0.5f);
 	// delay prop changes to allow the merging chip to move before changing,
 	// similar mechanism as animating, but there is not intermediate values
 	delayPropChanges({{ fontPropChanges.data.data(), fontPropChanges.size }});
@@ -202,7 +201,7 @@ void Chip::applyPropChanges(const std::span<const int> syncKeys) {
 	while(it != syncKeys.end()) {
 		int key = *it;
 
-		current[key] = target[key];
+		actual[key] = target[key];
 
 		it++;
 	}
@@ -215,7 +214,7 @@ void Chip::delayPropChanges(FlatMapView<int, float> targetMap) {
 		int key = it->first;
 		float targetVal = it->second;
 		
-		source[key] = current[key];
+		source[key] = actual[key];
 		target[key] = targetVal;
 
 		it++;
@@ -230,7 +229,7 @@ void Chip::animatePropSources(FlatMapView<int, float> sourceMap) {
 		float sourceVal = it->second;
 		
 		source[key] = sourceVal;
-		target[key] = current[key];
+		target[key] = actual[key];
 		frame[key] = 1;
 
 		it++;
@@ -247,7 +246,7 @@ void Chip::animatePropTargets(FlatMapView<int, float> targetMap) {
 		int key = it->first;
 		float targetVal = it->second;
 		
-		source[key] = current[key];
+		source[key] = actual[key];
 		target[key] = targetVal;
 		frame[key] = 1;
 
@@ -271,7 +270,7 @@ void Chip::setProps(FlatMapView<int, float> propMap, bool setSource, bool setCur
 		}
 		
 		if (setCurrent) {
-			current[key] = val;
+			actual[key] = val;
 		}
 
 		if (setTarget) {
@@ -285,13 +284,13 @@ void Chip::setProps(FlatMapView<int, float> propMap, bool setSource, bool setCur
 // Setters
 
 void Chip::setPosition(Vector2 position) {
-	current[POSX] = position.x;	
-	source[POSX] = position.x;	
-	target[POSX] = position.x;
+	actual[X] = position.x;	
+	source[X] = position.x;	
+	target[X] = position.x;
 
-	current[POSY] = position.y;	
-	source[POSY] = position.y;	
-	target[POSY] = position.y;
+	actual[Y] = position.y;	
+	source[Y] = position.y;	
+	target[Y] = position.y;
 }
 
 void Chip::setFontSize(float newFontSize) {
@@ -301,20 +300,20 @@ void Chip::setFontSize(float newFontSize) {
 	float fontX = fontWidth*-0.5f;
 	float fontY = newFontSize*-0.5f;
 
-	current[FONTX] = fontX;	
-	source[FONTX] = fontX;	
-	target[FONTX] = fontX;
+	actual[FONT_X] = fontX;	
+	source[FONT_X] = fontX;	
+	target[FONT_X] = fontX;
 
-	current[FONTY] = fontY;	
-	source[FONTY] = fontY;	
-	target[FONTY] = fontY;
+	actual[FONT_Y] = fontY;	
+	source[FONT_Y] = fontY;	
+	target[FONT_Y] = fontY;
 }
 
 void Chip::setSize(Vector2 chipSize) {
 	size = chipSize;
 }
 
-void Chip::setCurrentHex(Hex::Point point) {
+void Chip::setHex(Hex::Point point) {
 	hex = point;
 }
 
@@ -341,11 +340,11 @@ Hex::Point Chip::getCurrentHex() const {
 }
 
 Vector2 Chip::getPosition() const {
-	return { current[POSX], current[POSY] };
+	return { actual[X], actual[Y] };
 }
 
 Vector2 Chip::getTargetPosition() const {
-	return { target[POSX], target[POSY] };
+	return { target[X], target[Y] };
 }
 
 float Chip::getFontSize() const {
