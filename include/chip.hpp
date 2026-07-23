@@ -121,7 +121,7 @@ public:
 	// getters
 	int getId() const;
 	int getValue() const;
-	Hex::Point getCurrentHex() const;
+	Hex::Point getHex() const;
 	Vector2 getPosition() const;
 	Vector2 getTargetPosition() const;
 	float getFontSize() const;

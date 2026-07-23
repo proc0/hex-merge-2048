@@ -339,7 +339,7 @@ int Chip::getValue() const {
 	return value;
 }
 
-Hex::Point Chip::getCurrentHex() const {
+Hex::Point Chip::getHex() const {
 	return hex;
 }
 

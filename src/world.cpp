@@ -327,7 +327,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 bool World::chipLocked(Chip& chip) const {
     bool locked = true;
 
-    Hex::Point chipHex = chip.getCurrentHex();
+    Hex::Point chipHex = chip.getHex();
     for (auto& direction : Hex::BasisDirection) {
         Hex::Point neighbor = chipHex + direction;
         if (grid.inside(neighbor)) {
@@ -427,7 +427,7 @@ void World::resize(int width, int height) {
     for (auto& chip : chips) {
         chip.resize(unitHex, fontSize);
         if (chip.active()) {
-            Vector2 newPosition = grid.getPosition(chip.getCurrentHex());
+            Vector2 newPosition = grid.getPosition(chip.getHex());
             chip.setPosition(newPosition);
         }
     }
