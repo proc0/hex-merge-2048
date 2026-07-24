@@ -183,16 +183,24 @@ Clay_RenderCommandArray App::update() {
             }
         }
 
-        if(surfaceAction == Action::Surface::CONFIRM_TUTORIAL || surfaceAction == Action::Surface::RESTART) {
+        if(surfaceAction == Action::Surface::RESTART) {
+            state = State::App::RUN;
+            // reset any game state
+            world.reset();
+            game.restart();
+            
+            game.transition(state, screen);
+            world.transition(state, screen, Action::Surface::DO_NOTHING);
+            surface.transition(state, screen);
+
+        } else if(surfaceAction == Action::Surface::CONFIRM_TUTORIAL) {
             TraceLog(LOG_INFO, "BEGIN GAME");
             state = State::App::RUN;
 
             surface.clearEvent();
-            // reset any game state
-            world.reset();
-            game.restart();
-            game.transition(state, screen);
-            world.transition(state, screen, Action::Surface::DO_NOTHING);
+
+            // game.transition(state, screen);
+            // world.transition(state, screen, Action::Surface::DO_NOTHING);
             surface.transition(state, screen);
 
         } else if(surfaceAction == Action::Surface::GAME_CONTINUE) {
@@ -256,7 +264,9 @@ Clay_RenderCommandArray App::update() {
             screen = State::Screen::GAME;
             // NOTE: app state is still on HOLD until confirm
             surface.beginEvent(Event::Surface::SHOW_TUTORIAL);
-
+            // reset any game state
+            world.reset();
+            game.restart();
             game.transition(state, screen);
             // transition world to start showing in background
             world.transition(state, screen, surfaceAction);

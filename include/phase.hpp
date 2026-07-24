@@ -3,11 +3,15 @@
 #include "type.hpp"
 #include "level.hpp"
 
+#include <span>
+
 class Phase {
 	
 	int currentPhase = 0;
 
-	const Distribution* valueDist = &distributionEasy;
+	// const Distribution* valueDist = &distributionEasy;
+
+	std::span<const ValueDistribution, PHASE_COUNT> valueDist = distributionEasy;
 
 public:
 	Phase() {}

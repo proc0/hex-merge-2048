@@ -55,10 +55,10 @@ constexpr float constexpr_round(float x) {
 
 #define DISTRIBUTION_RESOLUTION 30
 
-typedef std::array<std::array<int, DISTRIBUTION_RESOLUTION>, PHASE_COUNT> Distribution;
+typedef std::array<int, DISTRIBUTION_RESOLUTION> ValueDistribution;
 // generate the distribution of values based on the configuration of probabilities
-static inline consteval Distribution generatePhaseDistributions(const std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT>& probabilities) {
-	Distribution result{};
+static inline consteval std::array<ValueDistribution, PHASE_COUNT> generatePhaseDistributions(const std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT>& probabilities) {
+	std::array<ValueDistribution, PHASE_COUNT> result{};
 
 	// iterate throught the 2D array of probabilities
 	// for each array of probabilities (phaseProbs)

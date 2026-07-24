@@ -20,7 +20,7 @@ int Phase::getRandomValue() const {
     if (currentPhase >= 0) {
         // sample the random distribution with a random index
         int randomIndex = GetRandomValue(0, DISTRIBUTION_RESOLUTION-1);
-        newValue = (*valueDist)[currentPhase][randomIndex];
+        newValue = valueDist[currentPhase][randomIndex];
     }
 
     return fmax(newValue, 2);
@@ -41,10 +41,10 @@ void Phase::setPhase(int value) {
 void Phase::transition(Action::Surface action) {
 	switch (action) {
 	case Action::Surface::MAIN_NEW_CLASSIC:
-		valueDist = &distributionEasy;
+		valueDist = distributionEasy;
 		break;
 	case Action::Surface::MAIN_NEW_WIPEOUT:
-		valueDist = &distributionMedium;
+		valueDist = distributionMedium;
 		break;
 	default:
 		break;
