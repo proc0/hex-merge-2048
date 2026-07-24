@@ -112,15 +112,31 @@ State::Chip Chip::update() {
 
 void Chip::place(Hex::Point point, Vector2 position, int newValue) {
 	hex = point;
+	int prevValue = value;
 	value = newValue;
 	nextValue = newValue;
 	setPosition(position);
 	enable();
 
-	// update font of potential new value
-	setFontSize(fontSize);
 	// animate chip placement, scale and font scale
 	animatePropSources({{ configSourcePlaceEffect.data.data(), configSourcePlaceEffect.size }});
+
+	if (newValue == prevValue) return;
+	// update only if this chip is not the same as before
+	auto maybeColor = conifgValueColor.get(value);
+	if (maybeColor.has_value()) {
+		Color& newColor = maybeColor.value();
+		StackMap<int, float, 4> configPlaceUpdate{{
+			{ COLOR_R, newColor.r },
+			{ COLOR_G, newColor.g },
+			{ COLOR_B, newColor.b },
+			{ COLOR_A, newColor.a },
+		}};
+		setProps({{ configPlaceUpdate.data.data(), configPlaceUpdate.size }}, true, true, true);
+	}
+
+	// update font of new value
+	setFontSize(fontSize);
 }
 
 // move the chip within the hex board

@@ -50,7 +50,7 @@ void Grid::render() const {
     // render hex effects
 	for (auto &[hex, state] : map) {
 		if (state.key == 0) continue;
-		DrawPoly(state.position, 6, unit.x, 0.0f, { 253, 249, 0, 150 });
+		DrawPoly(state.position, 6, unit.x, 0.0f, { 0, 0, 0, 10 });
 	}
 }
 

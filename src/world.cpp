@@ -41,8 +41,10 @@ void World::reset() {
     for (auto& chip : chips) {
         chip.reset();
     }
-    meta.maxValue = 2;
     meta.gridlock = false;
+    meta.maxValue = 2;
+    phase.setPhase(meta.maxValue);
+    
     chipsIdxsUpdating.clear();
     chipsIdxsMoving.clear();
     // seed chip
