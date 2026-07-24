@@ -69,11 +69,11 @@ void Surface::load(){
     // 4. Initialize Clay [clay.h:2186-2188]
     Clay_Initialize(arena, Clay_Dimensions({ window.widthf, window.heightf }), Clay_ErrorHandler({ .errorHandlerFunction = handleError, .userData = this }));
 
-    fonts[0] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_MEDIUM), 48, 0, 400);
+    fonts[0] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_MEDIUM), 32, 0, 324);
     SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
-    fonts[1] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_REGULAR), 32, 0, 400);
+    fonts[1] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_REGULAR), 48, 0, 324);
     SetTextureFilter(fonts[1].texture, TEXTURE_FILTER_BILINEAR);
-    fonts[2] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_CONDENSED), 184, 0, 400);
+    fonts[2] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_CONDENSED), 184, 0, 324);
     SetTextureFilter(fonts[2].texture, TEXTURE_FILTER_BILINEAR);
     Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
 
