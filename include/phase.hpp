@@ -12,7 +12,8 @@ class Phase {
 	// const Distribution* valueDist = &distributionEasy;
 
 	std::span<const ValueDistribution, PHASE_COUNT> valueDist = distributionEasy;
-
+	std::span<const int, PHASE_COUNT> spawnDist = spawnNumberPhasesEasy;
+	
 public:
 	Phase() {}
 	~Phase() = default;
@@ -23,6 +24,7 @@ public:
 	void setPhase(int value);
     
     int getRandomValue() const;
-	
+	int getSpawnNumber() const;
+
 	void transition(Action::Surface);
 };

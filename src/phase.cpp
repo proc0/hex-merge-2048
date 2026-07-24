@@ -26,6 +26,10 @@ int Phase::getRandomValue() const {
     return fmax(newValue, 2);
 }
 
+int Phase::getSpawnNumber() const {
+	return spawnDist[currentPhase];
+}
+
 void Phase::setPhase(int value) {
     // get the phase index
 	currentPhase = static_cast<int>(fmin(fmax(log2(value), 0), PHASE_COUNT))-1;
@@ -42,9 +46,11 @@ void Phase::transition(Action::Surface action) {
 	switch (action) {
 	case Action::Surface::MAIN_NEW_CLASSIC:
 		valueDist = distributionEasy;
+		spawnDist = spawnNumberPhasesEasy;
 		break;
 	case Action::Surface::MAIN_NEW_WIPEOUT:
 		valueDist = distributionMedium;
+		spawnDist = spawnNumberPhasesMedium;
 		break;
 	default:
 		break;

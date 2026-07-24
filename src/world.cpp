@@ -226,7 +226,6 @@ WorldState World::updateHold(InputEvent inputEvent, Action::Surface action){
 WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
     if (chipsIdxsUpdating.size() && meta.state == State::World::PROCESS_SPAWN) {
-        // TraceLog(LOG_INFO, "Updating non-movement chips.");
         std::erase_if(chipsIdxsUpdating, [this](int idx){
             Chip& chip = chips[idx];
             State::Chip chipState = chip.update();
@@ -250,26 +249,21 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
         if (chipsIdxsMoving.empty()) {
             meta.state = State::World::PROCESS_SPAWN;
-            // TraceLog(LOG_INFO, "DONE Processing movement chips. Size: %d", chipsIdxsMoving.size());
 
+            // sync all the chips to give a chance
+            // for the once that didn't move to update
             for (auto& chip : chips) {
                 if (chip.active()) {
                     chip.sync();
                 }
             }
-
+            // clear whatever was not moving
+            // but still updating
             chipsIdxsUpdating.clear();
 
-            // TODO: separate spawning into its own method
-            // potentially have another config for number of chips that spawn
-            // like using the log of maxValue
-            int numberOfChips = 1;
-            if (meta.maxValue > 32) {
-                numberOfChips = 2;
-            } else if (meta.maxValue > 512) {
-                numberOfChips = 3;
-            }
-            for (int i = 0; i < numberOfChips; i++) {                
+            // spawn chips
+            const int spawnNumber = phase.getSpawnNumber();
+            for (int i = 0; i < spawnNumber; i++) {                
                 Hex::Point nextHex = grid.findRandom();
                 if (nextHex != Hex::Absurd) {
                     spawnChip(nextHex, phase.getRandomValue());
