@@ -103,7 +103,7 @@ void App::runIntro() {
             state = State::App::RUN;
             screen = State::Screen::MAIN;
             surface.transition(state, screen);
-            world.transition(state, screen);
+            world.transition(state, screen, Action::Surface::DO_NOTHING);
             game.transition(state, screen);
 
 #ifdef __EMSCRIPTEN__
@@ -170,7 +170,7 @@ Clay_RenderCommandArray App::update() {
                     state = State::App::RUN;
 
                     game.transition(state, screen);
-                    world.transition(state, screen);
+                    world.transition(state, screen, Action::Surface::DO_NOTHING);
                     surface.transition(state, screen);
                 }
             } else if (state == State::App::RUN) {
@@ -178,7 +178,7 @@ Clay_RenderCommandArray App::update() {
                 state = State::App::HOLD;
 
                 game.transition(state, screen);
-                world.transition(state, screen);
+                world.transition(state, screen, Action::Surface::DO_NOTHING);
                 surface.transition(state, screen);
             }
         }
@@ -192,7 +192,7 @@ Clay_RenderCommandArray App::update() {
             world.reset();
             game.restart();
             game.transition(state, screen);
-            world.transition(state, screen);
+            world.transition(state, screen, Action::Surface::DO_NOTHING);
             surface.transition(state, screen);
 
         } else if(surfaceAction == Action::Surface::GAME_CONTINUE) {
@@ -207,7 +207,7 @@ Clay_RenderCommandArray App::update() {
                 state = State::App::RUN;
             
                 game.transition(state, screen);
-                world.transition(state, screen);
+                world.transition(state, screen, Action::Surface::DO_NOTHING);
                 surface.transition(state, screen);
 
             } else if (surfaceAction == Action::Surface::MAIN_MENU) {
@@ -219,7 +219,7 @@ Clay_RenderCommandArray App::update() {
                 state = State::App::RUN;
                 screen = State::Screen::MAIN;
 
-                world.transition(state, screen);
+                world.transition(state, screen, Action::Surface::DO_NOTHING);
                 game.transition(state, screen);
                 surface.transition(state, screen);
 
@@ -259,7 +259,7 @@ Clay_RenderCommandArray App::update() {
 
             game.transition(state, screen);
             // transition world to start showing in background
-            world.transition(state, screen);
+            world.transition(state, screen, surfaceAction);
             surface.transition(state, screen);
 
         } else if (surfaceAction == Action::Surface::OPTIONS) {

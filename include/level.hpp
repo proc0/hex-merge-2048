@@ -9,7 +9,7 @@
 // config 2D array for probabilities of the different chip values based on index
 // { 2, 4, 8, 16 ... 1024 }, where each index has a probability between 0 and 1 to spawn
 // and there are 10 phases for each of the numbers up to 1024 as well. The total sum of a phase array should be 1.
-static inline constexpr std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT> phaseValueDistributionConfig = {{
+static inline constexpr std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT> configPhaseMedium = {{
 	{ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 	{ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 	{ 0.8, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
@@ -20,6 +20,19 @@ static inline constexpr std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_C
 	{ 0.0, 0.0, 0.2, 0.4, 0.3, 0.1, 0.0, 0.0, 0.0, 0.0 },
 	{ 0.0, 0.1, 0.1, 0.3, 0.2, 0.2, 0.1, 0.0, 0.0, 0.0 },
 	{ 0.0, 0.0, 0.0, 0.0, 0.2, 0.3, 0.3, 0.1, 0.1, 0.0 }
+}};
+
+static inline constexpr std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT> configPhaseEasy = {{
+	{ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }
 }};
 
 constexpr float constexpr_pow(float base, int exp) {
@@ -41,9 +54,11 @@ constexpr float constexpr_round(float x) {
 }
 
 #define DISTRIBUTION_RESOLUTION 30
+
+typedef std::array<std::array<int, DISTRIBUTION_RESOLUTION>, PHASE_COUNT> Distribution;
 // generate the distribution of values based on the configuration of probabilities
-static inline consteval std::array<std::array<int, DISTRIBUTION_RESOLUTION>, PHASE_COUNT> generatePhaseDistributions(const std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT>& probabilities) {
-	std::array<std::array<int, DISTRIBUTION_RESOLUTION>, PHASE_COUNT> result{};
+static inline consteval Distribution generatePhaseDistributions(const std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT>& probabilities) {
+	Distribution result{};
 
 	// iterate throught the 2D array of probabilities
 	// for each array of probabilities (phaseProbs)
@@ -85,4 +100,5 @@ static inline consteval std::array<std::array<int, DISTRIBUTION_RESOLUTION>, PHA
 	return result;
 }
 
-static inline constexpr auto randomizedPhaseMap = generatePhaseDistributions(phaseValueDistributionConfig);
+static inline constexpr auto distributionMedium = generatePhaseDistributions(configPhaseMedium);
+static inline constexpr auto distributionEasy = generatePhaseDistributions(configPhaseEasy);

@@ -4,7 +4,6 @@
 #include "config.hpp"
 #include "hex.hpp"
 #include "type.hpp"
-#include "level.hpp"
 
 #include "raylib.h"
 
@@ -131,6 +130,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
             // World book keeping
             if (resultValue > meta.maxValue) {
                 meta.maxValue = resultValue;
+                phase.setPhase(meta.maxValue);
             }
             chipsIdxsMoving.push_back(sourceKey);
             meta.state = State::World::PROCESS_MOVES;
@@ -270,7 +270,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
             for (int i = 0; i < numberOfChips; i++) {                
                 Hex::Point nextHex = grid.findRandom();
                 if (nextHex != Hex::Absurd) {
-                    spawnChip(nextHex, getRandomValue());
+                    spawnChip(nextHex, phase.getRandomValue());
                 }
             }
 
@@ -348,27 +348,6 @@ bool World::chipLocked(Chip& chip) const {
     return locked;
 }
 
-int World::getRandomValue() const {
-    // get the phase index
-    // TODO: separate into a different method to get phase index from other places
-    // subtract min chip value (2) and take the min between the value and max chip value (1024)
-    int currentPhase = static_cast<int>(fmin(fmax(log2(meta.maxValue), 0), PHASE_COUNT))-1;
-    
-    if (currentPhase > PHASE_COUNT-1) {
-        // clamp the phase to the last one
-        currentPhase = PHASE_COUNT-1;
-    }
-    
-    int newValue = 2;
-    if (currentPhase >= 0) {
-        // sample the random distribution with a random index
-        int randomIndex = GetRandomValue(0, DISTRIBUTION_RESOLUTION-1);
-        newValue = randomizedPhaseMap[currentPhase][randomIndex];
-    }
-
-    return fmax(newValue, 2);
-}
-
 void World::renderMain() const {
     DrawRectangleGradientV(0, 0, window.width, window.height, DARKBLUE, DARKGRAY);
 }
@@ -390,7 +369,7 @@ void World::renderGame() const {
     }
 }
 
-void World::transition(State::App appState, State::Screen screen) {
+void World::transition(State::App appState, State::Screen screen, Action::Surface action) {
     switch(screen) {
         case State::Screen::MAIN:
             update = &World::updateMain;
@@ -403,6 +382,8 @@ void World::transition(State::App appState, State::Screen screen) {
             } else {
                 update = &World::updateGame;
                 render = &World::renderGame;
+
+                phase.transition(action);
             }
             break;
         default:

@@ -49,9 +49,8 @@ public:
     WorldState updateHold(InputEvent, Action::Surface);
     
     bool chipLocked(Chip&) const;
-    int getRandomValue() const;
     void resize(int width, int height) override;
-    void transition(State::App, State::Screen);
+    void transition(State::App, State::Screen, Action::Surface);
     bool arrested();
     void arrest(int max);
     void unload();
