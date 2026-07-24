@@ -81,9 +81,17 @@ void Surface::load(){
 
     // TODO: move this into Display class
     textureArrowUp = LoadTexture(PATH_ASSET(URI_IMAGE_ARROW_UP));
-    textureArrowRight = LoadTexture(PATH_ASSET(URI_IMAGE_ARROW_RIGHT));
+    SetTextureFilter(textureArrowUp, TEXTURE_FILTER_BILINEAR);
+    textureArrowUpRight = LoadTexture(PATH_ASSET(URI_IMAGE_ARROW_UP_RIGHT));
+    SetTextureFilter(textureArrowUpRight, TEXTURE_FILTER_BILINEAR);
+    textureArrowDownRight = LoadTexture(PATH_ASSET(URI_IMAGE_ARROW_DOWN_RIGHT));
+    SetTextureFilter(textureArrowDownRight, TEXTURE_FILTER_BILINEAR);
     textureArrowDown = LoadTexture(PATH_ASSET(URI_IMAGE_ARROW_DOWN));
-    textureArrowLeft = LoadTexture(PATH_ASSET(URI_IMAGE_ARROW_LEFT));
+    SetTextureFilter(textureArrowDown, TEXTURE_FILTER_BILINEAR);
+    textureArrowDownLeft = LoadTexture(PATH_ASSET(URI_IMAGE_ARROW_DOWN_LEFT));
+    SetTextureFilter(textureArrowDownLeft, TEXTURE_FILTER_BILINEAR);
+    textureArrowUpLeft = LoadTexture(PATH_ASSET(URI_IMAGE_ARROW_UP_LEFT));
+    SetTextureFilter(textureArrowUpLeft, TEXTURE_FILTER_BILINEAR);
 
     textureBlueTile = LoadTexture(PATH_ASSET(URI_IMAGE_BLUE_TILE));
 
@@ -95,6 +103,8 @@ void Surface::load(){
     // scrollBox blacks, i.e.:
     // tutorialScrollId = widget.initScrollBox("TutorialScrollBox");
     widget.initScrollBox("TutorialScrollBox");
+
+    resize(window.width, window.height);
 }
 
 void Surface::loadOverlay() {
@@ -841,9 +851,10 @@ void Surface::layoutDisplayGame() {
         CLAY(CLAY_ID("ControlHUD"), {
             .layout = {
                 .sizing = {
-                    .width = CLAY_SIZING_FIXED(210), 
+                    .width = CLAY_SIZING_FIXED(window.scale(300)), 
                     .height = CLAY_SIZING_GROW(0),
                 },
+                .childGap = 10,
                 .childAlignment = { .x = CLAY_ALIGN_X_RIGHT, .y = CLAY_ALIGN_Y_BOTTOM },
                 .layoutDirection = CLAY_LEFT_TO_RIGHT,
             },
@@ -851,45 +862,50 @@ void Surface::layoutDisplayGame() {
 
             CLAY(CLAY_ID("HUDControlsLeft"), {
                 .layout = {
-                    .sizing = { 
-                        .width = CLAY_SIZING_FIXED(70), 
-                        .height = CLAY_SIZING_FIXED(170), 
-                    },
+                    // .sizing = { 
+                    //     .width = CLAY_SIZING_FIXED(70), 
+                    //     .height = CLAY_SIZING_FIXED(170), 
+                    // },
+                    .childGap = 10,
                     .childAlignment = { .y = CLAY_ALIGN_Y_CENTER },
                     .layoutDirection = CLAY_TOP_TO_BOTTOM,
                 }
             }) {            
 
-                widget.layoutButtonTexture(BUTTON_ID::MOVE_LEFT, &textureArrowLeft);
+                widget.layoutButtonArrow(BUTTON_ID::MOVE_UP_LEFT, &textureArrowUpLeft);
+                widget.layoutButtonArrow(BUTTON_ID::MOVE_DOWN_LEFT, &textureArrowDownLeft);
             }
 
             // TODO: get the fixed size dynamically from images
             CLAY(CLAY_ID("HUDControlsMiddle"), {
                 .layout = {
-                    .sizing = { 
-                        .width = CLAY_SIZING_FIXED(70), 
-                        .height = CLAY_SIZING_FIXED(170), 
-                    },
-                    .childGap = 30,
+                    // .sizing = { 
+                    //     .width = CLAY_SIZING_FIXED(70), 
+                    //     .height = CLAY_SIZING_FIXED(170), 
+                    // },
+                    // .childGap = 30,
+                    .childGap = 20,
                     .childAlignment = { .y = CLAY_ALIGN_Y_CENTER },
                     .layoutDirection = CLAY_TOP_TO_BOTTOM,
                 }
             }) {            
-                widget.layoutButtonTexture(BUTTON_ID::MOVE_UP, &textureArrowUp);
-                widget.layoutButtonTexture(BUTTON_ID::MOVE_DOWN, &textureArrowDown);
+                widget.layoutButtonArrow(BUTTON_ID::MOVE_UP, &textureArrowUp);
+                widget.layoutButtonArrow(BUTTON_ID::MOVE_DOWN, &textureArrowDown);
             }
 
             CLAY(CLAY_ID("HUDControlsRight"), {
                 .layout = {
-                    .sizing = { 
-                        .width = CLAY_SIZING_FIXED(70), 
-                        .height = CLAY_SIZING_FIXED(170), 
-                    },
+                    // .sizing = { 
+                    //     .width = CLAY_SIZING_FIXED(70), 
+                    //     .height = CLAY_SIZING_FIXED(170), 
+                    // },
+                    .childGap = 10,
                     .childAlignment = { .y = CLAY_ALIGN_Y_CENTER },
                     .layoutDirection = CLAY_TOP_TO_BOTTOM,
                 }
             }) {            
-                widget.layoutButtonTexture(BUTTON_ID::MOVE_RIGHT, &textureArrowRight);
+                widget.layoutButtonArrow(BUTTON_ID::MOVE_UP_RIGHT, &textureArrowUpRight);
+                widget.layoutButtonArrow(BUTTON_ID::MOVE_DOWN_RIGHT, &textureArrowDownRight);
             }
         } // End HUD
     }
@@ -930,6 +946,11 @@ void Surface::handleError(Clay_ErrorData errorData) {
 
 void Surface::resize(int width, int height) {
 	Clay_SetLayoutDimensions(Clay_Dimensions({ static_cast<float>(width), static_cast<float>(height) }));
+    TraceLog(LOG_INFO, "HELLO FROM SURFACE RESIZE");
+    float buttonScale = window.width > window.height*0.8f ? 0.8f : 1.0f;
+    float newButtonWidth = window.scale(BUTTON_ARROW_WIDTH*buttonScale);
+    float newButtonHeight = window.scale(BUTTON_ARROW_HEIGHT*buttonScale);
+    widget.resize(newButtonWidth, newButtonHeight);
 }
 
 void Surface::transition(State::App appState, State::Screen screen) {
@@ -991,9 +1012,11 @@ void Surface::transition(State::App appState, State::Screen screen) {
 void Surface::unload(){
 
     UnloadTexture(textureArrowUp);
-    UnloadTexture(textureArrowRight);
+    UnloadTexture(textureArrowUpRight);
+    UnloadTexture(textureArrowDownRight);
     UnloadTexture(textureArrowDown);
-    UnloadTexture(textureArrowLeft);
+    UnloadTexture(textureArrowDownLeft);
+    UnloadTexture(textureArrowUpLeft);
     UnloadTexture(textureBlueTile);
 
     UnloadShader(overlayShader);

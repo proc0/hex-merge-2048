@@ -25,9 +25,11 @@ class Surface : public Layer {
     // along with building the components
     // for the HUD
     Texture2D textureArrowUp;
-    Texture2D textureArrowRight;
+    Texture2D textureArrowUpRight;
+    Texture2D textureArrowDownRight;
     Texture2D textureArrowDown;
-    Texture2D textureArrowLeft;
+    Texture2D textureArrowDownLeft;
+    Texture2D textureArrowUpLeft;
     Texture2D textureBlueTile;
     std::string formatScore = "Score";
     std::string formatTotalTime = "Time";

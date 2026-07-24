@@ -31,6 +31,24 @@ void handleClayHover(Clay_ElementId elementId, Clay_PointerData pointerData, voi
     }
 }
 
+void Widget::layoutButtonArrow(const BUTTON_ID id, Texture2D* textureData) {
+    const Button& button = getButton(id);
+    CLAY(button.clayId, { 
+        .layout = {
+            .sizing = { 
+                .width = CLAY_SIZING_FIXED(buttonArrowDimension.x),
+                .height = CLAY_SIZING_FIXED(buttonArrowDimension.y)
+            },
+            .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER },
+        }, 
+        .image = { .imageData = textureData },
+    }) {
+        onButtonHover(id, Clay_Hovered());
+        // Clay_OnHover also handles click events
+        Clay_OnHover(handleClayHover, this);
+    }
+}
+
 void Widget::layoutButtonTexture(const BUTTON_ID id, Texture2D* textureData) {
     const Button& button = getButton(id);
     CLAY(button.clayId, { 
@@ -352,6 +370,10 @@ void Widget::triggerButtonAction(const char* elementId) {
 
 BUTTON_ID Widget::getActiveTab() const {
     return activeTab;
+}
+
+void Widget::resize(float buttonWidth, float buttonHeight) {
+    buttonArrowDimension = { buttonWidth, buttonHeight };
 }
 
 void Widget::clearButtonAction() {

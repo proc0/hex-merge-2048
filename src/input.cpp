@@ -87,7 +87,7 @@ InputEvent Input::update() {
 		};
 	} else if (IsKeyPressed(KEY_D)) {
 		return {
-			.id = Event::Input::MOVE_RIGHT,
+			.id = Event::Input::MOVE_DOWN_RIGHT,
 			.position = position,
 			.mouseWheel = mouseWheelDelta,
 		};
@@ -99,7 +99,7 @@ InputEvent Input::update() {
 		};
 	} else if (IsKeyPressed(KEY_A)) {
 		return {
-			.id = Event::Input::MOVE_LEFT,
+			.id = Event::Input::MOVE_DOWN_LEFT,
 			.position = position,
 			.mouseWheel = mouseWheelDelta,
 		};

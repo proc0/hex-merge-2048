@@ -291,7 +291,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
                 // TraceLog(LOG_INFO, "MOVE UP RIGHT");
                 updateMove(Hex::NE);
 
-        } else if (inputEvent.id == Event::Input::MOVE_RIGHT || action == Action::Surface::MOVE_RIGHT ) {
+        } else if (inputEvent.id == Event::Input::MOVE_DOWN_RIGHT || action == Action::Surface::MOVE_DOWN_RIGHT ) {
                 // TraceLog(LOG_INFO, "MOVE RIGHT");
                 updateMove(Hex::SE);
 
@@ -299,7 +299,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
                 // TraceLog(LOG_INFO, "MOVE DOWN");
                 updateMove(Hex::S);
 
-        } else if (inputEvent.id == Event::Input::MOVE_LEFT || action == Action::Surface::MOVE_LEFT ) {
+        } else if (inputEvent.id == Event::Input::MOVE_DOWN_LEFT || action == Action::Surface::MOVE_DOWN_LEFT ) {
                 // TraceLog(LOG_INFO, "MOVE LEFT");
                 updateMove(Hex::SW);
 

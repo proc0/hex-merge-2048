@@ -1,5 +1,6 @@
 #pragma once
 
+#include "index.h"
 #include "type.hpp"
 
 extern "C" {
@@ -25,9 +26,11 @@ namespace WidgetId {
 		MAIN_NEW_CURSED,
 		RESUME,
 		MOVE_UP,
-		MOVE_RIGHT,
+		MOVE_UP_RIGHT,
+		MOVE_DOWN_RIGHT,
 		MOVE_DOWN,
-		MOVE_LEFT,
+		MOVE_DOWN_LEFT,
+		MOVE_UP_LEFT,
 		RETURN,
 		RESTART,
 		GAME_CONTINUE,
@@ -89,9 +92,11 @@ BUTTON(MAIN_NEW_HEXED, "ButtonNewHexed", MAIN_NEW_HEXED,    	"Hexed (Hard)") \
 BUTTON(MAIN_NEW_CURSED, "ButtonNewCursed", MAIN_NEW_CURSED, "Cursed (Brutal)") \
 BUTTON(RESUME, 		   "ButtonGameResume",  RESUME_GAME,			"Resume") \
 BUTTON(MOVE_UP, 	   "HUDMoveUp",  		MOVE_UP,					"Up") \
-BUTTON(MOVE_RIGHT, 	   "HUDMoveRight",  	MOVE_RIGHT,				 "Right") \
+BUTTON(MOVE_UP_RIGHT,	"HUDMoveUpRight",  	MOVE_UP_RIGHT,			"UpRight") \
+BUTTON(MOVE_DOWN_RIGHT,	"HUDMoveDownRight",	MOVE_DOWN_RIGHT,		"DownRight") \
 BUTTON(MOVE_DOWN, 	   "HUDMoveDown",  		MOVE_DOWN,				  "Down") \
-BUTTON(MOVE_LEFT, 	   "HUDMoveLeft",  		MOVE_LEFT,				  "Left") \
+BUTTON(MOVE_DOWN_LEFT,	"HUDMoveDownLeft",	MOVE_DOWN_LEFT,		  "DownLeft") \
+BUTTON(MOVE_UP_LEFT,	"HUDMoveUpLeft",	MOVE_UP_LEFT,			"UpLeft") \
 BUTTON(RETURN, 		   "ButtonMainMenu", 	MAIN_MENU, 			 "Main Menu") \
 BUTTON(RESTART, 	   "ButtonGameRestart", RESTART,			   "Restart") \
 BUTTON(GAME_CONTINUE,  "ButtonGameContinue", GAME_CONTINUE,		  "Continue") \
@@ -125,6 +130,7 @@ BUTTONS
 	std::vector<char> buttonHovers;
 
 	ScrollState scrollState = {0};
+    Vector2 buttonArrowDimension = { BUTTON_ARROW_WIDTH, BUTTON_ARROW_HEIGHT };
 
 	Action::Surface currentButtonAction = Action::Surface::DO_NOTHING;
 	BUTTON_ID lastButtonHovered = BUTTON_ID::NIL;
@@ -176,10 +182,13 @@ public:
 	void layoutButtonSecondary(const BUTTON_ID);
 	void layoutTab(const BUTTON_ID);
 	void layoutButtonTexture(const BUTTON_ID, Texture2D* buttonTexture);
+	void layoutButtonArrow(const BUTTON_ID, Texture2D* buttonTexture);
 	void layoutScrollBar(const Clay_ElementId& parentId, Clay_ElementId scrollbarId);
 
 	void BeginScrollBox();
 	void EndScrollBox();
+
+	void resize(float buttonWidth, float buttonHeight);
 };
 
 #undef BUTTONS
