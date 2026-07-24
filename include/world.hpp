@@ -20,6 +20,9 @@ class World : public Layer {
 
     WorldState meta;
 
+    Color bgColor = LIGHTGRAY;
+    Color lastBgColor = DARKGRAY;
+
     int attempts;
     bool maxValueChanged = false;
     

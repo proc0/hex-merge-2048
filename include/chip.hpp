@@ -156,10 +156,12 @@ public:
 	// getters
 	int getId() const;
 	int getValue() const;
+	int getTargetValue() const;
 	Hex::Point getHex() const;
 	Vector2 getPosition() const;
 	Vector2 getTargetPosition() const;
 	float getFontSize() const;
+	Color getColor() const;
 	// query
 	bool hasAbsorbed() const;
 	void enable();

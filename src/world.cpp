@@ -39,6 +39,8 @@ void World::reset() {
     // seed chip
     grid.place(Hex::Origin, spawnChip(Hex::Origin, 2));
     meta.state = State::World::WAIT;
+    bgColor = LIGHTGRAY;
+    lastBgColor = DARKGRAY;
 }
 
 int World::spawnChip(Hex::Point hex, int value) {
@@ -236,18 +238,29 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
             // sync all the chips to give a chance
             // for the once that didnt move to update
+            bool bgLoaded = false;
+            int phaseIdx = phase.getPhase();
+            Color newBgColor;
             for (auto& chip : chips) {
 
                 if (chip.active()) {
                     chip.sync();
-                    if (maxValueChanged) {
+                    if (maxValueChanged && phaseIdx > 0) {
                         chip.phaseTransition(phase.getPhase());
                         // chipsIdxsUpdating.push_back(chip.getId());
+                        if (!bgLoaded && chip.getTargetValue() == meta.maxValue) {
+                            newBgColor = chip.getColor();
+                            bgLoaded = true;
+                        }
                     }
                 }
             }
 
             if (maxValueChanged) {
+                if (phaseIdx > 0) {
+                    lastBgColor = bgColor;
+                    bgColor = newBgColor;
+                }
                 maxValueChanged = false;
             }
             // clear whatever was not moving
@@ -325,8 +338,10 @@ void World::renderMain() const {
 }
 
 void World::renderGame() const {
-    DrawRectangleGradientV(0, 0, window.width, window.height, BLUE, GREEN);
-    
+    // DrawRectangleGradientV(0, 0, window.width, window.height, BLUE, GREEN);
+    ClearBackground(bgColor);
+    DrawCircleGradient(grid.getOrigin(), window.halfWidthf, lastBgColor, bgColor);
+
     grid.render();
         
     // first pass bottom layer

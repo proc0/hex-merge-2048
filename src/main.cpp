@@ -29,11 +29,15 @@ int main(void){
 // DONE: remove unecessary chip props that do not animate
 // DONE: rename chip animation related variables to reflect function better
 // DONE: add multiple game modes starting with difficulty of classic, easy/medium/hard
+// DONE: add phases, changing color as maxValue increases
 
-
-// TODO: add phases, changing color as maxValue increases
-// change board and bg color
+// TODO: change board and bg color
 // grayscale light -> cool pastels -> warm pastels -> cool saturated -> light grayscale high contrast -> hot saturated -> dark grayscale high contrast
+// TODO: add score
+// TODO: add better win/lose screen
+// TODO: design difficulties better
+// TODO: balance
+// TODO: release to itch and github.io
 
 
 // MODE: time based mode "survival mode"

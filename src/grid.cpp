@@ -82,6 +82,10 @@ Vector2 Grid::getUnit() const {
 	return unit;
 }
 
+Vector2 Grid::getOrigin() const {
+	return origin;
+}
+
 void Grid::place(Hex::Point point, int key) {
 	// TODO: change to map[hex] and/or add DEBUG guard
 	HexState& state = map.at(point);

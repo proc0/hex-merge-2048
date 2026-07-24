@@ -50,6 +50,7 @@ public:
 	HexState getState(Hex::Point) const;
 	Vector2 getPosition(Hex::Point) const;
 	Vector2 getUnit() const;
+	Vector2 getOrigin() const;
 
 	void place(Hex::Point, int value);
 	void clear(Hex::Point point);

@@ -370,6 +370,10 @@ int Chip::getValue() const {
 	return value;
 }
 
+int Chip::getTargetValue() const {
+	return nextValue;
+}
+
 Hex::Point Chip::getHex() const {
 	return hex;
 }
@@ -384,6 +388,10 @@ Vector2 Chip::getTargetPosition() const {
 
 float Chip::getFontSize() const {
 	return fontSize;
+}
+
+Color Chip::getColor() const {
+	return { static_cast<unsigned char>(actual[COLOR_R]), static_cast<unsigned char>(actual[COLOR_G]), static_cast<unsigned char>(actual[COLOR_B]), static_cast<unsigned char>(actual[COLOR_A]) };
 }
 
 void Chip::enable() {
