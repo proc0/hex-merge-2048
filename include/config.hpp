@@ -22,28 +22,28 @@
 
 #define CHIP_FONT_SIZE 52
 
-#define PHASE_COLOR_2 RAYWHITE
-#define PHASE_COLOR_4 PINK
-#define PHASE_COLOR_8 SKYBLUE
-#define PHASE_COLOR_16 LIME
-#define PHASE_COLOR_32 GRAY
-#define PHASE_COLOR_64 YELLOW
-#define PHASE_COLOR_128 MAROON
-#define PHASE_COLOR_256 GOLD
-#define PHASE_COLOR_512 ORANGE
-#define PHASE_COLOR_1024 DARKGRAY
-#define PHASE_COLOR_2048 BLACK
-#define PHASE_COLOR_4096 MAGENTA
+#define CHIP_COLOR_2 LIGHTGRAY
+#define CHIP_COLOR_4 YELLOW
+#define CHIP_COLOR_8 SKYBLUE
+#define CHIP_COLOR_16 GREEN
+#define CHIP_COLOR_32 MAROON
+#define CHIP_COLOR_64 GRAY
+#define CHIP_COLOR_128 BLUE
+#define CHIP_COLOR_256 GOLD
+#define CHIP_COLOR_512 VIOLET
+#define CHIP_COLOR_1024 RED
+#define CHIP_COLOR_2048 BLACK
+#define CHIP_COLOR_4096 MAGENTA
 
-#define CHIP_COLOR_2 Color({ 210, 210, 210, 255 })
-#define CHIP_COLOR_4 Color({ 190, 190, 190, 255 })
-#define CHIP_COLOR_8 Color({ 170, 170, 170, 255 })
-#define CHIP_COLOR_16 Color({ 150, 150, 150, 255 })
-#define CHIP_COLOR_32 Color({ 140, 140, 140, 255 })
-#define CHIP_COLOR_64 Color({ 120, 120, 120, 255 })
-#define CHIP_COLOR_128 Color({ 100, 100, 100, 255 })
-#define CHIP_COLOR_256 Color({ 90, 90, 90, 255 })
-#define CHIP_COLOR_512 Color({ 60, 60, 60, 255 })
-#define CHIP_COLOR_1024 Color({ 40, 40, 40, 255 })
-#define CHIP_COLOR_2048 Color({ 0, 0, 0, 255 })
-#define CHIP_COLOR_4096 Color({ 0, 0, 0, 255 })
+#define PHASE_COLOR_2 RAYWHITE
+#define PHASE_COLOR_4 Color({ 190, 190, 190, 255 })
+#define PHASE_COLOR_8 Color({ 170, 170, 170, 255 })
+#define PHASE_COLOR_16 Color({ 150, 150, 150, 255 })
+#define PHASE_COLOR_32 Color({ 140, 140, 140, 255 })
+#define PHASE_COLOR_64 Color({ 120, 120, 120, 255 })
+#define PHASE_COLOR_128 Color({ 100, 100, 100, 255 })
+#define PHASE_COLOR_256 Color({ 90, 90, 90, 255 })
+#define PHASE_COLOR_512 Color({ 60, 60, 60, 255 })
+#define PHASE_COLOR_1024 Color({ 40, 40, 40, 255 })
+#define PHASE_COLOR_2048 Color({ 0, 0, 0, 255 })
+#define PHASE_COLOR_4096 Color({ 0, 0, 0, 255 })

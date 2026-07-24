@@ -149,7 +149,7 @@ void Chip::place(Hex::Point point, Vector2 position, int newValue, int phase) {
 	if (maybeColor.has_value()) {
 		const Color& baseColor = maybeColor.value();
 		const Color& phaseColor = configPhaseColor[currentPhase];
-		TraceLog(LOG_INFO, "BLENDING COLORS for %d: BASE %d %d %d and PHASE %d %d %d", value, baseColor.r, baseColor.g, baseColor.b, phaseColor.r, phaseColor.g, phaseColor.b);
+		// TraceLog(LOG_INFO, "BLENDING COLORS for %d: BASE %d %d %d and PHASE %d %d %d", value, baseColor.r, baseColor.g, baseColor.b, phaseColor.r, phaseColor.g, phaseColor.b);
 		Color newColor = ColorTint(baseColor, phaseColor);
 		StackMap<int, float, 4> configPlaceUpdate{{
 			{ COLOR_R, newColor.r },
@@ -415,7 +415,7 @@ void Chip::phaseTransition(int phase) {
 		const Color& baseColor = maybeColor.value();
 		const Color& phaseColor = configPhaseColor[currentPhase];
 		Color newColor = ColorTint(baseColor, phaseColor);
-		TraceLog(LOG_INFO, "TRANSITIONING - BLENDING COLORS for %d: BASE %d %d %d and PHASE %d %d %d", value, baseColor.r, baseColor.g, baseColor.b, phaseColor.r, phaseColor.g, phaseColor.b);
+		// TraceLog(LOG_INFO, "TRANSITIONING - BLENDING COLORS for %d: BASE %d %d %d and PHASE %d %d %d", value, baseColor.r, baseColor.g, baseColor.b, phaseColor.r, phaseColor.g, phaseColor.b);
 
 		StackMap<int, float, 4> configPhaseUpdate{{
 			{ COLOR_R, newColor.r },

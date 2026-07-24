@@ -39,7 +39,17 @@ void Phase::setPhase(int value) {
 }
 
 int Phase::getPhase() const {
-	return currentPhase;
+	switch (mode) {
+	case Action::Surface::MAIN_NEW_CLASSIC:
+		return 0;
+		break;
+	case Action::Surface::MAIN_NEW_WIPEOUT:
+		return currentPhase;
+		break;
+	default:
+		break;
+	}
+	return 0;
 }
 
 Color Phase::getPhaseColor() const {

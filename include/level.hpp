@@ -26,16 +26,16 @@ static inline constexpr std::array<Color, 12> configPhaseColor{
 #define VALUE_TYPES_COUNT 10
 
 static inline constexpr std::array<int, PHASE_COUNT> spawnNumberPhasesMedium = {
+	6,
+	5,
+	4,
+	4,
+	4,
+	2,
+	2,
+	2,
 	1,
 	1,
-	1,
-	2,
-	2,
-	2,
-	2,
-	2,
-	3,
-	3,
 };
 
 static inline constexpr std::array<int, PHASE_COUNT> spawnNumberPhasesEasy = {
@@ -54,15 +54,15 @@ static inline constexpr std::array<int, PHASE_COUNT> spawnNumberPhasesEasy = {
 // { 2, 4, 8, 16 ... 1024 }, where each index has a probability between 0 and 1 to spawn
 // and there are 10 phases for each of the numbers up to 1024 as well. The total sum of a phase array should be 1.
 static inline constexpr std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT> configPhaseMedium = {{
-	{ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-	{ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 	{ 0.8, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 	{ 0.6, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.6, 0.2, 0.0, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.6, 0.0, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 	{ 0.2, 0.6, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 	{ 0.0, 0.4, 0.4, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-	{ 0.1, 0.2, 0.3, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-	{ 0.0, 0.0, 0.2, 0.4, 0.3, 0.1, 0.0, 0.0, 0.0, 0.0 },
-	{ 0.0, 0.1, 0.1, 0.3, 0.2, 0.2, 0.1, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.2, 0.3, 0.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.0, 0.1, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.0, 0.0, 0.3, 0.2, 0.2, 0.3, 0.0, 0.0, 0.0 },
 	{ 0.0, 0.0, 0.0, 0.0, 0.2, 0.3, 0.3, 0.1, 0.1, 0.0 }
 }};
 
