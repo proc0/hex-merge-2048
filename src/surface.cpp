@@ -696,7 +696,7 @@ void Surface::layoutMenuPause() {
                         .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_BOTTOM },
                         .layoutDirection = CLAY_TOP_TO_BOTTOM,
                     },
-                    .backgroundColor = SURFACE_COLOR_ACCENT_BG,
+                    .backgroundColor = SURFACE_COLOR_MENU_BG,
                     .floating = { 
                         .offset = { 0, 0 },
                         .zIndex = 1, 
@@ -706,10 +706,10 @@ void Surface::layoutMenuPause() {
                         }, 
                         .attachTo = CLAY_ATTACH_TO_ROOT 
                     },
-                    .border = { 
-                        .color = SURFACE_COLOR_ACCENT_BORDER, 
-                        .width = CLAY_BORDER_OUTSIDE(6)
-                    },
+                    // .border = { 
+                    //     .color = SURFACE_COLOR_ACCENT_BORDER, 
+                    //     .width = CLAY_BORDER_OUTSIDE(6)
+                    // },
                     .transition = {
                         .handler = Clay_EaseOut,
                         .duration = 0.3f,
@@ -731,7 +731,7 @@ void Surface::layoutMenuPause() {
                         // and as a result any fading on the parent leave the text unchange and looks jarring.
                         // solution is to either add .transition to each text element in Clay, or allow the parent
                         // to somehow force fade the children text nodes in it if a transition property is set.
-                        CLAY_TEXT(CLAY_STRING(TEXT_RETURN_TO_MAIN), STYLE_TEXT_HIGHLIGHT);
+                        CLAY_TEXT(CLAY_STRING(TEXT_RETURN_TO_MAIN), STYLE_TEXT_DEFAULT);
                     }
 
                     CLAY(CLAY_ID("FooterReturnToMainWarning"), {

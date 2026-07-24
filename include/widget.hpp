@@ -49,20 +49,20 @@ using BUTTON_ID = WidgetId::ButtonId;
 // It would take a list of component IDs and keep some kind of state for them, 
 // i.e. activeTab or scrollState, and it would allow for multiple instances of these sets.
 // menu buttons per screen
-#define BUTTONS_MENU_MAIN const std::array<BUTTON_ID, 4> buttonsMenuMain{ \
+#define BUTTONS_MENU_MAIN const std::array<BUTTON_ID, 3> buttonsMenuMain{ \
 		BUTTON_ID::MAIN_NEW_CLASSIC,\
 		BUTTON_ID::MAIN_NEW_WIPEOUT, \
-		BUTTON_ID::OPTIONS,\
 		BUTTON_ID::QUIT,\
 	};
+		// BUTTON_ID::OPTIONS,
 
-#define BUTTONS_MENU_PAUSE const std::array<BUTTON_ID, 5> buttonsMenuPause{ \
+#define BUTTONS_MENU_PAUSE const std::array<BUTTON_ID, 4> buttonsMenuPause{ \
 		BUTTON_ID::RESUME,\
 		BUTTON_ID::RESTART,\
-		BUTTON_ID::OPTIONS,\
 		BUTTON_ID::RETURN,\
 		BUTTON_ID::QUIT,\
 	};
+		// BUTTON_ID::OPTIONS,
 
 // declare tabs here
 #define TABS_OPTIONS const std::array<BUTTON_ID, 3> tabButtonIds{ \
@@ -89,7 +89,7 @@ BUTTON(MOVE_UP, 	   "HUDMoveUp",  		MOVE_UP,					"Up") \
 BUTTON(MOVE_RIGHT, 	   "HUDMoveRight",  	MOVE_RIGHT,				 "Right") \
 BUTTON(MOVE_DOWN, 	   "HUDMoveDown",  		MOVE_DOWN,				  "Down") \
 BUTTON(MOVE_LEFT, 	   "HUDMoveLeft",  		MOVE_LEFT,				  "Left") \
-BUTTON(RETURN, 		   "ButtonMainMenu", 	MAIN_MENU, "Return to Main Menu") \
+BUTTON(RETURN, 		   "ButtonMainMenu", 	MAIN_MENU, 			 "Main Menu") \
 BUTTON(RESTART, 	   "ButtonGameRestart", RESTART,			   "Restart") \
 BUTTON(GAME_CONTINUE,  "ButtonGameContinue", GAME_CONTINUE,		  "Continue") \
 BUTTON(OPTIONS, 	   "ButtonOptions", 	OPTIONS, 			   "Options") \
