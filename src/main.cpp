@@ -28,8 +28,8 @@ int main(void){
 // DONE: make animations frame independent
 // DONE: remove unecessary chip props that do not animate
 // DONE: rename chip animation related variables to reflect function better
+// DONE: add multiple game modes starting with difficulty of classic, easy/medium/hard
 
-// TODO: add multiple game modes starting with difficulty of classic, easy/medium/hard
 
 // TODO: add phases, changing color as maxValue increases
 // change board and bg color

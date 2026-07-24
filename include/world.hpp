@@ -18,10 +18,11 @@ class World : public Layer {
     std::vector<int> chipsIdxsMoving;
     std::vector<int> chipsIdxsUpdating;
 
-    int attempts;
-
     WorldState meta;
 
+    int attempts;
+    bool maxValueChanged = false;
+    
 public:
     World(Window& window): window(window) {}
     ~World() = default;

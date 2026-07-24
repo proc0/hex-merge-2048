@@ -10,7 +10,7 @@
 
 #include <array>
 
-#define DEFAULT_CHIP_COLOR LIGHTGRAY
+#define DEFAULT_CHIP_COLOR RAYWHITE
 #define DEFAULT_CHIP_FONT_COLOR RAYWHITE
 
 // WARNING: must equal the properties enum size
@@ -30,7 +30,7 @@ class Chip {
 		COLOR_A
 	};
 
-	static constexpr StackMap<int, Color, 12> conifgValueColor{{
+	static constexpr StackMap<int, Color, 12> conifgBaseColor{{
 		{ 2, CHIP_COLOR_2 },
 		{ 4, CHIP_COLOR_4 },
 		{ 8, CHIP_COLOR_8 },
@@ -106,6 +106,7 @@ class Chip {
 	int value = 0;
 	int nextValue = 0;
 	int animatePropCount = 0;
+	int currentPhase = 0;
 
 	State::Chip state = State::Chip::READY;
 
@@ -115,14 +116,13 @@ class Chip {
 
 public:
 
-	Chip(Hex::Point point, Vector2 position, int chipId, int chipValue, bool active = false): 
+	Chip(Hex::Point point, Vector2 position, int chipId, int chipValue, int phase, bool active = false): 
 		hex(point), 
 		id(chipId),
-		value(chipValue),
-		nextValue(chipValue),
+		currentPhase(phase),
 		enabled(active) {
 			load(position);
-			if (active) place(hex, position, chipValue);
+			if (active) place(hex, position, chipValue, phase);
 		}
 	~Chip() = default;
 
@@ -137,7 +137,7 @@ public:
 	void render() const;
 	State::Chip update();
 
-	void place(Hex::Point, Vector2 position, int val);
+	void place(Hex::Point, Vector2 position, int val, int phase);
 	void translate(Hex::Point, Vector2 position);
 	int merge(Chip& other);
 	// animation
@@ -167,6 +167,7 @@ public:
 	bool active() const;
 	bool available() const;
 
+	void phaseTransition(int phase);
 	void resize(Vector2 newSize, int newFontSize);
 	void unload();
 };

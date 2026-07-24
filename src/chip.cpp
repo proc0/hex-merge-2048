@@ -1,6 +1,7 @@
 #include "chip.hpp"
 #include "config.hpp"
 #include "tool.hpp"
+#include "level.hpp"
 
 #include "raylib.h"
 #include "raymath.h"
@@ -8,6 +9,17 @@
 
 void Chip::load(Vector2 position) {
 	float fontWidth = MeasureText(TextFormat("%d", value), CHIP_FONT_SIZE);
+	// TODO: refactor these color blends that happen in merge and place also
+	// auto maybeColor = conifgBaseColor.get(value);
+	// Color newColor = DEFAULT_CHIP_COLOR;
+	// if (maybeColor.has_value()) {
+	// 	Color& baseColor = maybeColor.value();
+	// 	newColor = baseColor;
+	// 	if (currentPhase > 0) {
+	// 		const Color& phaseColor = configPhaseColor[currentPhase];
+	// 		newColor = ColorTint(baseColor, phaseColor);
+	// 	}
+	// }
 	StackMap<int, float, PROP_COUNT> configLoadProps = {
 		{ X, position.x },
 		{ Y, position.y },
@@ -110,22 +122,35 @@ State::Chip Chip::update() {
 	return state;
 }
 
-void Chip::place(Hex::Point point, Vector2 position, int newValue) {
-	hex = point;
+void Chip::place(Hex::Point point, Vector2 position, int newValue, int phase) {
 	int prevValue = value;
+	int prevPhase = currentPhase;
+
+	hex = point;
 	value = newValue;
 	nextValue = newValue;
+	currentPhase = phase;
+
 	setPosition(position);
 	enable();
 
 	// animate chip placement, scale and font scale
 	animatePropSources({{ configSourcePlaceEffect.data.data(), configSourcePlaceEffect.size }});
 
-	if (newValue == prevValue) return;
 	// update only if this chip is not the same as before
-	auto maybeColor = conifgValueColor.get(value);
+	if (newValue == prevValue && phase == prevPhase) return;
+
+	// update font of new value
+	setFontSize(fontSize);
+
+	// TODO: just use phaseTransition here
+	// update color and blend with phase color
+	auto maybeColor = conifgBaseColor.get(value);
 	if (maybeColor.has_value()) {
-		Color& newColor = maybeColor.value();
+		const Color& baseColor = maybeColor.value();
+		const Color& phaseColor = configPhaseColor[currentPhase];
+		TraceLog(LOG_INFO, "BLENDING COLORS for %d: BASE %d %d %d and PHASE %d %d %d", value, baseColor.r, baseColor.g, baseColor.b, phaseColor.r, phaseColor.g, phaseColor.b);
+		Color newColor = ColorTint(baseColor, phaseColor);
 		StackMap<int, float, 4> configPlaceUpdate{{
 			{ COLOR_R, newColor.r },
 			{ COLOR_G, newColor.g },
@@ -135,8 +160,6 @@ void Chip::place(Hex::Point point, Vector2 position, int newValue) {
 		setProps({{ configPlaceUpdate.data.data(), configPlaceUpdate.size }}, true, true, true);
 	}
 
-	// update font of new value
-	setFontSize(fontSize);
 }
 
 // move the chip within the hex board
@@ -166,9 +189,12 @@ int Chip::merge(Chip& other) {
 	configMergePropDelay.insert(FONT_X, fontWidth*-0.5f);
 	configMergePropDelay.insert(FONT_Y, fontSize*-0.5f);
 	// update color
-	auto maybeColor = conifgValueColor.get(nextValue);
+	auto maybeColor = conifgBaseColor.get(nextValue);
 	if (maybeColor.has_value()) {
-		Color& newColor = maybeColor.value();
+		Color& baseColor = maybeColor.value();
+		Color newColor = baseColor;
+		const Color& phaseColor = configPhaseColor[currentPhase];
+		newColor = ColorTint(baseColor, phaseColor);
 		configMergePropDelay.insert(COLOR_R, newColor.r);
 		configMergePropDelay.insert(COLOR_G, newColor.g);		
 		configMergePropDelay.insert(COLOR_B, newColor.b);		
@@ -378,6 +404,27 @@ bool Chip::active() const {
 
 bool Chip::available() const {
 	return !enabled;
+}
+
+void Chip::phaseTransition(int phase) {
+	currentPhase = phase;
+
+	// TODO: refactor these color blends that happen in merge and place also
+	auto maybeColor = conifgBaseColor.get(value);
+	if (maybeColor.has_value()) {
+		const Color& baseColor = maybeColor.value();
+		const Color& phaseColor = configPhaseColor[currentPhase];
+		Color newColor = ColorTint(baseColor, phaseColor);
+		TraceLog(LOG_INFO, "TRANSITIONING - BLENDING COLORS for %d: BASE %d %d %d and PHASE %d %d %d", value, baseColor.r, baseColor.g, baseColor.b, phaseColor.r, phaseColor.g, phaseColor.b);
+
+		StackMap<int, float, 4> configPhaseUpdate{{
+			{ COLOR_R, newColor.r },
+			{ COLOR_G, newColor.g },
+			{ COLOR_B, newColor.b },
+			{ COLOR_A, newColor.a },
+		}};
+		setProps({{ configPhaseUpdate.data.data(), configPhaseUpdate.size }}, true, true, true);
+	}
 }
 
 void Chip::resize(Vector2 newSize, int newFontSize) {

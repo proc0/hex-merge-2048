@@ -22,7 +22,7 @@ void World::load(){
     chipsIdxsUpdating.reserve(chipsCapacity);
 
     // shim chip 
-    chips.emplace_back(Hex::Origin, Vector2({}), 0, 0);
+    chips.emplace_back(Hex::Origin, Vector2({}), 0, 0, 0, false);
 }
 
 void World::reset() {
@@ -58,7 +58,7 @@ int World::createChip(Hex::Point hex, int value) {
     // update grid hex with key
     grid.place(hex, key);
     // create new chip at hex position, and is enabled
-    chips.emplace_back(hex, grid.getPosition(hex), key, value, true);
+    chips.emplace_back(hex, grid.getPosition(hex), key, value, phase.getPhase(), true);
     // get current hex size and scale font
     Vector2 unitHex = grid.getUnit();
     int fontSize = static_cast<int>(window.scale(CHIP_FONT_SIZE));
@@ -81,7 +81,7 @@ int World::respawnChip(Hex::Point hex, int value) {
             chip.enable();
 
             grid.place(hex, i);
-            chip.place(hex, grid.getPosition(hex), value);
+            chip.place(hex, grid.getPosition(hex), value, phase.getPhase());
             key = i;
             // chip has spawn animations
             chipsIdxsUpdating.push_back(key);
@@ -125,7 +125,8 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
             // World book keeping
             if (resultValue > meta.maxValue) {
                 meta.maxValue = resultValue;
-                phase.setPhase(meta.maxValue);
+                phase.setPhase(resultValue);
+                maxValueChanged = true;
             }
             // add to moving list to animate 
             chipsIdxsMoving.push_back(sourceKey);
@@ -236,9 +237,18 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
             // sync all the chips to give a chance
             // for the once that didnt move to update
             for (auto& chip : chips) {
+
                 if (chip.active()) {
                     chip.sync();
+                    if (maxValueChanged) {
+                        chip.phaseTransition(phase.getPhase());
+                        // chipsIdxsUpdating.push_back(chip.getId());
+                    }
                 }
+            }
+
+            if (maxValueChanged) {
+                maxValueChanged = false;
             }
             // clear whatever was not moving
             // but still updating

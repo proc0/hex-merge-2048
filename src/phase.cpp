@@ -26,6 +26,26 @@ void Phase::update() {
 	
 }
 
+void Phase::setPhase(int value) {
+    // get the phase index
+	currentPhase = static_cast<int>(fmin(fmax(log2(value), 0), PHASE_COUNT))-1;
+    
+    if (currentPhase > PHASE_COUNT-1) {
+        // clamp the phase to the last one
+        currentPhase = PHASE_COUNT-1;
+    } else if (currentPhase < 0) {
+    	currentPhase = 0;
+    }
+}
+
+int Phase::getPhase() const {
+	return currentPhase;
+}
+
+Color Phase::getPhaseColor() const {
+	return BLUE;
+}
+
 int Phase::getRandomValue() const {
 
     int newValue = 2;
@@ -42,25 +62,15 @@ int Phase::getSpawnNumber() const {
 	return spawnDist[currentPhase];
 }
 
-void Phase::setPhase(int value) {
-    // get the phase index
-	currentPhase = static_cast<int>(fmin(fmax(log2(value), 0), PHASE_COUNT))-1;
-    
-    if (currentPhase > PHASE_COUNT-1) {
-        // clamp the phase to the last one
-        currentPhase = PHASE_COUNT-1;
-    } else if (currentPhase < 0) {
-    	currentPhase = 0;
-    }
-}
-
 void Phase::transition(Action::Surface action) {
 	switch (action) {
 	case Action::Surface::MAIN_NEW_CLASSIC:
+		mode = action;
 		valueDist = distributionEasy;
 		spawnDist = spawnNumberPhasesEasy;
 		break;
 	case Action::Surface::MAIN_NEW_WIPEOUT:
+		mode = action;
 		valueDist = distributionMedium;
 		spawnDist = spawnNumberPhasesMedium;
 		break;

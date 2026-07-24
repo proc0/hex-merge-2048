@@ -1,7 +1,25 @@
 #pragma once
 
+#include "config.hpp"
+
+#include "raylib.h"
+
 #include <array>
 
+static inline constexpr std::array<Color, 12> configPhaseColor{
+	PHASE_COLOR_2,
+	PHASE_COLOR_4,
+	PHASE_COLOR_8,
+	PHASE_COLOR_16,
+	PHASE_COLOR_32,
+	PHASE_COLOR_64,
+	PHASE_COLOR_128,
+	PHASE_COLOR_256,
+	PHASE_COLOR_512,
+	PHASE_COLOR_1024,
+	PHASE_COLOR_2048,
+	PHASE_COLOR_4096,
+};
 // LEVEL CONFIG
 
 #define PHASE_COUNT 10
