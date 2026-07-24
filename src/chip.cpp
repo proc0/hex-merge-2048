@@ -15,10 +15,10 @@ void Chip::load(Vector2 position) {
 		{ FONT_X, fontWidth*-0.5f },
 		{ FONT_Y, CHIP_FONT_SIZE*-0.5f },
 		{ ROTATION, 0.0f },
-		{ COLOR_R, primaryColor.r },
-		{ COLOR_G, primaryColor.g },
-		{ COLOR_B, primaryColor.b },
-		{ COLOR_A, primaryColor.a },
+		{ COLOR_R, DEFAULT_CHIP_COLOR.r },
+		{ COLOR_G, DEFAULT_CHIP_COLOR.g },
+		{ COLOR_B, DEFAULT_CHIP_COLOR.b },
+		{ COLOR_A, DEFAULT_CHIP_COLOR.a },
 	};
 
 	setProps({{ loadProps.data.data(), loadProps.size }}, true, true, true);
@@ -65,7 +65,7 @@ void Chip::render() const {
 	DrawPoly({ actual[X], actual[Y] }, 6, radius, actual[ROTATION], { static_cast<unsigned char>(actual[COLOR_R]), static_cast<unsigned char>(actual[COLOR_G]), static_cast<unsigned char>(actual[COLOR_B]), static_cast<unsigned char>(actual[COLOR_A]) });
 	DrawPolyLinesEx({ actual[X], actual[Y] }, 6, radius, actual[ROTATION], actual[SCALE], BLACK);
 	
-	DrawText(TextFormat("%d", value), actual[X]+actual[FONT_X], actual[Y]+actual[FONT_Y], fontSize*actual[SCALE], secondaryColor);
+	DrawText(TextFormat("%d", value), actual[X]+actual[FONT_X], actual[Y]+actual[FONT_Y], fontSize*actual[SCALE], DEFAULT_CHIP_FONT_COLOR);
 }
 
 State::Chip Chip::update() {
@@ -262,7 +262,7 @@ void Chip::animatePropTargets(FlatMapView<int, float> targetMap) {
 }
 
 // flexible setter that sets all three prop arrays give a StackMap View of variable size
-void Chip::setProps(FlatMapView<int, float> propMap, bool setSource, bool setCurrent, bool setTarget) {
+void Chip::setProps(FlatMapView<int, float> propMap, bool setSource, bool setActual, bool setTarget) {
 
 	auto it = propMap.data.begin();
 	while(it != propMap.data.end()) {
@@ -273,7 +273,7 @@ void Chip::setProps(FlatMapView<int, float> propMap, bool setSource, bool setCur
 			source[key] = val;
 		}
 		
-		if (setCurrent) {
+		if (setActual) {
 			actual[key] = val;
 		}
 

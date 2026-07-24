@@ -1,13 +1,14 @@
 #include "world.hpp"
 
+#include "index.h"
 #include "config.hpp"
 #include "hex.hpp"
-#include "index.h"
 #include "type.hpp"
+#include "level.hpp"
 
 #include "raylib.h"
 
-#include <string>
+// #include <string>
 
 void World::load(){
     splat = LoadSound(PATH_ASSET(URI_SOUND_SPLAT));
@@ -25,14 +26,14 @@ void World::load(){
     // shim chip
     chips.emplace_back(Hex::Origin, Vector2({}), 0, 0);
 
-    for (int i = 0; i < randomizedPhaseMap.size(); ++i) {
-        std::string tempStr = "";
-        auto& randMap = randomizedPhaseMap[i];
-        for (int j = 0; j < randMap.size(); ++j) {
-            tempStr = std::format("{} {}", tempStr, randMap[j]);
-        }
-        TraceLog(LOG_INFO, "%d: %s", i, tempStr.c_str());
-    }
+    // for (int i = 0; i < randomizedPhaseMap.size(); ++i) {
+    //     std::string tempStr = "";
+    //     auto& randMap = randomizedPhaseMap[i];
+    //     for (int j = 0; j < randMap.size(); ++j) {
+    //         tempStr = std::format("{} {}", tempStr, randMap[j]);
+    //     }
+    //     TraceLog(LOG_INFO, "%d: %s", i, tempStr.c_str());
+    // }
 }
 
 void World::reset() {
@@ -209,9 +210,6 @@ void World::updateMove(Hex::Cardinal needle) {
 
 void World::renderHold() const {
     renderGame();
-    // const char* pausedText = TextFormat("PAUSED");
-    // float pausedTextWidth = MeasureText(pausedText, 200);
-    // DrawText(pausedText, window.halfWidthf-pausedTextWidth*0.5f, window.halfHeightf-100.0f, 200, RAYWHITE);
 }
 
 WorldState World::updateMain(InputEvent, Action::Surface){

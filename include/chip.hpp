@@ -2,12 +2,16 @@
 
 #include "config.hpp"
 #include "type.hpp"
-#include "hex.hpp"
 #include "tool.hpp"
+#include "hex.hpp"
+#include "anime.hpp"
 
 #include "raylib.h"
 
 #include <array>
+
+#define DEFAULT_CHIP_COLOR LIGHTGRAY
+#define DEFAULT_CHIP_FONT_COLOR RAYWHITE
 
 // WARNING: must equal the properties enum size
 #define PROP_COUNT 10
@@ -61,9 +65,6 @@ class Chip {
 
 	Hex::Point hex;
 
-	Color primaryColor = LIGHTGRAY;
-	Color secondaryColor = RAYWHITE;
-
 	Vector2 size = { HEX_SIZE, HEX_SIZE };
 	int fontSize = CHIP_FONT_SIZE;
 
@@ -111,7 +112,7 @@ public:
 	void delayPropChanges(FlatMapView<int, float>);
 	void applyPropChanges(const std::span<const int>);
 	// setters
-	void setProps(FlatMapView<int, float> propMap, bool setSource, bool setCurrent, bool setTarget);
+	void setProps(FlatMapView<int, float> propMap, bool setSource, bool setActual, bool setTarget);
 	void setPosition(Vector2);
 	void setFontSize(float fontSize);
 	void setSize(Vector2 hexSize);

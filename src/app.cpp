@@ -305,6 +305,9 @@ Clay_RenderCommandArray App::update() {
 }
 
 void App::resize(int width, int height) {    
+    if (screen == State::Screen::TITLE) {
+        game.updateTitle();
+    }
     UnloadRenderTexture(target);
     loadTarget();
 }
