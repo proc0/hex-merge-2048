@@ -8,7 +8,7 @@
 
 void Chip::load(Vector2 position) {
 	float fontWidth = MeasureText("2", CHIP_FONT_SIZE);
-	StackMap<int, float, PROP_COUNT> loadProps = {
+	StackMap<int, float, PROP_COUNT> configLoadProps = {
 		{ X, position.x },
 		{ Y, position.y },
 		{ SCALE, 1.0f },
@@ -21,7 +21,7 @@ void Chip::load(Vector2 position) {
 		{ COLOR_A, DEFAULT_CHIP_COLOR.a },
 	};
 
-	setProps({{ loadProps.data.data(), loadProps.size }}, true, true, true);
+	setProps({{ configLoadProps.data.data(), configLoadProps.size }}, true, true, true);
 }
 
 void Chip::reset() {
@@ -127,34 +127,23 @@ void Chip::place(Hex::Point point, Vector2 position, int newValue) {
 	setFontSize(fontSize);
 
 	// animate chip placement, scale and font scale
-	// TODO: memoize StackMap in member field
-	StackMap<int, float, 1> scaledPropSources;
-	scaledPropSources.insert(SCALE, 1.1f);
-	// scaledPropSources.insert(FONTSCALE, 1.1f);
-	animatePropSources({{ scaledPropSources.data.data(), scaledPropSources.size }});
+	animatePropSources({{ configSourcePlaceEffect.data.data(), configSourcePlaceEffect.size }});
 }
 
 // move the chip within the hex board
 void Chip::translate(Hex::Point point, Vector2 position) {
 	hex = point;
 
-	// animate movement
-	// TODO: memoize this in a member field
-	StackMap<int, float, 2> moveAnimation;
-	moveAnimation.insert(X, position.x);
-	moveAnimation.insert(Y, position.y);
-	animatePropTargets({{ moveAnimation.data.data(), moveAnimation.size }});
+	// WARNING: StackMap has hardcoded ITEM CAPACITY: 2
+	configMovePropTargets.insert(X, position.x);
+	configMovePropTargets.insert(Y, position.y);
+	// animate movement by setting the source and target on config props given
+	animatePropTargets({{ configMovePropTargets.data.data(), configMovePropTargets.size }});
 
-	// set the these props to a different value
-	// which then get sync'd after the movement
-	// to create a lifting effect
 	// NOTE: these are not animated because they would require
-	// prop value changes in the middle of animating, not supported
-	// TODO: memoize this in a member field
-	StackMap<int, float, 1> liftEffect;
-	liftEffect.insert(SCALE, 1.08f);
+	// prop value changes in the middle of animating (not supported)
 	// set this value on the current props, to later be overwritten by target
-	setProps({{ liftEffect.data.data(), liftEffect.size }}, false, true, false);
+	setProps({{ configPropsMoveEffect.data.data(), configPropsMoveEffect.size }}, false, true, false);
 }
 
 int Chip::merge(Chip& other) {
@@ -165,13 +154,11 @@ int Chip::merge(Chip& other) {
 
 	// update font properties 
 	float fontWidth = MeasureText(TextFormat("%d", nextValue), fontSize);
-	// TODO: memoize this in a member field
-	StackMap<int, float, 2> fontPropChanges;
-	fontPropChanges.insert(FONT_X, fontWidth*-0.5f);
-	fontPropChanges.insert(FONT_Y, fontSize*-0.5f);
+	configMergePropDelay.insert(FONT_X, fontWidth*-0.5f);
+	configMergePropDelay.insert(FONT_Y, fontSize*-0.5f);
 	// delay prop changes to allow the merging chip to move before changing,
-	// similar mechanism as animating, but there is not intermediate values
-	delayPropChanges({{ fontPropChanges.data.data(), fontPropChanges.size }});
+	// similar mechanism as animating, but there are no intermediate values
+	delayPropChanges({{ configMergePropDelay.data.data(), configMergePropDelay.size }});
 
 	return nextValue;
 }

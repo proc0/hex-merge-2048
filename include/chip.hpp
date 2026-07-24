@@ -53,6 +53,18 @@ class Chip {
 		0.2f,
 		0.2f,
 	};
+	// place effects constant values 
+	static constexpr StackMap<int, float, 1> configSourcePlaceEffect{{
+		{ SCALE, 1.1f },
+	}};
+	// move effects constant values
+	static constexpr StackMap<int, float, 1> configPropsMoveEffect{{
+		{ SCALE, 1.08f },
+	}};
+	// prop config maps that change at runtime
+	StackMap<int, float, 2> configMovePropTargets;
+	StackMap<int, float, 2> configMergePropDelay;
+	
 	std::array<float, PROP_COUNT> source{0};
 	std::array<float, PROP_COUNT> actual{0};
 	std::array<float, PROP_COUNT> target{0};

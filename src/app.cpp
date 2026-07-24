@@ -199,15 +199,6 @@ Clay_RenderCommandArray App::update() {
             TraceLog(LOG_INFO, "CONTINUE GAME");
 
             game.continueGame();
-            // state = State::App::RUN;
-
-            // surface.clearEvent();
-            // // reset any game state
-            // world.reset();
-            // game.restart();
-            // game.transition(state, screen);
-            // world.transition(state, screen);
-            // surface.transition(state, screen);
 
         } else if (state == State::App::HOLD) {
             // pause button events
