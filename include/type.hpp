@@ -8,7 +8,8 @@ namespace Action {
     enum Surface {
         DO_NOTHING,
         MAIN_NEW_CLASSIC,
-        MAIN_NEW_WIPEOUT,
+        MAIN_NEW_HEXED,
+        MAIN_NEW_CURSED,
         CONFIRM_TUTORIAL,
         MOVE_UP,
         MOVE_UP_RIGHT,

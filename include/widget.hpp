@@ -21,7 +21,8 @@ namespace WidgetId {
 	enum ButtonId {
 		NIL,
 		MAIN_NEW_CLASSIC,
-		MAIN_NEW_WIPEOUT,
+		MAIN_NEW_HEXED,
+		MAIN_NEW_CURSED,
 		RESUME,
 		MOVE_UP,
 		MOVE_RIGHT,
@@ -49,9 +50,10 @@ using BUTTON_ID = WidgetId::ButtonId;
 // It would take a list of component IDs and keep some kind of state for them, 
 // i.e. activeTab or scrollState, and it would allow for multiple instances of these sets.
 // menu buttons per screen
-#define BUTTONS_MENU_MAIN const std::array<BUTTON_ID, 3> buttonsMenuMain{ \
+#define BUTTONS_MENU_MAIN const std::array<BUTTON_ID, 4> buttonsMenuMain{ \
 		BUTTON_ID::MAIN_NEW_CLASSIC,\
-		BUTTON_ID::MAIN_NEW_WIPEOUT, \
+		BUTTON_ID::MAIN_NEW_HEXED, \
+		BUTTON_ID::MAIN_NEW_CURSED, \
 		BUTTON_ID::QUIT,\
 	};
 		// BUTTON_ID::OPTIONS,
@@ -82,8 +84,9 @@ struct Button {
 // WARNING: order should match WidgetId::ButtonId enum
 #define BUTTONS \
 BUTTON(NIL, 		   "ButtonNil", 		DO_NOTHING,			   "Nothing") \
-BUTTON(MAIN_NEW_CLASSIC, "ButtonNewClassic", MAIN_NEW_CLASSIC, "Classic") \
-BUTTON(MAIN_NEW_WIPEOUT, "ButtonNewWipeout", MAIN_NEW_WIPEOUT, "Wipeout") \
+BUTTON(MAIN_NEW_CLASSIC, "ButtonNewClassic", MAIN_NEW_CLASSIC, "Classic (Normal)") \
+BUTTON(MAIN_NEW_HEXED, "ButtonNewHexed", MAIN_NEW_HEXED,    	"Hexed (Hard)") \
+BUTTON(MAIN_NEW_CURSED, "ButtonNewCursed", MAIN_NEW_CURSED, "Cursed (Brutal)") \
 BUTTON(RESUME, 		   "ButtonGameResume",  RESUME_GAME,			"Resume") \
 BUTTON(MOVE_UP, 	   "HUDMoveUp",  		MOVE_UP,					"Up") \
 BUTTON(MOVE_RIGHT, 	   "HUDMoveRight",  	MOVE_RIGHT,				 "Right") \

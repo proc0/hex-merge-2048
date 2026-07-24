@@ -25,6 +25,19 @@ static inline constexpr std::array<Color, 12> configPhaseColor{
 #define PHASE_COUNT 10
 #define VALUE_TYPES_COUNT 10
 
+static inline constexpr std::array<int, PHASE_COUNT> spawnNumberPhasesHard = {
+	8,
+	2,
+	2,
+	2,
+	1,
+	1,
+	1,
+	1,
+	1,
+	1,
+};
+
 static inline constexpr std::array<int, PHASE_COUNT> spawnNumberPhasesMedium = {
 	6,
 	5,
@@ -53,6 +66,19 @@ static inline constexpr std::array<int, PHASE_COUNT> spawnNumberPhasesEasy = {
 // config 2D array for probabilities of the different chip values based on index
 // { 2, 4, 8, 16 ... 1024 }, where each index has a probability between 0 and 1 to spawn
 // and there are 10 phases for each of the numbers up to 1024 as well. The total sum of a phase array should be 1.
+static inline constexpr std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT> configPhaseHard = {{
+	{ 0.4, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.4, 0.2, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.2, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.1, 0.1, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.0, 0.1, 0.2, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.4, 0.4, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+	{ 0.2, 0.2, 0.0, 0.2, 0.2, 0.0, 0.2, 0.0, 0.0, 0.0 },
+	{ 0.1, 0.0, 0.1, 0.5, 0.2, 0.0, 0.1, 0.0, 0.0, 0.0 },
+	{ 0.0, 0.0, 0.0, 0.3, 0.2, 0.2, 0.3, 0.0, 0.0, 0.0 },
+	{ 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1, 0.0 }
+}};
+
 static inline constexpr std::array<std::array<float, VALUE_TYPES_COUNT>, PHASE_COUNT> configPhaseMedium = {{
 	{ 0.8, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
 	{ 0.6, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
@@ -144,5 +170,6 @@ static inline consteval std::array<ValueDistribution, PHASE_COUNT> generatePhase
 	return result;
 }
 
-static inline constexpr auto distributionMedium = generatePhaseDistributions(configPhaseMedium);
 static inline constexpr auto distributionEasy = generatePhaseDistributions(configPhaseEasy);
+static inline constexpr auto distributionMedium = generatePhaseDistributions(configPhaseMedium);
+static inline constexpr auto distributionHard = generatePhaseDistributions(configPhaseHard);

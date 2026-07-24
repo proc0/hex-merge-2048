@@ -43,7 +43,10 @@ int Phase::getPhase() const {
 	case Action::Surface::MAIN_NEW_CLASSIC:
 		return 0;
 		break;
-	case Action::Surface::MAIN_NEW_WIPEOUT:
+	case Action::Surface::MAIN_NEW_HEXED:
+		return currentPhase;
+		break;
+	case Action::Surface::MAIN_NEW_CURSED:
 		return currentPhase;
 		break;
 	default:
@@ -79,10 +82,15 @@ void Phase::transition(Action::Surface action) {
 		valueDist = distributionEasy;
 		spawnDist = spawnNumberPhasesEasy;
 		break;
-	case Action::Surface::MAIN_NEW_WIPEOUT:
+	case Action::Surface::MAIN_NEW_HEXED:
 		mode = action;
 		valueDist = distributionMedium;
 		spawnDist = spawnNumberPhasesMedium;
+		break;
+	case Action::Surface::MAIN_NEW_CURSED:
+		mode = action;
+		valueDist = distributionHard;
+		spawnDist = spawnNumberPhasesHard;
 		break;
 	default:
 		break;
