@@ -26,6 +26,7 @@ void World::load(){
     // shim chip
     chips.emplace_back(Hex::Origin, Vector2({}), 0, 0);
 
+    // TODO: move to a debug header?
     // for (int i = 0; i < randomizedPhaseMap.size(); ++i) {
     //     std::string tempStr = "";
     //     auto& randMap = randomizedPhaseMap[i];

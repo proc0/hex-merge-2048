@@ -20,14 +20,14 @@ namespace WidgetId {
 	// needs to be the same order as BUTTONS macro
 	enum ButtonId {
 		NIL,
-		NEW_GAME,
+		MAIN_NEW_CLASSIC,
+		MAIN_NEW_WIPEOUT,
 		RESUME,
 		MOVE_UP,
 		MOVE_RIGHT,
 		MOVE_DOWN,
 		MOVE_LEFT,
 		RETURN,
-		RELOAD,
 		RESTART,
 		GAME_CONTINUE,
 		OPTIONS,
@@ -50,8 +50,8 @@ using BUTTON_ID = WidgetId::ButtonId;
 // i.e. activeTab or scrollState, and it would allow for multiple instances of these sets.
 // menu buttons per screen
 #define BUTTONS_MENU_MAIN const std::array<BUTTON_ID, 4> buttonsMenuMain{ \
-		BUTTON_ID::NEW_GAME,\
-		BUTTON_ID::RELOAD,\
+		BUTTON_ID::MAIN_NEW_CLASSIC,\
+		BUTTON_ID::MAIN_NEW_WIPEOUT, \
 		BUTTON_ID::OPTIONS,\
 		BUTTON_ID::QUIT,\
 	};
@@ -82,14 +82,14 @@ struct Button {
 // WARNING: order should match WidgetId::ButtonId enum
 #define BUTTONS \
 BUTTON(NIL, 		   "ButtonNil", 		DO_NOTHING,			   "Nothing") \
-BUTTON(NEW_GAME, 	   "ButtonNewGame", 	NEW_GAME,			  "New Game") \
+BUTTON(MAIN_NEW_CLASSIC, "ButtonNewClassic", MAIN_NEW_CLASSIC, "Classic") \
+BUTTON(MAIN_NEW_WIPEOUT, "ButtonNewWipeout", MAIN_NEW_WIPEOUT, "Wipeout") \
 BUTTON(RESUME, 		   "ButtonGameResume",  RESUME_GAME,			"Resume") \
 BUTTON(MOVE_UP, 	   "HUDMoveUp",  		MOVE_UP,					"Up") \
 BUTTON(MOVE_RIGHT, 	   "HUDMoveRight",  	MOVE_RIGHT,				 "Right") \
 BUTTON(MOVE_DOWN, 	   "HUDMoveDown",  		MOVE_DOWN,				  "Down") \
 BUTTON(MOVE_LEFT, 	   "HUDMoveLeft",  		MOVE_LEFT,				  "Left") \
 BUTTON(RETURN, 		   "ButtonMainMenu", 	MAIN_MENU, "Return to Main Menu") \
-BUTTON(RELOAD, 		   "ButtonGameLoad", 	LOAD_GAME,			 "Load Game") \
 BUTTON(RESTART, 	   "ButtonGameRestart", RESTART,			   "Restart") \
 BUTTON(GAME_CONTINUE,  "ButtonGameContinue", GAME_CONTINUE,		  "Continue") \
 BUTTON(OPTIONS, 	   "ButtonOptions", 	OPTIONS, 			   "Options") \

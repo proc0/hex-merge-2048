@@ -252,7 +252,7 @@ Clay_RenderCommandArray App::update() {
     } else if (screen == State::Screen::MAIN) {
         // Main screen input events
         //-----------------------------
-        if(surfaceAction == Action::Surface::NEW_GAME) {
+        if(surfaceAction == Action::Surface::MAIN_NEW_CLASSIC || surfaceAction == Action::Surface::MAIN_NEW_WIPEOUT) {
             screen = State::Screen::GAME;
             // NOTE: app state is still on HOLD until confirm
             surface.beginEvent(Event::Surface::SHOW_TUTORIAL);

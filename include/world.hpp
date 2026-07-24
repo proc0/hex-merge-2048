@@ -3,6 +3,7 @@
 #include "type.hpp"
 #include "window.hpp"
 #include "grid.hpp"
+#include "phase.hpp"
 #include "chip.hpp"
 
 #include "raylib.h"
@@ -11,6 +12,7 @@ class World : public Layer {
     Sound splat;
     Window& window;
     Grid grid{window};
+    Phase phase;
 
     std::vector<Chip> chips;
     std::vector<int> chipsIdxsMoving;

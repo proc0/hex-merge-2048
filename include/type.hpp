@@ -7,7 +7,8 @@
 namespace Action {
     enum Surface {
         DO_NOTHING,
-        NEW_GAME,
+        MAIN_NEW_CLASSIC,
+        MAIN_NEW_WIPEOUT,
         CONFIRM_TUTORIAL,
         MOVE_UP,
         MOVE_UP_RIGHT,
@@ -15,7 +16,6 @@ namespace Action {
         MOVE_DOWN,
         MOVE_LEFT,
         MOVE_UP_LEFT,
-        LOAD_GAME,
         RESTART,
         GAME_CONTINUE,
         OPTIONS,
