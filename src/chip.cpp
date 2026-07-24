@@ -149,6 +149,15 @@ int Chip::merge(Chip& other) {
 	float fontWidth = MeasureText(TextFormat("%d", nextValue), fontSize);
 	configMergePropDelay.insert(FONT_X, fontWidth*-0.5f);
 	configMergePropDelay.insert(FONT_Y, fontSize*-0.5f);
+	// update color
+	auto maybeColor = conifgValueColor.get(nextValue);
+	if (maybeColor.has_value()) {
+		Color& newColor = maybeColor.value();
+		configMergePropDelay.insert(COLOR_R, newColor.r);
+		configMergePropDelay.insert(COLOR_G, newColor.g);		
+		configMergePropDelay.insert(COLOR_B, newColor.b);		
+		configMergePropDelay.insert(COLOR_A, newColor.a);		
+	}
 	// delay prop changes to allow the merging chip to move before changing,
 	// similar mechanism as animating, but there are no intermediate values
 	delayPropChanges({{ configMergePropDelay.data.data(), configMergePropDelay.size }});

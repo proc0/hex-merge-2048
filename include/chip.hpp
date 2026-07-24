@@ -29,7 +29,21 @@ class Chip {
 		COLOR_B,
 		COLOR_A
 	};
-	
+
+	static constexpr StackMap<int, Color, 12> conifgValueColor{{
+		{ 2, CHIP_COLOR_2 },
+		{ 4, CHIP_COLOR_4 },
+		{ 8, CHIP_COLOR_8 },
+		{ 16, CHIP_COLOR_16 },
+		{ 32, CHIP_COLOR_32 },
+		{ 64, CHIP_COLOR_64 },
+		{ 128, CHIP_COLOR_128 },
+		{ 256, CHIP_COLOR_256 },
+		{ 512, CHIP_COLOR_512 },
+		{ 1024, CHIP_COLOR_1024 },
+		{ 2048, CHIP_COLOR_2048 },
+		{ 4096, CHIP_COLOR_4096 },
+	}};
 	static constexpr std::array<Anime::Curve, PROP_COUNT> curveSelect{
 		Anime::Curve::EASE_IN_OUT_CUBIC,
 		Anime::Curve::EASE_IN_OUT_CUBIC,
@@ -63,10 +77,14 @@ class Chip {
 		{ SCALE, 1.08f },
 	}};
 	// sync all the props that changed
-	static constexpr std::array<int, 3> syncProps = {
+	static constexpr std::array<int, 7> syncProps = {
 		SCALE,
 		FONT_X,
 		FONT_Y,
+		COLOR_R,
+		COLOR_G,
+		COLOR_B,
+		COLOR_A,
 	};
 
 	std::array<float, PROP_COUNT> source{0};
@@ -77,7 +95,7 @@ class Chip {
 
 	// prop config maps that change at runtime
 	StackMap<int, float, 2> configMovePropTargets;
-	StackMap<int, float, 2> configMergePropDelay;
+	StackMap<int, float, 6> configMergePropDelay;
 	
 	Hex::Point hex;
 
