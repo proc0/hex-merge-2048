@@ -7,7 +7,7 @@
 #include "type.hpp"
 
 void Chip::load(Vector2 position) {
-	float fontWidth = MeasureText("2", CHIP_FONT_SIZE);
+	float fontWidth = MeasureText(TextFormat("%d", value), CHIP_FONT_SIZE);
 	StackMap<int, float, PROP_COUNT> configLoadProps = {
 		{ X, position.x },
 		{ Y, position.y },
@@ -39,12 +39,6 @@ void Chip::reset() {
 }
 
 void Chip::sync() {
-	// sync all the props that changed
-	constexpr std::array<int, 3> syncProps = {
-		SCALE,
-		FONT_X,
-		FONT_Y,
-	};
 	// delayed value application
 	applyPropChanges(syncProps);
 
@@ -125,7 +119,6 @@ void Chip::place(Hex::Point point, Vector2 position, int newValue) {
 
 	// update font of potential new value
 	setFontSize(fontSize);
-
 	// animate chip placement, scale and font scale
 	animatePropSources({{ configSourcePlaceEffect.data.data(), configSourcePlaceEffect.size }});
 }

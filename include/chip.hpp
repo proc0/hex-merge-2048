@@ -29,6 +29,7 @@ class Chip {
 		COLOR_B,
 		COLOR_A
 	};
+	
 	static constexpr std::array<Anime::Curve, PROP_COUNT> curveSelect{
 		Anime::Curve::EASE_IN_OUT_CUBIC,
 		Anime::Curve::EASE_IN_OUT_CUBIC,
@@ -61,20 +62,23 @@ class Chip {
 	static constexpr StackMap<int, float, 1> configPropsMoveEffect{{
 		{ SCALE, 1.08f },
 	}};
-	// prop config maps that change at runtime
-	StackMap<int, float, 2> configMovePropTargets;
-	StackMap<int, float, 2> configMergePropDelay;
-	
+	// sync all the props that changed
+	static constexpr std::array<int, 3> syncProps = {
+		SCALE,
+		FONT_X,
+		FONT_Y,
+	};
+
 	std::array<float, PROP_COUNT> source{0};
 	std::array<float, PROP_COUNT> actual{0};
 	std::array<float, PROP_COUNT> target{0};
 	std::array<float, PROP_COUNT> elapsed{0};
 	std::array<int,   PROP_COUNT> animate{0};
 
-	// StackMap<int, float, 2> moveTargets;
-	// StackMap<int, float, 2> delayMoveSources;
-	// StackMap<int, float, 2> fontPosTargets;
-
+	// prop config maps that change at runtime
+	StackMap<int, float, 2> configMovePropTargets;
+	StackMap<int, float, 2> configMergePropDelay;
+	
 	Hex::Point hex;
 
 	Vector2 size = { HEX_SIZE, HEX_SIZE };
