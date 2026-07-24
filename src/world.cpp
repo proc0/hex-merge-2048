@@ -7,8 +7,6 @@
 
 #include "raylib.h"
 
-// #include <string>
-
 void World::load(){
     splat = LoadSound(PATH_ASSET(URI_SOUND_SPLAT));
 
@@ -18,22 +16,13 @@ void World::load(){
     // reserve number of hexes plus shim chip
     int chipsCapacity = grid.size() + 1;
     chips.reserve(chipsCapacity);
-    // TODO: rename
+    // chip index vectors to help sync
+    // the player input and the chip animations
     chipsIdxsMoving.reserve(chipsCapacity);
     chipsIdxsUpdating.reserve(chipsCapacity);
 
-    // shim chip
+    // shim chip 
     chips.emplace_back(Hex::Origin, Vector2({}), 0, 0);
-
-    // TODO: move to a debug header?
-    // for (int i = 0; i < randomizedPhaseMap.size(); ++i) {
-    //     std::string tempStr = "";
-    //     auto& randMap = randomizedPhaseMap[i];
-    //     for (int j = 0; j < randMap.size(); ++j) {
-    //         tempStr = std::format("{} {}", tempStr, randMap[j]);
-    //     }
-    //     TraceLog(LOG_INFO, "%d: %s", i, tempStr.c_str());
-    // }
 }
 
 void World::reset() {
@@ -54,6 +43,7 @@ void World::reset() {
 
 int World::spawnChip(Hex::Point hex, int value) {
     int key = 0;
+    // create new chips or respawn if chips vector full
     if (static_cast<int>(chips.size()) > grid.size()) {
         key = respawnChip(hex, value);
     } else {
@@ -67,13 +57,14 @@ int World::createChip(Hex::Point hex, int value) {
     int key = static_cast<int>(chips.size());
     // update grid hex with key
     grid.place(hex, key);
+    // create new chip at hex position, and is enabled
+    chips.emplace_back(hex, grid.getPosition(hex), key, value, true);
     // get current hex size and scale font
     Vector2 unitHex = grid.getUnit();
     int fontSize = static_cast<int>(window.scale(CHIP_FONT_SIZE));
-    // create and resize chip
-    chips.emplace_back(hex, grid.getPosition(hex), key, value, true);
+    // scale chip in case default window size changed
     chips.at(key).resize(unitHex, fontSize);
-
+    // chip has spawn animations
     chipsIdxsUpdating.push_back(key);
     return key;
 }
@@ -82,15 +73,17 @@ int World::respawnChip(Hex::Point hex, int value) {
     int key = -1;
     // WARNING: do not use SHIM sigil at 0!
     int total = static_cast<int>(chips.size());
+    // find first available chip and reuse
     for (int i = 1; i < total; ++i) {
         Chip& chip = chips.at(i);
+
         if (chip.available()) {
             chip.enable();
 
             grid.place(hex, i);
             chip.place(hex, grid.getPosition(hex), value);
             key = i;
-
+            // chip has spawn animations
             chipsIdxsUpdating.push_back(key);
             break;
         }
@@ -134,6 +127,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
                 meta.maxValue = resultValue;
                 phase.setPhase(meta.maxValue);
             }
+            // add to moving list to animate 
             chipsIdxsMoving.push_back(sourceKey);
             meta.state = State::World::PROCESS_MOVES;
 
@@ -211,21 +205,10 @@ void World::updateMove(Hex::Cardinal needle) {
     // TraceLog(LOG_INFO, "----------- END TURN -----------");
 }
 
-void World::renderHold() const {
-    renderGame();
-}
-
-WorldState World::updateMain(InputEvent, Action::Surface){
-    return meta;
-}
-
-WorldState World::updateHold(InputEvent inputEvent, Action::Surface action){
-    return meta;
-}
-
 WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
     if (chipsIdxsUpdating.size() && meta.state == State::World::PROCESS_SPAWN) {
+        // process chips that animate but were not moving
         std::erase_if(chipsIdxsUpdating, [this](int idx){
             Chip& chip = chips[idx];
             State::Chip chipState = chip.update();
@@ -238,7 +221,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
     }
 
     if (chipsIdxsMoving.size() && meta.state == State::World::PROCESS_MOVES) {
-        // TraceLog(LOG_INFO, "Processing movement chips.");
+        // process moving chips, the turn is driven by moving chips
         std::erase_if(chipsIdxsMoving, [this](int idx){
             Chip& chip = chips[idx];
             State::Chip chipState = chip.update();
@@ -251,7 +234,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
             meta.state = State::World::PROCESS_SPAWN;
 
             // sync all the chips to give a chance
-            // for the once that didn't move to update
+            // for the once that didnt move to update
             for (auto& chip : chips) {
                 if (chip.active()) {
                     chip.sync();
@@ -319,6 +302,41 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
     return meta;
 }
 
+WorldState World::updateMain(InputEvent, Action::Surface){
+    return meta;
+}
+
+WorldState World::updateHold(InputEvent inputEvent, Action::Surface action){
+    return meta;
+}
+
+void World::renderMain() const {
+    DrawRectangleGradientV(0, 0, window.width, window.height, DARKBLUE, DARKGRAY);
+}
+
+void World::renderGame() const {
+    DrawRectangleGradientV(0, 0, window.width, window.height, BLUE, GREEN);
+    
+    grid.render();
+        
+    // first pass bottom layer
+    for (auto& chip : chips) {
+        if (chip.active() && chip.hasAbsorbed()) {
+            chip.render();
+        }
+    }
+    // render top chips merging on top
+    for (auto& chip : chips) {
+        if (chip.active() && !chip.hasAbsorbed()) {
+            chip.render();
+        }
+    }
+}
+
+void World::renderHold() const {
+    renderGame();
+}
+
 bool World::chipLocked(Chip& chip) const {
     bool locked = true;
 
@@ -342,27 +360,6 @@ bool World::chipLocked(Chip& chip) const {
     }
 
     return locked;
-}
-
-void World::renderMain() const {
-    DrawRectangleGradientV(0, 0, window.width, window.height, DARKBLUE, DARKGRAY);
-}
-
-void World::renderGame() const {
-    DrawRectangleGradientV(0, 0, window.width, window.height, BLUE, GREEN);
-    grid.render();
-    
-    for (auto& chip : chips) {
-        if (chip.active() && chip.hasAbsorbed()) {
-            chip.render();
-        }
-    }
-
-    for (auto& chip : chips) {
-        if (chip.active() && !chip.hasAbsorbed()) {
-            chip.render();
-        }
-    }
 }
 
 void World::transition(State::App appState, State::Screen screen, Action::Surface action) {

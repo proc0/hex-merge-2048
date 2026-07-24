@@ -6,8 +6,20 @@
 #include "raylib.h"
 #include "type.hpp"
 
+// #include <string>
+
 void Phase::load() {
 	
+    // TODO: move to a debug header?
+    // debug print distributions
+    // for (int i = 0; i < randomizedPhaseMap.size(); ++i) {
+    //     std::string tempStr = "";
+    //     auto& randMap = randomizedPhaseMap[i];
+    //     for (int j = 0; j < randMap.size(); ++j) {
+    //         tempStr = std::format("{} {}", tempStr, randMap[j]);
+    //     }
+    //     TraceLog(LOG_INFO, "%d: %s", i, tempStr.c_str());
+    // }
 }
 
 void Phase::update() {
