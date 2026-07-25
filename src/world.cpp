@@ -271,13 +271,16 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
             // spawn chips
             const int spawnNumber = phase.getSpawnNumber();
+            std::unordered_set<int> spawnValues;
             for (int i = 0; i < spawnNumber; i++) {                
+                spawnValues.emplace(phase.getRandomValue());
+            }
+            for (auto& val : spawnValues) {
                 Hex::Point nextHex = grid.findRandom();
                 if (nextHex != Hex::Absurd) {
-                    spawnChip(nextHex, phase.getRandomValue());
-                }
+                    spawnChip(nextHex, val);
+                }  
             }
-
             // check gridlock
             if (grid.filled()) {
                 bool gridlock = true;
@@ -347,8 +350,9 @@ void World::renderMain() const {
 
 void World::renderGame() const {
     // DrawRectangleGradientV(0, 0, window.width, window.height, BLUE, GREEN);
-    ClearBackground(bgColor);
-    DrawCircleGradient(grid.getOrigin(), window.halfWidthf, lastBgColor, bgColor);
+    ClearBackground(lastBgColor);
+    // DrawCircleGradient(grid.getOrigin(), window.halfWidthf, bgColor, lastBgColor);
+    DrawRectangleGradientEx({ 0, 0, window.widthf, window.heightf }, lastBgColor, bgColor, DARKGRAY, bgColor);
 
     grid.render();
         

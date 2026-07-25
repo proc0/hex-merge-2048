@@ -1,4 +1,3 @@
-#include "clay.h"
 #define CLAY_IMPLEMENTATION
 #include "surface.hpp"
 
@@ -523,9 +522,9 @@ void Surface::layoutWinLose() {
                 CLAY(CLAY_ID("FooterWinLose"), {
                     .layout = { 
                         .sizing = { 
-                            .width = CLAY_SIZING_PERCENT(window.adapt(0.3f)),
+                            .width = CLAY_SIZING_GROW(0),
                         },
-                        .padding = { 0, 0, window.scale(12), 0 },
+                        .padding = CLAY_PADDING_ALL(window.scale(12)),
                         .childGap = window.scale(12),
                         .layoutDirection = CLAY_LEFT_TO_RIGHT,
                     },
