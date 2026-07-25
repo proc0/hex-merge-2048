@@ -150,6 +150,7 @@ public:
 	void setPosition(Vector2);
 	void setFontSize(float fontSize);
 	void setSize(Vector2 hexSize);
+	void setColor(Color);
 	void setHex(Hex::Point);
 	void setValue(int);
 	void addValue(int);

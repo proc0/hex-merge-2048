@@ -260,7 +260,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
             if (maxValueChanged) {
                 if (phaseIdx > 0) {
-                    lastBgColor = bgColor;
+                    // lastBgColor = bgColor;
                     bgColor = newBgColor;
                 }
                 maxValueChanged = false;
@@ -291,6 +291,12 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
                 if (gridlock) {
                     meta.state = State::World::LOCKED;
                     meta.gridlock = true;
+                    for (auto& chip : chips) {
+                        if (chip.active()) {
+                            chip.setColor(LIGHTGRAY);
+                        }
+                    }
+                    bgColor = LIGHTGRAY;
                 }
             }
         }

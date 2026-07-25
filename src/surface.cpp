@@ -1,3 +1,4 @@
+#include "clay.h"
 #define CLAY_IMPLEMENTATION
 #include "surface.hpp"
 
@@ -499,7 +500,7 @@ void Surface::layoutWinLose() {
                     },
                     .padding = CLAY_PADDING_ALL(window.scale(24)),
                     .childGap = window.scale(12),
-                    .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER },
+                    .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_BOTTOM },
                     .layoutDirection = CLAY_TOP_TO_BOTTOM,
                 },
                 .backgroundColor = SURFACE_COLOR_MENU_BG,
@@ -509,7 +510,7 @@ void Surface::layoutWinLose() {
                     .zIndex = 1, 
                     .attachPoints = { 
                         CLAY_ATTACH_POINT_CENTER_CENTER, 
-                        CLAY_ATTACH_POINT_CENTER_CENTER 
+                        CLAY_ATTACH_POINT_CENTER_BOTTOM 
                     }, 
                     .attachTo = CLAY_ATTACH_TO_PARENT 
                 },
@@ -526,7 +527,7 @@ void Surface::layoutWinLose() {
                         },
                         .padding = { 0, 0, window.scale(12), 0 },
                         .childGap = window.scale(12),
-                        .layoutDirection = CLAY_TOP_TO_BOTTOM,
+                        .layoutDirection = CLAY_LEFT_TO_RIGHT,
                     },
                 }) {        
                     widget.layoutButton(BUTTON_ID::RESTART);

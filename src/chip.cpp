@@ -69,8 +69,9 @@ void Chip::sync() {
 void Chip::render() const {
 	float radius = size.x*actual[SCALE];
 	DrawPoly({ actual[X], actual[Y] }, 6, radius, actual[ROTATION], { static_cast<unsigned char>(actual[COLOR_R]), static_cast<unsigned char>(actual[COLOR_G]), static_cast<unsigned char>(actual[COLOR_B]), static_cast<unsigned char>(actual[COLOR_A]) });
-	DrawPolyLinesEx({ actual[X], actual[Y] }, 6, radius, actual[ROTATION], actual[SCALE], BLACK);
+	DrawPolyLinesEx({ actual[X], actual[Y] }, 6, radius, actual[ROTATION], 3.0f*actual[SCALE], BLACK);
 	
+	DrawText(TextFormat("%d", value), actual[X]+actual[FONT_X]-3, actual[Y]+actual[FONT_Y]+3, fontSize*actual[SCALE], BLACK);
 	DrawText(TextFormat("%d", value), actual[X]+actual[FONT_X], actual[Y]+actual[FONT_Y], fontSize*actual[SCALE], DEFAULT_CHIP_FONT_COLOR);
 }
 
@@ -342,6 +343,16 @@ void Chip::setFontSize(float newFontSize) {
 	actual[FONT_Y] = fontY;	
 	source[FONT_Y] = fontY;	
 	target[FONT_Y] = fontY;
+}
+
+void Chip::setColor(Color color) {
+	StackMap<int, float, 4> configColor{{
+		{ COLOR_R, color.r },
+		{ COLOR_G, color.g },
+		{ COLOR_B, color.b },
+		{ COLOR_A, color.a },
+	}};
+	setProps({{ configColor.data.data(), configColor.size }}, true, true, true);
 }
 
 void Chip::setSize(Vector2 chipSize) {

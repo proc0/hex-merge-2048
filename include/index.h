@@ -3,7 +3,7 @@
 #define PROJECT_NAME "hex-merge-2048"
 #define VERSION "0.2.0"
 #define DEBUG 1
-#define DATE_BUILD "2026-07-24 18:45:11"
+#define DATE_BUILD "2026-07-24 19:45:46"
 #define DIR_ASSETS "asset"
 
 #define PATH_ASSET(filename) DIR_ASSETS "/" filename
