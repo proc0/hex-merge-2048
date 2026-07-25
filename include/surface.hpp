@@ -33,6 +33,7 @@ class Surface : public Layer {
     Texture2D textureBlueTile;
     std::string formatScore = "Score";
     std::string formatTotalTime = "Time";
+    std::string formatMoves = "Moves";
 
     Camera Raylib_camera;
     Shader overlayShader;
@@ -41,7 +42,8 @@ class Surface : public Layer {
 
     const Window& window;
     // TODO: move this to Display
-    int gameScore;
+    int gameScore = 0;
+    int moveCount = 0;
     State::Game currentGameState = State::Game::START;
     // overlay shader variable
     int overlayColorLocation;

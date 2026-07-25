@@ -39,8 +39,8 @@ void World::reset() {
     // seed chip
     grid.place(Hex::Origin, spawnChip(Hex::Origin, 2));
     meta.state = State::World::WAIT;
-    bgColor = LIGHTGRAY;
-    lastBgColor = DARKGRAY;
+    bgColor = WORLD_COLOR_PRIMARY_BG;
+    lastBgColor = WORLD_COLOR_SECONDARY_BG;
 }
 
 int World::spawnChip(Hex::Point hex, int value) {
@@ -132,6 +132,7 @@ void World::updateChip(Hex::Basis forward, Hex::Point sourceHex) {
             }
             // add to moving list to animate 
             chipsIdxsMoving.push_back(sourceKey);
+            meta.mergedValue += sourceChip.getValue();
             meta.state = State::World::PROCESS_MOVES;
 
             return;
@@ -206,6 +207,7 @@ void World::updateMove(Hex::Cardinal needle) {
     }
 
     // TraceLog(LOG_INFO, "----------- END TURN -----------");
+    meta.moveCount++;
 }
 
 WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){

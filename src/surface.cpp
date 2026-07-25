@@ -428,9 +428,11 @@ Action::Surface Surface::updateMenu(const InputEvent& inputEvent) {
 }
 
 void Surface::updateDisplay(const GameState gameState) {
-    if (gameState.score != gameScore) {
+    if (gameState.moveCount > moveCount) {
         gameScore = gameState.score;
+        moveCount = gameState.moveCount;
         formatScore = std::format("Score {}", gameScore);
+        formatMoves = std::format("Moves {}", moveCount);
     }
 
     if (currentGameState != gameState.state) {
@@ -475,13 +477,14 @@ void Surface::layoutWinLose() {
         CLAY(CLAY_ID("ContentWinLose"), {
             .layout = { 
                 .sizing = { 
-                    .width = CLAY_SIZING_PERCENT(window.adapt(0.5f)),
+                    .width = CLAY_SIZING_PERCENT(0.5f),
                 },
-                .padding = CLAY_PADDING_ALL(static_cast<uint16_t>(window.scale(24))),
-                .childGap = static_cast<uint16_t>(window.scale(4)),
+                .padding = CLAY_PADDING_ALL(window.scale(24)),
+                .childGap = window.scale(4),
                 .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER },
                 .layoutDirection = CLAY_TOP_TO_BOTTOM,
             },
+
         }) { 
             if (currentGameState == State::Game::WIN) {
                 CLAY_TEXT(CLAY_STRING(TEXT_GAME_WIN_SUBTITLE), STYLE_TEXT_DISPLAY);
@@ -489,21 +492,48 @@ void Surface::layoutWinLose() {
                 CLAY_TEXT(CLAY_STRING(TEXT_GAME_LOSE_SUBTITLE), STYLE_TEXT_DISPLAY);
             }
 
-            widget.layoutLabel(formatScore);
-            widget.layoutLabel(formatTotalTime);
-        }
-
-        CLAY(CLAY_ID("FooterWinLose"), {
-            .layout = { 
-                .sizing = { 
-                    .width = CLAY_SIZING_PERCENT(window.adapt(0.3f)),
+            CLAY(CLAY_ID("ContentWinLoseNumbers"), {
+                .layout = { 
+                    .sizing = { 
+                        .width = CLAY_SIZING_GROW(0),
+                    },
+                    .padding = CLAY_PADDING_ALL(window.scale(24)),
+                    .childGap = window.scale(12),
+                    .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER },
+                    .layoutDirection = CLAY_TOP_TO_BOTTOM,
                 },
-                .padding = { 0, 0, static_cast<uint16_t>(window.scale(12)), 0 },
-            },
-        }) {        
-            widget.layoutButton(BUTTON_ID::RESTART);
-            if (currentGameState == State::Game::WIN) {
-                widget.layoutButton(BUTTON_ID::GAME_CONTINUE);
+                .backgroundColor = SURFACE_COLOR_MENU_BG,
+                .cornerRadius = CLAY_CORNER_RADIUS(10),
+                .floating = { 
+                    .offset = {0, 0}, 
+                    .zIndex = 1, 
+                    .attachPoints = { 
+                        CLAY_ATTACH_POINT_CENTER_CENTER, 
+                        CLAY_ATTACH_POINT_CENTER_CENTER 
+                    }, 
+                    .attachTo = CLAY_ATTACH_TO_PARENT 
+                },
+
+            }) {
+                widget.layoutLabel(formatScore);
+                widget.layoutLabel(formatTotalTime);
+                widget.layoutLabel(formatMoves);
+
+                CLAY(CLAY_ID("FooterWinLose"), {
+                    .layout = { 
+                        .sizing = { 
+                            .width = CLAY_SIZING_PERCENT(window.adapt(0.3f)),
+                        },
+                        .padding = { 0, 0, window.scale(12), 0 },
+                        .childGap = window.scale(12),
+                        .layoutDirection = CLAY_TOP_TO_BOTTOM,
+                    },
+                }) {        
+                    widget.layoutButton(BUTTON_ID::RESTART);
+                    if (currentGameState == State::Game::WIN) {
+                        widget.layoutButton(BUTTON_ID::GAME_CONTINUE);
+                    }
+                }
             }
         }
     }
@@ -733,7 +763,7 @@ void Surface::layoutMenuPause() {
                             .sizing = { 
                                 .width = CLAY_SIZING_GROW(0), 
                             },
-                            .padding = CLAY_PADDING_ALL(static_cast<uint16_t>(window.scale(24))),
+                            .padding = CLAY_PADDING_ALL(window.scale(24)),
                             .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER }
                         },
                     }) {
@@ -749,7 +779,7 @@ void Surface::layoutMenuPause() {
                             .sizing = { 
                                 .width = CLAY_SIZING_GROW(0), 
                             },
-                            .childGap = static_cast<uint16_t>(window.scale(48)),
+                            .childGap = window.scale(48),
                             .layoutDirection = CLAY_LEFT_TO_RIGHT,
                         },
                     }) {
@@ -836,14 +866,14 @@ void Surface::layoutDisplayGame() {
             .padding = { 30, 40, 30, 30 }, 
         }, 
     }) {
-        CLAY(CLAY_ID("LeftCounter"), {
+        CLAY(CLAY_ID("CounterHUD"), {
             .layout = {
                 .sizing = { 
                     .width = CLAY_SIZING_GROW(0), 
                 },
-                .childAlignment = { .x = CLAY_ALIGN_X_LEFT, .y = CLAY_ALIGN_Y_CENTER }
+                .childAlignment = { .x = CLAY_ALIGN_X_LEFT, .y = CLAY_ALIGN_Y_TOP },
             },
-        }) {            
+        }) {
             widget.layoutLabel(formatScore);
         }
 
@@ -851,14 +881,14 @@ void Surface::layoutDisplayGame() {
         CLAY(CLAY_ID("ControlHUD"), {
             .layout = {
                 .sizing = {
-                    .width = CLAY_SIZING_FIXED(window.scale(300)), 
+                    .width = CLAY_SIZING_FIXED(window.scale(300.0f)), 
                     .height = CLAY_SIZING_GROW(0),
                 },
                 .childGap = 10,
                 .childAlignment = { .x = CLAY_ALIGN_X_RIGHT, .y = CLAY_ALIGN_Y_BOTTOM },
                 .layoutDirection = CLAY_LEFT_TO_RIGHT,
             },
-        }) {         
+        }) {
 
             CLAY(CLAY_ID("HUDControlsLeft"), {
                 .layout = {

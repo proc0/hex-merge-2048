@@ -51,6 +51,11 @@ GameState Game::updateGame(InputEvent inputEvent, WorldState worldState){
         return meta;
     }
  
+    if (worldState.moveCount > meta.moveCount) {
+        meta.score = worldState.mergedValue;
+        meta.moveCount = worldState.moveCount;
+    }
+
     if (meta.state != State::Game::STAY && worldState.maxValue == 2048) {
         window.timer.stopWatch(gameTimerId);
         meta.state = State::Game::WIN;

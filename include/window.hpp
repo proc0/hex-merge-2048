@@ -6,6 +6,7 @@
 #include "timer.hpp"
 
 #include "raylib.h"
+#include <cstdint>
 
 class Window {
 	Camera2D& camera;
@@ -50,6 +51,7 @@ public:
 	void enlist(Layer* listener);
 	void resize(int newWidth, int newHeight);
 	float scale(float value) const;
+	uint16_t scale(int value) const;
 	Rectangle scale(Rectangle area) const;
 	Vector2 scale(Vector2 vect) const;
 	Rectangle center(Rectangle area) const;

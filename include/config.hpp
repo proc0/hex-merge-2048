@@ -15,10 +15,13 @@
 
 #define RAYLIB_LOGO_SIZE 200
 
-#define HEX_SIZE 80.0f
+#define HEX_SIZE 72.0f
 // Hex grid extent (half width/height) - 1 (center hex)
 // or number of onion hex layers around center hex
 #define GRID_EXTENT 2
+
+#define WORLD_COLOR_PRIMARY_BG DARKGRAY
+#define WORLD_COLOR_SECONDARY_BG LIGHTGRAY
 
 #define CHIP_FONT_SIZE 52
 

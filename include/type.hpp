@@ -137,16 +137,19 @@ struct InputEvent {
 #define DEFAULT_INPUT InputEvent({ .id = Event::Input::IDLE, .position = Vector2({}) })
 
 struct GameState {
-    int score = 0;
-    State::Game state = State::Game::START;
     TimerId totalTimeId = 0;
+    State::Game state = State::Game::START;
+    int score = 0;
+    int moveCount = 0;
 };
 static inline constexpr GameState defaultGameState{};
 
 struct WorldState {
     State::World state = State::World::WAIT;
-    bool gridlock = 0;
     int maxValue = 0;
+    int mergedValue = 0;
+    int moveCount = 0;
+    bool gridlock = 0;
 };
 static inline constexpr WorldState defaultWorldState{};
 

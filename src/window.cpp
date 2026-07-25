@@ -5,6 +5,7 @@
 
 #include "raylib.h"
 #include "raymath.h"
+#include <cstdint>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -120,6 +121,10 @@ void Window::resize(int newWidth, int newHeight) {
 
 float Window::scale(float value) const {
     return value*ratio;
+}
+
+uint16_t Window::scale(int value) const {
+    return static_cast<uint16_t>(value*ratio);
 }
 
 Rectangle Window::scale(Rectangle area) const {

@@ -21,7 +21,8 @@ class Game : public Layer {
     const Window& window;
     TimerId gameTimerId;
 
-    bool paused;
+    int moveCount = 0;
+    bool paused = false;
 
 public:
     Game(const Window& window): window(window) {}

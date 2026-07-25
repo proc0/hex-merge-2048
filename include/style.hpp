@@ -54,7 +54,7 @@
 #define STYLE_TEXT_TITLE CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_BG, .fontId = 1, .fontSize = 48, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
 #define STYLE_TEXT_HIGHLIGHT CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_HL, .fontId = 1, .fontSize = 48, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
 #define STYLE_TEXT_DISPLAY CLAY_TEXT_CONFIG({ .textColor = CLAY_WHITE, .fontId = 1, .fontSize = 48, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
-#define STYLE_TEXT_BANNER CLAY_TEXT_CONFIG({ .textColor = CLAY_WHITE, .fontId = 1, .fontSize = 42, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
+#define STYLE_TEXT_BANNER CLAY_TEXT_CONFIG({ .textColor = CLAY_WHITE, .fontId = 2, .fontSize = 48, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
 #define STYLE_TEXT_WIN CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_ACCENT_GOLD, .fontId = 2, .fontSize = 160 })
 #define STYLE_TEXT_LOSE CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_ACCENT_RED, .fontId = 2, .fontSize = 160 })
 
