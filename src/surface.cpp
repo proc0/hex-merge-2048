@@ -107,6 +107,11 @@ void Surface::load(){
     resize(window.width, window.height);
 }
 
+void Surface::reset() {
+    gameScore = 0;
+    moveCount = 0;
+}
+
 void Surface::loadOverlay() {
 #ifdef __EMSCRIPTEN__
     // GLSL ES 3.0 shader for WebGL 2.0 used by Emscripten for Web
@@ -818,7 +823,7 @@ void Surface::layoutMenuMain() {
         CLAY(CLAY_ID("ContentMainMenu"), {
             .layout = { 
                 .sizing = { 
-                    .width = CLAY_SIZING_PERCENT(0.33f), 
+                    .width = CLAY_SIZING_PERCENT(window.adapt(0.33f)), 
                     .height = CLAY_SIZING_PERCENT(0.5f) 
                 }, 
                 .childGap = 2,

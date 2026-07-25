@@ -3,7 +3,7 @@
 #define PROJECT_NAME "hex-merge-2048"
 #define VERSION "0.2.0"
 #define DEBUG 1
-#define DATE_BUILD "2026-07-25 07:37:05"
+#define DATE_BUILD "2026-07-25 11:44:02"
 #define DIR_ASSETS "asset"
 
 #define PATH_ASSET(filename) DIR_ASSETS "/" filename
@@ -12,6 +12,7 @@
 #define URI_FONT_ROBOTO_REGULAR "Roboto-Regular.ttf"
 #define URI_FONT_ROBOTO_CONDENSED "RobotoCondensed-SemiBold.ttf"
 #define URI_FONT_TURRENT_EXTRA_BOLD "TurretRoad-ExtraBold.ttf"
+#define URI_FONT_HEX_GIRLFRIEND "Hex_Girlfriend.ttf"
 
 #define URI_SOUND_SPLAT "splat1.wav"
 

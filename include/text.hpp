@@ -1,5 +1,7 @@
 #pragma once
 
+#define GAME_TITLE "Hex Merge\n       2048"
+#define GAME_TITLE_BG "Hex\nMerge\n2048\nHex\nMerge\n2048"
 #define TITLE_HINT "Press any key to continue."
 
 #define TEXT_RETURN_TO_MAIN "All progress will be lost.\nReturn to Main Menu?"

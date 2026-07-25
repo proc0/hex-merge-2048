@@ -32,6 +32,7 @@ void World::reset() {
     }
     meta.gridlock = false;
     meta.maxValue = 2;
+    meta.mergedValue = 0;
     phase.setPhase(meta.maxValue);
     
     chipsIdxsUpdating.clear();

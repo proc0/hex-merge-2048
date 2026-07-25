@@ -88,7 +88,8 @@ void App::runIntro() {
 
     (timer.*timer.update)();
     window.update(DEFAULT_INPUT);
-    
+    game.updateTitle();
+
     if (screen == State::Screen::INTRO) {
         if(input.updateAnyKey() || timer.isEmpty()) {
             screen = State::Screen::TITLE;
@@ -188,6 +189,7 @@ Clay_RenderCommandArray App::update() {
             // reset any game state
             world.reset();
             game.restart();
+            surface.reset();
             
             game.transition(state, screen);
             world.transition(state, screen, Action::Surface::DO_NOTHING);
@@ -267,6 +269,7 @@ Clay_RenderCommandArray App::update() {
             // reset any game state
             world.reset();
             game.restart();
+            surface.reset();
             game.transition(state, screen);
             // transition world to start showing in background
             world.transition(state, screen, surfaceAction);
@@ -306,8 +309,8 @@ Clay_RenderCommandArray App::update() {
 }
 
 void App::resize(int width, int height) {    
-    if (screen == State::Screen::TITLE) {
-        game.updateTitle();
+    if (screen == State::Screen::TITLE || screen == State::Screen::MAIN) {
+        game.resizeTitle();
     }
     UnloadRenderTexture(target);
     loadTarget();

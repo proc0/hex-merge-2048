@@ -15,6 +15,10 @@
 
 #define RAYLIB_LOGO_SIZE 200
 
+#define TITLE_FONT_SIZE 150
+#define TITLE_HINT_FONT_SIZE 32
+#define TITLE_BG_FONT_SIZE 700
+
 #define HEX_SIZE 72.0f
 // Hex grid extent (half width/height) - 1 (center hex)
 // or number of onion hex layers around center hex

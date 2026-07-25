@@ -9,13 +9,15 @@
 class Logo : public Layer {
     const char* logoName = "proc0";
     int logoFontSize = 108;
-
+    int logoX;
+    int logoY;
+    
     const char* rlLogoName = "raylib";
     // NOTE: can be resized dynamically in resize() if needed
-    const int rlLogoFontSize = round(RAYLIB_LOGO_SIZE*0.2f);
-    const float rlLogoSize = RAYLIB_LOGO_SIZE;
-    const int rlLogoBorder = round(RAYLIB_LOGO_SIZE*0.08f);
-    const float rlLogoInnerSize = rlLogoSize - 2.0f*rlLogoBorder;
+    int rlLogoFontSize = round(RAYLIB_LOGO_SIZE*0.2f);
+    float rlLogoSize = RAYLIB_LOGO_SIZE;
+    int rlLogoBorder = round(RAYLIB_LOGO_SIZE*0.08f);
+    float rlLogoInnerSize = rlLogoSize - 2.0f*rlLogoBorder;
     Rectangle rlLogoOuterRec;
     Rectangle rlLogoInnerRec;
     Vector2 rlLogoTextPos;

@@ -18,7 +18,7 @@ class World : public Layer {
     std::vector<int> chipsIdxsMoving;
     std::vector<int> chipsIdxsUpdating;
 
-    WorldState meta;
+    WorldState meta = defaultWorldState;
 
     Color bgColor = WORLD_COLOR_PRIMARY_BG;
     Color lastBgColor = WORLD_COLOR_SECONDARY_BG;

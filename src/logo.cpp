@@ -3,8 +3,18 @@
 #include "raylib.h"
 
 void Logo::load() {
+    rlLogoSize = window.scale(RAYLIB_LOGO_SIZE);
+    rlLogoFontSize = round(rlLogoSize*0.2f);
+    rlLogoBorder = round(rlLogoSize*0.08f);
+    rlLogoInnerSize = rlLogoSize - 2.0f*rlLogoBorder;
+
     float rlLogoX = window.halfWidthf*1.4f - rlLogoSize*0.5f;
     float rlLogoY = window.halfHeightf - rlLogoSize*0.5f;
+
+    logoFontSize = window.scale(108);
+    logoX = window.halfWidthf*0.4f;
+    logoY = window.halfHeightf - logoFontSize*0.4f;
+
     drawRaylibLogo({ rlLogoX, rlLogoY });
 }
 
@@ -29,8 +39,7 @@ void Logo::renderRaylibLogo() const {
 
 void Logo::renderLogo() const {
     // float logoSize = MeasureText(logoName, logoFontSize);
-    int logoX = window.halfWidthf*0.4f;
-    int logoY = window.halfHeightf - logoFontSize*0.4f;
+
 
     DrawText(logoName, logoX, logoY, logoFontSize, BLACK);
 }

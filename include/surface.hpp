@@ -63,6 +63,7 @@ public:
     Action::Surface (Surface::*update)(const InputEvent&) = &Surface::updateUnit;
 
     void load();
+    void reset();
     void loadOverlay();
 
     void renderUnit(Clay_RenderCommandArray& renderCommands) const {};
