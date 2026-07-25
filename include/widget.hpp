@@ -15,35 +15,62 @@ extern "C" {
 #include <array>
 #include <vector>
 
+    // enum Surface {
+    //     DO_NOTHING,
+    //     MAIN_NEW_CLASSIC,
+    //     MAIN_NEW_HEXED,
+    //     MAIN_NEW_CURSED,
+    //     CONFIRM_TUTORIAL,
+    //     MOVE_UP,
+    //     MOVE_UP_RIGHT,
+    //     MOVE_DOWN_RIGHT,
+    //     MOVE_DOWN,
+    //     MOVE_DOWN_LEFT,
+    //     MOVE_UP_LEFT,
+    //     RESTART,
+    //     GAME_CONTINUE,
+    //     OPTIONS,
+    //     RESUME_GAME,
+    //     MAIN_MENU,
+    //     CONFIRM_RETURN,
+    //     CANCEL_RETURN,
+    //     CONFIRM_OPTIONS,
+    //     CANCEL_OPTIONS,
+    //     CHANGE_OPTIONS_GAME,
+    //     CHANGE_OPTIONS_AUDIO,
+    //     CHANGE_OPTIONS_INPUTS,
+    //     QUIT_APP,
+    // };
+
 // TODO: make consistent button ids and their actions in type header
 namespace WidgetId {
 	// WARNING: used for indices to Widget.buttons
 	// needs to be the same order as BUTTONS macro
-	enum ButtonId {
-		NIL,
-		MAIN_NEW_CLASSIC,
-		MAIN_NEW_HEXED,
-		MAIN_NEW_CURSED,
-		RESUME,
-		MOVE_UP,
-		MOVE_UP_RIGHT,
-		MOVE_DOWN_RIGHT,
-		MOVE_DOWN,
-		MOVE_DOWN_LEFT,
-		MOVE_UP_LEFT,
-		RETURN,
-		RESTART,
-		GAME_CONTINUE,
-		OPTIONS,
-		CONFIRM_RETURN,
-		CONFIRM_TUTORIAL,
-		CANCEL_RETURN,
-		OPTIONS_GAME,
-		OPTIONS_AUDIO,
-		OPTIONS_INPUTS,
-		CONFIRM_OPTIONS,
-		CANCEL_OPTIONS,
-		QUIT
+	enum ButtonId { 
+		NIL, 				// DUMMY
+		MAIN_NEW_CLASSIC,	// MAIN_NEW_GAME_CLASSIC_<Difficulty>
+		MAIN_NEW_HEXED,		// MAIN_NEW_GAME_HEXED_<Difficulty>
+		MAIN_NEW_CURSED,	// MAIN_NEW_GAME_CURSED_<Difficulty>
+		RESUME,				// GAME_RESUME
+		MOVE_UP,			//
+		MOVE_UP_RIGHT,		//
+		MOVE_DOWN_RIGHT,	//		
+		MOVE_DOWN,			//
+		MOVE_DOWN_LEFT,		//
+		MOVE_UP_LEFT,		//
+		RETURN,				// GAME_RETURN_MAIN
+		RESTART,			// GAME_RESTART
+		GAME_CONTINUE,		// GAME_CONTINUE
+		OPTIONS,			// MENU_OPTIONS
+		CONFIRM_RETURN,		// GAME_CONFIRM_RETURN_MAIN
+		CONFIRM_TUTORIAL,	// -- not needed
+		CANCEL_RETURN,		// GAME_CANCEL_RETURN_MAIN
+		OPTIONS_GAME,		// MENU_OPTIONS_TAB_GAME
+		OPTIONS_AUDIO,		// MENU_OPTIONS_TAB_AUDIO
+		OPTIONS_INPUTS,		// MENU_OPTIONS_TAB_INPUTS
+		CONFIRM_OPTIONS,	// MENU_OPTIONS_SAVE
+		CANCEL_OPTIONS,	    // MENU_OPTIONS_DISCARD
+		QUIT 				// MENU_QUIT
 	};
 }
 
