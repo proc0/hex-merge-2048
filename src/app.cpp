@@ -25,8 +25,8 @@ void App::load() {
 
     surface.load();
 	world.load();
-	game.load();
     logo.load();
+	game.load();
 
     window.enlist(this);
     window.enlist(&surface);
@@ -34,9 +34,9 @@ void App::load() {
     window.enlist(&game);
     window.enlist(&logo);
     
-    window.load();
-
     loadTarget();
+
+    window.load();
 }
 
 void App::loadTarget() {
@@ -51,7 +51,7 @@ void App::loadTarget() {
 void App::start() {
     // set intro timer
     timer.schedule(INTRO_TIME_MS, nullptr);
-    
+    game.resizeTitle();
 #ifdef __EMSCRIPTEN__
     // no target FPS (3rd param) to allow browser to optimize frame rate
     // set simulate infinite loop (4th param) to 0 to let the rest of the function execute

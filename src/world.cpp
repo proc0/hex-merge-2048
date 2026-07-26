@@ -9,8 +9,6 @@
 #include "raylib.h"
 
 void World::load(){
-    splat = LoadSound(PATH_ASSET(URI_SOUND_SPLAT));
-
     grid.load();
     window.enlist(&grid);
 
@@ -462,5 +460,4 @@ void World::unload(){
     }
     chips.clear();
     grid.unload();
-    UnloadSound(splat);
 }

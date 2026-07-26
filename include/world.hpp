@@ -9,7 +9,6 @@
 #include "raylib.h"
 
 class World : public Layer {
-    Sound splat;
     Window& window;
     Grid grid{window};
     Phase phase;

@@ -231,9 +231,9 @@ if(IS_WEB)
         -sWASM=1
         # -sASYNCIFY=1
         # ~12MB
-        # -sINITIAL_HEAP=100663296
+        -sINITIAL_HEAP=134217728
         # ~8MB
-        -sINITIAL_HEAP=67108864
+        # -sINITIAL_HEAP=67108864
         # ~3MB
         # -sINITIAL_HEAP=25165824
         -sEXPORT_ES6=1
