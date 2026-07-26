@@ -213,7 +213,7 @@ void World::updateMove(Hex::Cardinal needle) {
 
 WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
-    if (chipsIdxsUpdating.size() && meta.state == State::World::PROCESS_SPAWN) {
+    if (chipsIdxsUpdating.size() && (meta.state == State::World::PROCESS_SPAWN || meta.state == State::World::LOCKED)) {
         // process chips that animate but were not moving
         std::erase_if(chipsIdxsUpdating, [this](int idx){
             Chip& chip = chips[idx];
@@ -222,7 +222,17 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
         });
 
         if (chipsIdxsUpdating.empty()) {
-            meta.state = State::World::WAIT;
+            if (meta.state == State::World::LOCKED) {
+                meta.gridlock = true;
+                for (auto& chip : chips) {
+                    if (chip.active()) {
+                        chip.setColor(LIGHTGRAY);
+                    }
+                }
+                bgColor = LIGHTGRAY;
+            } else {
+                meta.state = State::World::WAIT;
+            }
         }
     }
 
@@ -294,13 +304,7 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
                 if (gridlock) {
                     meta.state = State::World::LOCKED;
-                    meta.gridlock = true;
-                    for (auto& chip : chips) {
-                        if (chip.active()) {
-                            chip.setColor(LIGHTGRAY);
-                        }
-                    }
-                    bgColor = LIGHTGRAY;
+
                 }
             }
         }
