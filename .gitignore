@@ -2,10 +2,6 @@
 build/*
 build-*/*
 
-# Install files
-dist/*
-dist-*/*
-
 # Prerequisites
 *.d
 
