@@ -6,6 +6,15 @@
 
 #define TEXT_RETURN_TO_MAIN "All progress will be lost.\nReturn to Main Menu?"
 
+#define TEXT_GAME_MODE_CLASSIC_TITLE "Classic Mode"
+#define TEXT_GAME_MODE_CLASSIC_BODY "This is classic mode."
+
+#define TEXT_GAME_MODE_CURSED_TITLE "Cursed Mode"
+#define TEXT_GAME_MODE_CURSED_BODY "This is Cursed mode."
+
+#define TEXT_GAME_MODE_HEXED_TITLE "Hexed Mode"
+#define TEXT_GAME_MODE_HEXED_BODY "This is Hexed mode."
+
 #define TEXT_TUTORIAL_TITLE "How to Play"
 #define TEXT_TUTORIAL_1 "Faucibus purus in massa tempor nec. Nec ullamcorper sit amet risus nullam eget felis eget nunc. Diam vulputate ut pharetra sit amet aliquam id diam. Lacus suspendisse faucibus interdum posuere lorem. A diam sollicitudin tempor id. Amet massa vitae tortor condimentum lacinia. Aliquet nibh praesent tristique magna."
 #define TEXT_TUTORIAL_2 "Suspendisse in est ante in nibh. Amet venenatis urna cursus eget nunc scelerisque viverra. Elementum sagittis vitae et leo duis ut diam quam nulla. Enim nulla aliquet porttitor lacus. Pellentesque habitant morbi tristique senectus et. Facilisi nullam vehicula ipsum a arcu cursus vitae."

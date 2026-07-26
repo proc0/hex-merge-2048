@@ -269,7 +269,8 @@ void Widget::BeginScrollBox() {
     // Clay__CloseElement();
     Clay__OpenElementWithId(scrollState.parentId);
     Clay__ConfigureOpenElement(CLAY__INIT(Clay_ElementDeclaration) {
-            .layout = { 
+            .layout = {
+                .sizing = { .width = CLAY_SIZING_GROW(0) },
                 .padding = CLAY_PADDING_ALL(32), 
                 .childGap = 12, 
                 .layoutDirection = CLAY_TOP_TO_BOTTOM 

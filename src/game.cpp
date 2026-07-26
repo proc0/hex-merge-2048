@@ -28,6 +28,7 @@ void Game::start() {
 void Game::restart() {
     meta.score = 0;
     meta.state = State::Game::PLAY;
+    meta.moveCount = 0;
     gameTimerId = window.timer.startWatch();
     meta.totalTimeId = gameTimerId;
 }

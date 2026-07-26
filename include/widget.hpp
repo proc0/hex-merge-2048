@@ -85,8 +85,8 @@ using BUTTON_ID = WidgetId::ButtonId;
 // menu buttons per screen
 #define BUTTONS_MENU_MAIN const std::array<BUTTON_ID, 4> buttonsMenuMain{ \
 		BUTTON_ID::MAIN_NEW_CLASSIC,\
-		BUTTON_ID::MAIN_NEW_HEXED, \
 		BUTTON_ID::MAIN_NEW_CURSED, \
+		BUTTON_ID::MAIN_NEW_HEXED, \
 		BUTTON_ID::QUIT,\
 	};
 		// BUTTON_ID::OPTIONS,

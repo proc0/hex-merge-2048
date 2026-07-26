@@ -47,10 +47,11 @@ class Surface : public Layer {
     int gameScore = 0;
     int moveCount = 0;
     State::Game currentGameState = State::Game::START;
+    Action::Surface gameMode = Action::Surface::MAIN_NEW_CLASSIC;
     // overlay shader variable
     int overlayColorLocation;
     bool showGameScore = false;
-    
+
 public:
     Widget widget;
 
@@ -94,7 +95,7 @@ public:
 
     static void handleError(Clay_ErrorData);
     void resize(int width, int height);
-    void transition(State::App, State::Screen);
+    void transition(State::App, State::Screen, Action::Surface);
     void unload();
 };
 

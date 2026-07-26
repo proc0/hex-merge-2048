@@ -114,6 +114,9 @@ void Surface::reset() {
     gameScore = 0;
     moveCount = 0;
     showGameScore = false;
+    formatScore = "Score";
+    formatTotalTime = "Time";
+    formatMoves = "Moves";
 }
 
 void Surface::loadOverlay() {
@@ -590,16 +593,38 @@ void Surface::layoutTutorial() {
             CLAY_AUTO_ID({
                 .layout = { 
                     .sizing = { .width = CLAY_SIZING_GROW(0) }, 
-                    .padding = CLAY_PADDING_ALL(static_cast<uint16_t>(window.scale(20))), 
+                    .padding = CLAY_PADDING_ALL(window.scale(20)), 
                     .childAlignment = { .x = CLAY_ALIGN_X_CENTER }, 
-                }
+                },
             }) {
-                CLAY_TEXT(CLAY_STRING(TEXT_TUTORIAL_TITLE), STYLE_TEXT_TITLE);
+                switch(gameMode) {
+                case Action::Surface::MAIN_NEW_CLASSIC:
+                    CLAY_TEXT(CLAY_STRING(TEXT_GAME_MODE_CLASSIC_TITLE), STYLE_TEXT_TITLE);
+                    break;
+                case Action::Surface::MAIN_NEW_CURSED:
+                    CLAY_TEXT(CLAY_STRING(TEXT_GAME_MODE_CURSED_TITLE), STYLE_TEXT_TITLE);
+                    break;
+                case Action::Surface::MAIN_NEW_HEXED:
+                    CLAY_TEXT(CLAY_STRING(TEXT_GAME_MODE_HEXED_TITLE), STYLE_TEXT_TITLE);
+                    break;
+                default:
+                    break;
+                }
             }
 
-            CLAY_TEXT(CLAY_STRING(TEXT_TUTORIAL_1), STYLE_TEXT_DEFAULT);
-            CLAY_TEXT(CLAY_STRING(TEXT_TUTORIAL_2), STYLE_TEXT_DEFAULT);
-            CLAY_TEXT(CLAY_STRING(TEXT_TUTORIAL_3), STYLE_TEXT_DEFAULT);
+            switch(gameMode) {
+            case Action::Surface::MAIN_NEW_CLASSIC:
+                CLAY_TEXT(CLAY_STRING(TEXT_GAME_MODE_CLASSIC_BODY), STYLE_TEXT_DEFAULT);
+                break;
+            case Action::Surface::MAIN_NEW_CURSED:
+                CLAY_TEXT(CLAY_STRING(TEXT_GAME_MODE_CURSED_BODY), STYLE_TEXT_DEFAULT);
+                break;
+            case Action::Surface::MAIN_NEW_HEXED:
+                CLAY_TEXT(CLAY_STRING(TEXT_GAME_MODE_HEXED_BODY), STYLE_TEXT_DEFAULT);
+                break;
+            default:
+                break;
+            }
         widget.EndScrollBox();
 
         CLAY(CLAY_ID("FooterTutorial"), {
@@ -608,10 +633,10 @@ void Surface::layoutTutorial() {
                     .width = CLAY_SIZING_GROW(0),
                 },
                 .padding = { 
-                    static_cast<uint16_t>(window.scale(120)),
-                    static_cast<uint16_t>(window.scale(120)),
-                    static_cast<uint16_t>(window.scale(32)),
-                    static_cast<uint16_t>(window.scale(32))
+                    window.scale(120),
+                    window.scale(120),
+                    window.scale(32),
+                    window.scale(32)
                 }, 
                 .childGap = window.scale(16),
                 .layoutDirection = CLAY_TOP_TO_BOTTOM,
@@ -1006,7 +1031,7 @@ void Surface::resize(int width, int height) {
     widget.resize(newButtonWidth, newButtonHeight);
 }
 
-void Surface::transition(State::App appState, State::Screen screen) {
+void Surface::transition(State::App appState, State::Screen screen, Action::Surface action) {
     switch(screen) {
         case State::Screen::MAIN:
             if (surfaceEvent == Event::Surface::SHOW_OPTIONS) {
@@ -1019,10 +1044,10 @@ void Surface::transition(State::App appState, State::Screen screen) {
             layoutDisplay   = &Surface::layoutDisplayUnit;
             render          = &Surface::renderRaylib;
             break;
-        case State::Screen::GAME:
         case State::Screen::GAME_INTRO:
+            gameMode = action;
+        case State::Screen::GAME:
             render = &Surface::renderRaylib;
-
             switch(appState) {
                 case State::App::HOLD:
                     if (surfaceEvent == Event::Surface::SHOW_OPTIONS) {
