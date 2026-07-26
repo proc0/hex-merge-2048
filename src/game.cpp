@@ -102,6 +102,10 @@ void Game::updateTitle() {
     }
 }
 
+bool Game::finished() const {
+    return meta.state == State::Game::WIN || meta.state == State::Game::OVER;
+}
+
 void Game::transition(State::App appState, State::Screen screen) {
     switch(screen) {
         case State::Screen::MAIN:

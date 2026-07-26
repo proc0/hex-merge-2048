@@ -208,21 +208,17 @@ Clay_RenderCommandArray App::update() {
             world.transition(state, screen, Action::Surface::DO_NOTHING);
             surface.transition(state, screen);
 
-        } 
+        } else if (game.finished() && surfaceAction == Action::Surface::MAIN_MENU) {
+            TraceLog(LOG_INFO, "RETURN MAIN AFTER WIN-LOSS");
+            surface.clearEvent();
+            state = State::App::RUN;
+            screen = State::Screen::MAIN;
 
-        // else if (surfaceAction == Action::Surface::CONFIRM_RETURN) {
-        //     TraceLog(LOG_INFO, "RETURN MAIN");
-        //     surface.clearEvent();
-        //     state = State::App::RUN;
-        //     screen = State::Screen::MAIN;
+            world.transition(state, screen, Action::Surface::DO_NOTHING);
+            game.transition(state, screen);
+            surface.transition(state, screen);
 
-        //     world.transition(state, screen, Action::Surface::DO_NOTHING);
-        //     game.transition(state, screen);
-        //     surface.transition(state, screen);
-
-        // } else 
-
-        else if(surfaceAction == Action::Surface::GAME_CONTINUE) {
+        } else if(surfaceAction == Action::Surface::GAME_CONTINUE) {
             TraceLog(LOG_INFO, "CONTINUE GAME");
 
             game.continueGame();

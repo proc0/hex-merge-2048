@@ -69,6 +69,7 @@ public:
     GameState updateGame(InputEvent, WorldState);
     void updateTitle();
 
+    bool finished() const;
     void transition(State::App, State::Screen);
     void resizeTitle();
     void resize(int height, int width) override;
