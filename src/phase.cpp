@@ -55,6 +55,10 @@ int Phase::getPhase() const {
 	return 0;
 }
 
+int Phase::getMode() const {
+	return mode;
+}
+
 Color Phase::getPhaseColor() const {
 	return BLUE;
 }

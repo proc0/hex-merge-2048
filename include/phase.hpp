@@ -27,6 +27,7 @@ public:
 	void setPhase(int value);
     
     int getPhase() const;
+    int getMode() const;
     Color getPhaseColor() const;
     int getRandomValue() const;
 	int getSpawnNumber() const;
