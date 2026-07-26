@@ -41,7 +41,7 @@ void Phase::setPhase(int value) {
 int Phase::getPhase() const {
 	switch (mode) {
 	case Action::Surface::MAIN_NEW_CLASSIC:
-		return 0;
+		return currentPhase > 3 ? currentPhase : 0;
 		break;
 	case Action::Surface::MAIN_NEW_HEXED:
 		return currentPhase;

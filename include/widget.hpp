@@ -83,12 +83,12 @@ using BUTTON_ID = WidgetId::ButtonId;
 // It would take a list of component IDs and keep some kind of state for them, 
 // i.e. activeTab or scrollState, and it would allow for multiple instances of these sets.
 // menu buttons per screen
-#define BUTTONS_MENU_MAIN const std::array<BUTTON_ID, 4> buttonsMenuMain{ \
+#define BUTTONS_MENU_MAIN const std::array<BUTTON_ID, 2> buttonsMenuMain{ \
 		BUTTON_ID::MAIN_NEW_CLASSIC,\
-		BUTTON_ID::MAIN_NEW_CURSED, \
-		BUTTON_ID::MAIN_NEW_HEXED, \
 		BUTTON_ID::QUIT,\
 	};
+		// BUTTON_ID::MAIN_NEW_CURSED, 
+		// BUTTON_ID::MAIN_NEW_HEXED, 
 		// BUTTON_ID::OPTIONS,
 
 #define BUTTONS_MENU_PAUSE const std::array<BUTTON_ID, 4> buttonsMenuPause{ \
@@ -117,12 +117,12 @@ struct Button {
 // WARNING: order should match WidgetId::ButtonId enum
 #define BUTTONS \
 BUTTON(NIL, 		   "ButtonNil", 		DO_NOTHING,			   "Nothing") \
-BUTTON(MAIN_NEW_CLASSIC, "ButtonNewClassic", MAIN_NEW_CLASSIC, 		"Classic") \
+BUTTON(MAIN_NEW_CLASSIC, "ButtonNewClassic", MAIN_NEW_CLASSIC, 		"Begin") \
 BUTTON(MAIN_NEW_HEXED, "ButtonNewHexed", MAIN_NEW_HEXED,    		"Hexed") \
 BUTTON(MAIN_NEW_CURSED, "ButtonNewCursed", MAIN_NEW_CURSED, 	    "Cursed") \
 BUTTON(GAME_DIFF_EASY, "ButtonDiffEasy", GAME_DIFF_EASY, 			"Normal") \
 BUTTON(GAME_DIFF_MEDIUM, "ButtonDiffMedium", GAME_DIFF_MEDIUM,    	  "Hard") \
-BUTTON(GAME_DIFF_HARD, "ButtonDiffHard", GAME_DIFF_HARD, 			"Hexpert") \
+BUTTON(GAME_DIFF_HARD, "ButtonDiffHard", GAME_DIFF_HARD, 			"Hexed") \
 BUTTON(RESUME, 		   "ButtonGameResume",  RESUME_GAME,			"Resume") \
 BUTTON(MOVE_UP, 	   "HUDMoveUp",  		MOVE_UP,					"Up") \
 BUTTON(MOVE_UP_RIGHT,	"HUDMoveUpRight",  	MOVE_UP_RIGHT,			"UpRight") \
