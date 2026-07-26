@@ -40,6 +40,8 @@ class Surface : public Layer {
 
     Clay_Arena arena = {};
 
+    TimerId winLoseDelay = 0;
+
     const Window& window;
     // TODO: move this to Display
     int gameScore = 0;
@@ -47,7 +49,8 @@ class Surface : public Layer {
     State::Game currentGameState = State::Game::START;
     // overlay shader variable
     int overlayColorLocation;
-
+    bool showGameScore = false;
+    
 public:
     Widget widget;
 

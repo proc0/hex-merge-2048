@@ -195,6 +195,15 @@ Clay_RenderCommandArray App::update() {
             world.transition(state, screen, Action::Surface::DO_NOTHING);
             surface.transition(state, screen);
 
+        } else if (surfaceAction == Action::Surface::MAIN_MENU) {
+                surface.clearEvent();
+                state = State::App::RUN;
+                screen = State::Screen::MAIN;
+
+                world.transition(state, screen, Action::Surface::DO_NOTHING);
+                game.transition(state, screen);
+                surface.transition(state, screen);
+
         } else if(surfaceAction == Action::Surface::CONFIRM_TUTORIAL) {
             TraceLog(LOG_INFO, "BEGIN GAME");
             state = State::App::RUN;

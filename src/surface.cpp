@@ -69,12 +69,15 @@ void Surface::load(){
     // 4. Initialize Clay [clay.h:2186-2188]
     Clay_Initialize(arena, Clay_Dimensions({ window.widthf, window.heightf }), Clay_ErrorHandler({ .errorHandlerFunction = handleError, .userData = this }));
 
-    fonts[0] = LoadFontEx(PATH_ASSET(URI_FONT_TURRENT_EXTRA_BOLD), 32, 0, 400);
+    fonts[0] = LoadFontEx(PATH_ASSET(URI_FONT_TURRENT_EXTRA_BOLD), 64, 0, 400);
     SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
-    fonts[1] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_REGULAR), 48, 0, 324);
+    // fonts[1] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_REGULAR), 48, 0, 324);
+    // SetTextureFilter(fonts[1].texture, TEXTURE_FILTER_BILINEAR);
+    fonts[1] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_CONDENSED), 64, 0, 324);
     SetTextureFilter(fonts[1].texture, TEXTURE_FILTER_BILINEAR);
-    fonts[2] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_CONDENSED), 184, 0, 324);
+    fonts[2] = LoadFontEx(PATH_ASSET(URI_FONT_TURRENT_EXTRA_BOLD), 180, 0, 400);
     SetTextureFilter(fonts[2].texture, TEXTURE_FILTER_BILINEAR);
+
     Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
 
     loadOverlay();
@@ -110,6 +113,7 @@ void Surface::load(){
 void Surface::reset() {
     gameScore = 0;
     moveCount = 0;
+    showGameScore = false;
 }
 
 void Surface::loadOverlay() {
@@ -442,12 +446,16 @@ void Surface::updateDisplay(const GameState gameState) {
 
     if (currentGameState != gameState.state) {
         currentGameState = gameState.state;
+
         if (gameState.state == State::Game::OVER || gameState.state == State::Game::WIN) {
-            layoutMenu = &Surface::layoutWinLose;
             if (gameState.totalTimeId) {
                 std::string totalTime = window.timer.consumeWatchTime(gameState.totalTimeId);
                 formatTotalTime = std::format("Time {}", totalTime);
+                layoutMenu = &Surface::layoutWinLose;
             }
+            window.timer.schedule(2000, [this](){
+                showGameScore = true;
+            });
         }
     }
 }
@@ -479,67 +487,73 @@ void Surface::layoutWinLose() {
             CLAY_TEXT(CLAY_STRING(TEXT_GAME_LOSE_TITLE), STYLE_TEXT_LOSE);
         }
 
-        CLAY(CLAY_ID("ContentWinLose"), {
-            .layout = { 
-                .sizing = { 
-                    .width = CLAY_SIZING_PERCENT(0.5f),
-                },
-                .padding = CLAY_PADDING_ALL(window.scale(24)),
-                .childGap = window.scale(4),
-                .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER },
-                .layoutDirection = CLAY_TOP_TO_BOTTOM,
-            },
+        if (showGameScore) {
 
-        }) { 
-            if (currentGameState == State::Game::WIN) {
-                CLAY_TEXT(CLAY_STRING(TEXT_GAME_WIN_SUBTITLE), STYLE_TEXT_DISPLAY);
-            } else if (currentGameState == State::Game::OVER) {
-                CLAY_TEXT(CLAY_STRING(TEXT_GAME_LOSE_SUBTITLE), STYLE_TEXT_DISPLAY);
-            }
-
-            CLAY(CLAY_ID("ContentWinLoseNumbers"), {
+            CLAY(CLAY_ID("ContentWinLose"), {
                 .layout = { 
                     .sizing = { 
-                        .width = CLAY_SIZING_GROW(0),
+                        .width = CLAY_SIZING_PERCENT(0.5f),
                     },
                     .padding = CLAY_PADDING_ALL(window.scale(24)),
-                    .childGap = window.scale(12),
-                    .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_BOTTOM },
+                    .childGap = window.scale(4),
+                    .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_CENTER },
                     .layoutDirection = CLAY_TOP_TO_BOTTOM,
                 },
-                .backgroundColor = SURFACE_COLOR_MENU_BG,
-                .cornerRadius = CLAY_CORNER_RADIUS(10),
-                .floating = { 
-                    .offset = {0, 0}, 
-                    .zIndex = 1, 
-                    .attachPoints = { 
-                        CLAY_ATTACH_POINT_CENTER_CENTER, 
-                        CLAY_ATTACH_POINT_CENTER_BOTTOM 
-                    }, 
-                    .attachTo = CLAY_ATTACH_TO_PARENT 
-                },
 
-            }) {
-                widget.layoutLabel(formatScore);
-                widget.layoutLabel(formatTotalTime);
-                widget.layoutLabel(formatMoves);
+            }) { 
 
-                CLAY(CLAY_ID("FooterWinLose"), {
+
+                CLAY(CLAY_ID("ContentWinLoseNumbers"), {
                     .layout = { 
                         .sizing = { 
                             .width = CLAY_SIZING_GROW(0),
                         },
-                        .padding = CLAY_PADDING_ALL(window.scale(12)),
+                        .padding = CLAY_PADDING_ALL(window.scale(24)),
                         .childGap = window.scale(12),
-                        .layoutDirection = CLAY_LEFT_TO_RIGHT,
+                        .childAlignment = { .x = CLAY_ALIGN_X_CENTER, .y = CLAY_ALIGN_Y_BOTTOM },
+                        .layoutDirection = CLAY_TOP_TO_BOTTOM,
                     },
-                }) {        
-                    widget.layoutButton(BUTTON_ID::RESTART);
+                    .backgroundColor = SURFACE_COLOR_MENU_BG,
+                    .cornerRadius = CLAY_CORNER_RADIUS(10),
+                    .floating = { 
+                        .offset = {0, 0}, 
+                        .zIndex = 1, 
+                        .attachPoints = { 
+                            CLAY_ATTACH_POINT_CENTER_CENTER, 
+                            CLAY_ATTACH_POINT_CENTER_BOTTOM 
+                        }, 
+                        .attachTo = CLAY_ATTACH_TO_PARENT 
+                    },
+
+                }) {
                     if (currentGameState == State::Game::WIN) {
-                        widget.layoutButton(BUTTON_ID::GAME_CONTINUE);
+                        CLAY_TEXT(CLAY_STRING(TEXT_GAME_WIN_SUBTITLE), STYLE_TEXT_DISPLAY);
+                    } else if (currentGameState == State::Game::OVER) {
+                        CLAY_TEXT(CLAY_STRING(TEXT_GAME_LOSE_SUBTITLE), STYLE_TEXT_DISPLAY);
+                    }
+
+                    widget.layoutLabel(formatScore);
+                    widget.layoutLabel(formatTotalTime);
+                    widget.layoutLabel(formatMoves);
+
+                    CLAY(CLAY_ID("FooterWinLose"), {
+                        .layout = { 
+                            .sizing = { 
+                                .width = CLAY_SIZING_GROW(0),
+                            },
+                            .padding = CLAY_PADDING_ALL(window.scale(12)),
+                            .childGap = window.scale(12),
+                            .layoutDirection = CLAY_LEFT_TO_RIGHT,
+                        },
+                    }) {        
+                        widget.layoutButton(BUTTON_ID::RESTART);
+                        if (currentGameState == State::Game::WIN) {
+                            widget.layoutButton(BUTTON_ID::GAME_CONTINUE);
+                        }
+                        widget.layoutButton(BUTTON_ID::RETURN);
                     }
                 }
-            }
+            } // game scores
         }
     }
 }

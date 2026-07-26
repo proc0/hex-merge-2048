@@ -15,8 +15,8 @@
 #define SURFACE_COLOR_ACCENT_RED Clay_Color({ 230, 40, 45, 255 })
 #define SURFACE_COLOR_ACCENT_GOLD Clay_Color({ 216, 238, 10, 255 })
 
-#define WIDGET_COLOR_BUTTON_BG Clay_Color({ 205, 5, 205, 255 })
-#define WIDGET_COLOR_BUTTON_BG_HL Clay_Color({ 235, 90, 235, 255 })
+#define WIDGET_COLOR_BUTTON_BG Clay_Color({ 160, 15, 160, 255 })
+#define WIDGET_COLOR_BUTTON_BG_HL Clay_Color({ 200, 50, 200, 255 })
 #define WIDGET_COLOR_BORDER Clay_Color({ 245, 245, 245, 255 })
 
 #define WIDGET_COLOR_SCROLLBAR Clay_Color({80, 80, 80, 255})
@@ -53,10 +53,10 @@
 #define STYLE_TEXT_DISABLED CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_BG, .fontId = 0, .fontSize = 32 })
 #define STYLE_TEXT_TITLE CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_BG, .fontId = 1, .fontSize = 48, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
 #define STYLE_TEXT_HIGHLIGHT CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_HL, .fontId = 1, .fontSize = 48, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
-#define STYLE_TEXT_DISPLAY CLAY_TEXT_CONFIG({ .textColor = CLAY_WHITE, .fontId = 1, .fontSize = 48, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
-#define STYLE_TEXT_BANNER CLAY_TEXT_CONFIG({ .textColor = CLAY_WHITE, .fontId = 2, .fontSize = 48, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
-#define STYLE_TEXT_WIN CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_ACCENT_GOLD, .fontId = 2, .fontSize = 160 })
-#define STYLE_TEXT_LOSE CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_ACCENT_RED, .fontId = 2, .fontSize = 160 })
+#define STYLE_TEXT_DISPLAY CLAY_TEXT_CONFIG({ .textColor = CLAY_WHITE, .fontId = 0, .fontSize = 64, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
+#define STYLE_TEXT_BANNER CLAY_TEXT_CONFIG({ .textColor = CLAY_WHITE, .fontId = 1, .fontSize = 48, .textAlignment = CLAY_TEXT_ALIGN_CENTER })
+#define STYLE_TEXT_WIN CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_ACCENT_GOLD, .fontId = 2, .fontSize = 180 })
+#define STYLE_TEXT_LOSE CLAY_TEXT_CONFIG({ .textColor = SURFACE_COLOR_ACCENT_RED, .fontId = 2, .fontSize = 180 })
 
 // typedef struct Clay_ElementDeclaration {
 //     // Controls various settings that affect the size and position of an element, as well as the sizes and positions of any child elements.
