@@ -159,7 +159,20 @@ Clay_RenderCommandArray App::update() {
 
     // TODO: implement app member function pointer state transitions
     // and transition self into different functions depending on screen
-    if(screen == State::Screen::GAME) {
+    if(screen == State::Screen::GAME_INTRO) {
+        if(surfaceAction == Action::Surface::GAME_DIFF_EASY || surfaceAction == Action::Surface::GAME_DIFF_MEDIUM || surfaceAction == Action::Surface::GAME_DIFF_HARD) {
+            TraceLog(LOG_INFO, "BEGIN GAME");
+            screen = State::Screen::GAME;
+            state = State::App::RUN;
+
+            surface.clearEvent();
+
+            game.transition(state, screen);
+            world.transition(state, screen, surfaceAction);
+            surface.transition(state, screen);
+
+        }
+    } else if(screen == State::Screen::GAME) {
         // Game screen input events
         //-----------------------------
         if(inputEvent.id == Event::Input::KEY_ESCAPE){
@@ -195,26 +208,21 @@ Clay_RenderCommandArray App::update() {
             world.transition(state, screen, Action::Surface::DO_NOTHING);
             surface.transition(state, screen);
 
-        } else if (surfaceAction == Action::Surface::MAIN_MENU) {
-                surface.clearEvent();
-                state = State::App::RUN;
-                screen = State::Screen::MAIN;
+        } 
 
-                world.transition(state, screen, Action::Surface::DO_NOTHING);
-                game.transition(state, screen);
-                surface.transition(state, screen);
+        // else if (surfaceAction == Action::Surface::CONFIRM_RETURN) {
+        //     TraceLog(LOG_INFO, "RETURN MAIN");
+        //     surface.clearEvent();
+        //     state = State::App::RUN;
+        //     screen = State::Screen::MAIN;
 
-        } else if(surfaceAction == Action::Surface::CONFIRM_TUTORIAL) {
-            TraceLog(LOG_INFO, "BEGIN GAME");
-            state = State::App::RUN;
+        //     world.transition(state, screen, Action::Surface::DO_NOTHING);
+        //     game.transition(state, screen);
+        //     surface.transition(state, screen);
 
-            surface.clearEvent();
+        // } else 
 
-            // game.transition(state, screen);
-            // world.transition(state, screen, Action::Surface::DO_NOTHING);
-            surface.transition(state, screen);
-
-        } else if(surfaceAction == Action::Surface::GAME_CONTINUE) {
+        else if(surfaceAction == Action::Surface::GAME_CONTINUE) {
             TraceLog(LOG_INFO, "CONTINUE GAME");
 
             game.continueGame();
@@ -230,6 +238,7 @@ Clay_RenderCommandArray App::update() {
                 surface.transition(state, screen);
 
             } else if (surfaceAction == Action::Surface::MAIN_MENU) {
+                TraceLog(LOG_INFO, "TRY RETURN MAIN");
             
                 surface.beginEvent(Event::Surface::SHOW_RETURN_MAIN_MENU_CONFIRMATION);
             
@@ -272,7 +281,7 @@ Clay_RenderCommandArray App::update() {
         // Main screen input events
         //-----------------------------
         if(surfaceAction == Action::Surface::MAIN_NEW_CLASSIC || surfaceAction == Action::Surface::MAIN_NEW_HEXED || surfaceAction == Action::Surface::MAIN_NEW_CURSED) {
-            screen = State::Screen::GAME;
+            screen = State::Screen::GAME_INTRO;
             // NOTE: app state is still on HOLD until confirm
             surface.beginEvent(Event::Surface::SHOW_TUTORIAL);
             // reset any game state

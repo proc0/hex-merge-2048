@@ -51,6 +51,9 @@ namespace WidgetId {
 		MAIN_NEW_CLASSIC,	// MAIN_NEW_GAME_CLASSIC_<Difficulty>
 		MAIN_NEW_HEXED,		// MAIN_NEW_GAME_HEXED_<Difficulty>
 		MAIN_NEW_CURSED,	// MAIN_NEW_GAME_CURSED_<Difficulty>
+		GAME_DIFF_EASY,
+		GAME_DIFF_MEDIUM,
+		GAME_DIFF_HARD,
 		RESUME,				// GAME_RESUME
 		MOVE_UP,			//
 		MOVE_UP_RIGHT,		//
@@ -114,9 +117,12 @@ struct Button {
 // WARNING: order should match WidgetId::ButtonId enum
 #define BUTTONS \
 BUTTON(NIL, 		   "ButtonNil", 		DO_NOTHING,			   "Nothing") \
-BUTTON(MAIN_NEW_CLASSIC, "ButtonNewClassic", MAIN_NEW_CLASSIC, "Classic (Normal)") \
-BUTTON(MAIN_NEW_HEXED, "ButtonNewHexed", MAIN_NEW_HEXED,    	"Hexed (Hard)") \
-BUTTON(MAIN_NEW_CURSED, "ButtonNewCursed", MAIN_NEW_CURSED, "Cursed (Brutal)") \
+BUTTON(MAIN_NEW_CLASSIC, "ButtonNewClassic", MAIN_NEW_CLASSIC, 		"Classic") \
+BUTTON(MAIN_NEW_HEXED, "ButtonNewHexed", MAIN_NEW_HEXED,    		"Hexed") \
+BUTTON(MAIN_NEW_CURSED, "ButtonNewCursed", MAIN_NEW_CURSED, 	    "Cursed") \
+BUTTON(GAME_DIFF_EASY, "ButtonDiffEasy", GAME_DIFF_EASY, 			"Normal") \
+BUTTON(GAME_DIFF_MEDIUM, "ButtonDiffMedium", GAME_DIFF_MEDIUM,    	  "Hard") \
+BUTTON(GAME_DIFF_HARD, "ButtonDiffHard", GAME_DIFF_HARD, 			"Hexpert") \
 BUTTON(RESUME, 		   "ButtonGameResume",  RESUME_GAME,			"Resume") \
 BUTTON(MOVE_UP, 	   "HUDMoveUp",  		MOVE_UP,					"Up") \
 BUTTON(MOVE_UP_RIGHT,	"HUDMoveUpRight",  	MOVE_UP_RIGHT,			"UpRight") \

@@ -409,8 +409,10 @@ void World::transition(State::App appState, State::Screen screen, Action::Surfac
         case State::Screen::MAIN:
             update = &World::updateMain;
             render = &World::renderMain;
+            phase.transition(action);
             break;
         case State::Screen::GAME:
+        case State::Screen::GAME_INTRO:
             if (appState == State::App::HOLD) {
                 update = &World::updateHold;
                 render = &World::renderHold;

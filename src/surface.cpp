@@ -606,17 +606,21 @@ void Surface::layoutTutorial() {
             .layout = { 
                 .sizing = { 
                     .width = CLAY_SIZING_GROW(0),
-                }, 
+                },
                 .padding = { 
                     static_cast<uint16_t>(window.scale(120)),
                     static_cast<uint16_t>(window.scale(120)),
                     static_cast<uint16_t>(window.scale(32)),
                     static_cast<uint16_t>(window.scale(32))
                 }, 
-                .layoutDirection = CLAY_LEFT_TO_RIGHT,
+                .childGap = window.scale(16),
+                .layoutDirection = CLAY_TOP_TO_BOTTOM,
             },
         }) {        
-            widget.layoutButton(BUTTON_ID::CONFIRM_TUTORIAL);
+            // widget.layoutButton(BUTTON_ID::CONFIRM_TUTORIAL);
+            widget.layoutButton(BUTTON_ID::GAME_DIFF_EASY);
+            widget.layoutButton(BUTTON_ID::GAME_DIFF_MEDIUM);
+            widget.layoutButton(BUTTON_ID::GAME_DIFF_HARD);
         }
     }
 }
@@ -1016,6 +1020,7 @@ void Surface::transition(State::App appState, State::Screen screen) {
             render          = &Surface::renderRaylib;
             break;
         case State::Screen::GAME:
+        case State::Screen::GAME_INTRO:
             render = &Surface::renderRaylib;
 
             switch(appState) {

@@ -79,20 +79,35 @@ void Phase::transition(Action::Surface action) {
 	switch (action) {
 	case Action::Surface::MAIN_NEW_CLASSIC:
 		mode = action;
-		valueDist = distributionEasy;
-		spawnDist = spawnNumberPhasesEasy;
-		break;
+		return;
 	case Action::Surface::MAIN_NEW_HEXED:
 		mode = action;
-		valueDist = distributionMedium;
-		spawnDist = spawnNumberPhasesMedium;
-		break;
+		return;
 	case Action::Surface::MAIN_NEW_CURSED:
 		mode = action;
-		valueDist = distributionHard;
-		spawnDist = spawnNumberPhasesHard;
-		break;
+		return;
 	default:
-		break;
+		if (mode == Action::Surface::MAIN_NEW_CLASSIC) {			
+			switch (action) {
+			case Action::Surface::GAME_DIFF_EASY:
+				valueDist = distributionEasy;
+				spawnDist = spawnNumberPhasesEasy;
+				break;
+			case Action::Surface::GAME_DIFF_MEDIUM:
+				valueDist = distributionMedium;
+				spawnDist = spawnNumberPhasesMedium;
+				break;
+			case Action::Surface::GAME_DIFF_HARD:
+				valueDist = distributionHard;
+				spawnDist = spawnNumberPhasesHard;
+				break;
+			default:
+				break;
+			}
+		} else if (mode == Action::Surface::MAIN_NEW_HEXED) {
+
+		} else if (mode == Action::Surface::MAIN_NEW_CURSED) {
+			
+		}
 	}
 }

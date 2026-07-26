@@ -10,6 +10,9 @@ namespace Action {
         MAIN_NEW_CLASSIC,
         MAIN_NEW_HEXED,
         MAIN_NEW_CURSED,
+        GAME_DIFF_EASY,
+        GAME_DIFF_MEDIUM,
+        GAME_DIFF_HARD,
         CONFIRM_TUTORIAL,
         MOVE_UP,
         MOVE_UP_RIGHT,
@@ -88,7 +91,8 @@ namespace State {
         INTRO,
         TITLE,
         MAIN,
-        GAME
+        GAME,
+        GAME_INTRO
     };
 
     enum Game {
