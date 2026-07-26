@@ -1,5 +1,6 @@
 #pragma once
 
+#include "raylib.h"
 #include "window.hpp"
 #include "type.hpp"
 #include "hex.hpp"
@@ -30,6 +31,7 @@ class Grid : public Layer {
 
 	Color colorHex = BEIGE;
 	Color colorLine = DARKGRAY;
+	Color colorLine2 = ColorBrightness(BEIGE, 0.21f);
 
 	Vector2 unit = { HEX_SIZE, HEX_SIZE };
 	int extent = GRID_EXTENT;
@@ -43,7 +45,7 @@ public:
 	void create(int extent);
 	void reset();
 
-	void render() const;
+	void render(bool hexMoving) const;
 	void renderGrid() const;
 	void renderHex(const Hex::Point&, const HexState&) const;
 

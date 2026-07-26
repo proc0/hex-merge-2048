@@ -1,7 +1,6 @@
 #include "chip.hpp"
 #include "config.hpp"
 #include "tool.hpp"
-#include "level.hpp"
 
 #include "raylib.h"
 #include "raymath.h"
@@ -149,9 +148,9 @@ void Chip::place(Hex::Point point, Vector2 position, int newValue, int phase) {
 	auto maybeColor = conifgBaseColor.get(value);
 	if (maybeColor.has_value()) {
 		const Color& baseColor = maybeColor.value();
-		const Color& phaseColor = configPhaseColor[currentPhase];
+		// const Color& phaseColor = configPhaseColor[currentPhase];
 		// TraceLog(LOG_INFO, "BLENDING COLORS for %d: BASE %d %d %d and PHASE %d %d %d", value, baseColor.r, baseColor.g, baseColor.b, phaseColor.r, phaseColor.g, phaseColor.b);
-		Color newColor = ColorTint(baseColor, phaseColor);
+		Color newColor = ColorTint(baseColor, RAYWHITE);
 		StackMap<int, float, 4> configPlaceUpdate{{
 			{ COLOR_R, newColor.r },
 			{ COLOR_G, newColor.g },
@@ -193,9 +192,9 @@ int Chip::merge(Chip& other) {
 	auto maybeColor = conifgBaseColor.get(nextValue);
 	if (maybeColor.has_value()) {
 		Color& baseColor = maybeColor.value();
-		Color newColor = baseColor;
-		const Color& phaseColor = configPhaseColor[currentPhase];
-		newColor = ColorTint(baseColor, phaseColor);
+		// Color newColor = baseColor;
+		// const Color& phaseColor = configPhaseColor[currentPhase];
+		Color newColor = ColorTint(baseColor, RAYWHITE);
 		configMergePropDelay.insert(COLOR_R, newColor.r);
 		configMergePropDelay.insert(COLOR_G, newColor.g);		
 		configMergePropDelay.insert(COLOR_B, newColor.b);		
@@ -432,8 +431,8 @@ void Chip::phaseTransition(int phase) {
 	auto maybeColor = conifgBaseColor.get(value);
 	if (maybeColor.has_value()) {
 		const Color& baseColor = maybeColor.value();
-		const Color& phaseColor = configPhaseColor[currentPhase];
-		Color newColor = ColorTint(baseColor, phaseColor);
+		// const Color& phaseColor = configPhaseColor[currentPhase];
+		Color newColor = ColorTint(baseColor, RAYWHITE);
 		// TraceLog(LOG_INFO, "TRANSITIONING - BLENDING COLORS for %d: BASE %d %d %d and PHASE %d %d %d", value, baseColor.r, baseColor.g, baseColor.b, phaseColor.r, phaseColor.g, phaseColor.b);
 
 		StackMap<int, float, 4> configPhaseUpdate{{

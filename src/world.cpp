@@ -4,6 +4,7 @@
 #include "config.hpp"
 #include "hex.hpp"
 #include "type.hpp"
+#include "level.hpp"
 
 #include "raylib.h"
 
@@ -271,8 +272,13 @@ WorldState World::updateGame(InputEvent inputEvent, Action::Surface action){
 
             if (maxValueChanged) {
                 if (phaseIdx > 0) {
-                    // lastBgColor = bgColor;
-                    bgColor = newBgColor;
+                    if (phaseIdx == 9) {
+                        lastBgColor = newBgColor;
+                        bgColor = ColorTint(newBgColor, configPhaseColor[phaseIdx]);
+                    } else {
+                        lastBgColor = configPhaseColor[phaseIdx];
+                        bgColor = ColorTint(newBgColor, lastBgColor);
+                    }
                 }
                 maxValueChanged = false;
             }
@@ -357,9 +363,9 @@ void World::renderGame() const {
     // DrawRectangleGradientV(0, 0, window.width, window.height, BLUE, GREEN);
     ClearBackground(lastBgColor);
     // DrawCircleGradient(grid.getOrigin(), window.halfWidthf, bgColor, lastBgColor);
-    DrawRectangleGradientEx({ 0, 0, window.widthf, window.heightf }, lastBgColor, bgColor, DARKGRAY, bgColor);
+    DrawRectangleGradientEx({ 0, 0, window.widthf, window.heightf }, LIGHTGRAY, bgColor, lastBgColor, bgColor);
 
-    grid.render();
+    grid.render(meta.state == State::World::PROCESS_MOVES);
         
     // first pass bottom layer
     for (auto& chip : chips) {

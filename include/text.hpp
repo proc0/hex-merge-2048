@@ -6,8 +6,8 @@
 
 #define TEXT_RETURN_TO_MAIN "All progress will be lost.\nReturn to Main Menu?"
 
-#define TEXT_GAME_MODE_CLASSIC_TITLE "Classic Mode"
-#define TEXT_GAME_MODE_CLASSIC_BODY "This is classic mode."
+#define TEXT_GAME_MODE_CLASSIC_TITLE "Welcome!"
+#define TEXT_GAME_MODE_CLASSIC_BODY "Move the hexes with [W,A,S,D] + [Q,E] or screen arrows to merge hexes with the same number and reach 2048.\n\n[Escape] for Pause Menu to restart."
 
 #define TEXT_GAME_MODE_CURSED_TITLE "Cursed Mode"
 #define TEXT_GAME_MODE_CURSED_BODY "This is Cursed mode."
@@ -20,11 +20,11 @@
 #define TEXT_TUTORIAL_2 "Suspendisse in est ante in nibh. Amet venenatis urna cursus eget nunc scelerisque viverra. Elementum sagittis vitae et leo duis ut diam quam nulla. Enim nulla aliquet porttitor lacus. Pellentesque habitant morbi tristique senectus et. Facilisi nullam vehicula ipsum a arcu cursus vitae."
 #define TEXT_TUTORIAL_3 "Sem fringilla ut morbi tincidunt. Euismod quis viverra nibh cras pulvinar mattis nunc sed. Velit sed ullamcorper morbi tincidunt ornare massa. Varius quam quisque id diam vel quam. Nulla pellentesque dignissim enim sit amet venenatis. Enim lobortis scelerisque fermentum dui faucibus in. Pretium viverra suspendisse potenti nullam ac tortor vitae. Lectus vestibulum mattis ullamcorper velit sed. Eget mauris pharetra et ultrices neque ornare aenean euismod elementum. Habitant morbi tristique senectus et. Integer vitae justo eget magna fermentum iaculis eu. Semper quis lectus nulla at volutpat diam. Enim praesent elementum facilisis leo. Massa vitae tortor condimentum lacinia quis vel."
 
-#define TEXT_GAME_WIN_TITLE "HEX MERGED"
-#define TEXT_GAME_WIN_SUBTITLE "~~~YOU WIN~~~"
+#define TEXT_GAME_WIN_TITLE "SUCCESS"
+#define TEXT_GAME_WIN_SUBTITLE "YOU WIN"
 
 #define TEXT_GAME_LOSE_TITLE "GRIDLOCKED"
-#define TEXT_GAME_LOSE_SUBTITLE "Game Over"
+#define TEXT_GAME_LOSE_SUBTITLE "Game Score"
 
 #define TEXT_OPTIONS_TITLE "Options"
 #define TEXT_OPTIONS_TAB_TITLE_GAME "Game Options"

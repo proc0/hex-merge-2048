@@ -45,16 +45,22 @@ void Grid::reset() {
 	}
 }
 
-void Grid::render() const {
+void Grid::render(bool hexMoving) const {
     DrawTexturePro(target.texture, targetSource, targetDestination, Vector2({}), 0.0f, WHITE);
+    
+    if (!hexMoving) return;
+
+    BeginBlendMode(BLEND_ADDITIVE);
     // render hex effects
 	for (auto &[hex, state] : map) {
 		if (state.key == 0) continue;
-		DrawPoly(state.position, 6, unit.x, 0.0f, { 0, 0, 0, 10 });
+		DrawPoly(state.position, 6, unit.x, 0.0f, { 255, 255, 255, 20 });
 	}
+	EndBlendMode();
 }
 
 void Grid::renderGrid() const {
+	DrawCircleGradient(origin, unit.x*extent*4.0f, DARKGRAY, BLANK);
 	for (auto &[hex, state] : map) {
 		renderHex(hex, state);
 	}
@@ -62,6 +68,7 @@ void Grid::renderGrid() const {
 
 void Grid::renderHex(const Hex::Point& point, const HexState& state) const {
 	DrawPoly(state.position, 6, unit.x, 0.0f, colorHex);
+	DrawPolyLinesEx(state.position, 6, unit.x*0.9f, 0.0f, 7.0f, colorLine2);
 	DrawPolyLinesEx(state.position, 6, unit.x, 0.0f, 1.0f, colorLine);
 
 	// const char *pointLabel = TextFormat("(%d, %d, %d)", point.q, point.r, point.s);

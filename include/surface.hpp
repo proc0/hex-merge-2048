@@ -20,7 +20,7 @@ extern "C" {
 #include <string>
 
 class Surface : public Layer {
-    Font fonts[3];
+    Font fonts[4];
     // TODO: move this into a Display class
     // along with building the components
     // for the HUD

@@ -71,12 +71,12 @@ void Surface::load(){
 
     fonts[0] = LoadFontEx(PATH_ASSET(URI_FONT_TURRENT_EXTRA_BOLD), 64, 0, 400);
     SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
-    // fonts[1] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_REGULAR), 48, 0, 324);
-    // SetTextureFilter(fonts[1].texture, TEXTURE_FILTER_BILINEAR);
     fonts[1] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_CONDENSED), 64, 0, 324);
     SetTextureFilter(fonts[1].texture, TEXTURE_FILTER_BILINEAR);
     fonts[2] = LoadFontEx(PATH_ASSET(URI_FONT_TURRENT_EXTRA_BOLD), 180, 0, 400);
     SetTextureFilter(fonts[2].texture, TEXTURE_FILTER_BILINEAR);
+    fonts[3] = LoadFontEx(PATH_ASSET(URI_FONT_ROBOTO_REGULAR), 48, 0, 324);
+    SetTextureFilter(fonts[3].texture, TEXTURE_FILTER_BILINEAR);
 
     Clay_SetMeasureTextFunction(Raylib_MeasureText, fonts);
 
